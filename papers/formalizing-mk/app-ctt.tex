@@ -1,0 +1,1002 @@
+\section{${\bf CTT}_{\bf uqe}$ Formalization}\label{app:cttuqe}
+
+\setcounter{biformthy}{0}
+
+{\churchqe}~\cite{FarmerArxiv16} is a version of simple type theory
+with quotation and evaluation.  {\churchuqe}~\cite{FarmerArxiv17} is a
+variant of {\churchqe} that admits undefined expressions, partial
+functions, and multiple base types of individuals.  {\churchuqe} also
+includes a definite description operator and conditional expression
+operator.  This appendix presents a formalization of the biform theory
+graph test case in {\churchuqe} (instead of {\churchqe}) since
+{\churchuqe} contains a notion of theory morphism.  The reader is
+expected to be familiar with the notation of {\churchuqe}.  The
+following are additional notes to the reader:
+
+\be
+
+  \item $\set{o,\epsilon,\iota}$ is the set of base types for all
+    eight biform theories given below.  The single nonlogical base
+    type $\iota$ is used to represent the natural numbers.
+
+  \item All constants that are not introduced as components of one of
+    the biform theories listed below are logical constants of
+    {\churchuqe}, either primitive or defined.
+    $\mname{is-abs}_{\epsilon \tarrow o}$, $\mname{abs-body}_{\epsilon
+      \tarrow \epsilon}$, and $\mname{is-closed}_{\epsilon \tarrow o}$
+    are defined logical constants not in~\cite{FarmerArxiv16}.
+    $\mname{is-abs}_{\epsilon \tarrow o} \, \textbf{A}_\epsilon$ holds
+    iff $\textbf{A}_\epsilon$ represents an abstraction.  If
+    $\textbf{A}_\epsilon$ represents an abstraction, then
+    $\mname{abs-body}_{\epsilon \tarrow \epsilon} \,
+    \textbf{A}_\epsilon$ represents the body of the abstraction.
+    $\mname{is-closed}_{\epsilon \tarrow o} \, \textbf{A}_\epsilon$
+    holds iff $\textbf{A}_\epsilon$ represents an expression that is
+    closed (and eval-free).
+
+  \item The type attached to a constant may be dropped when there is
+    no loss of meaning.
+
+\iffalse
+  \item When it makes sense, the notation
+    $\set{\textbf{A}_{\alpha}^{1}, \ldots, \textbf{A}_{\alpha}^{n}}$
+    denotes the predicate
+    \[\LambdaApp \textbf{x}_\alpha \mdot 
+    (\textbf{x}_\alpha = \textbf{A}_{\alpha}^{1} \OR \cdots \OR
+    \textbf{x}_\alpha = \textbf{A}_{\alpha}^{n}).\]
+\fi
+
+  \item A constant of a type of the form $\epsilon \tarrow \cdots
+    \tarrow \epsilon$ that is intended to be implemented by a
+    transformer has a name in upper case letters.
+
+  \item Expressions of type $\epsilon$, i.e., expressions that denote
+    constructions, are colored red to identify where reasoning about
+    syntax occurs.
+
+\ee
+
+The following are the eight biform theories and the two noninclusive
+theory morphisms in the test case:
+
+\begin{biformthy}[BT\thebiformthy: Simple Theory of $0$ and $S$]\em
+\bi
+
+  \item[] 
+
+  \item[] \textbf{Primitive Base Types}
+
+  \be
+
+    \item $\iota$ (type of natural numbers).
+
+  \ee
+
+  \item[] \textbf{Primitive Constants}
+
+  \be
+
+    \item $0_\iota$.
+
+    \item $S_{\iota \tarrow \iota}$.
+
+  \ee
+
+  \item[] \textbf{Defined Constants (selected)}
+
+  \be
+
+    \item $1_\iota = S \, 0_\iota$.
+
+    \item $\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon} = \LambdaApp
+      x_\epsilon \mdot \textbf{B}_\epsilon$ {\sglsp} where
+      $\textbf{B}_\epsilon$ is a complex expression such that
+      $\syn{(\LambdaApp x_\epsilon \mdot \textbf{B}_\epsilon) \,
+        \synbrack{\textbf{A}_\alpha}}$ equals $\syn{\synbrack{T_o}}$
+      [$\syn{\synbrack{F_o}}$] if $\textbf{A}_\alpha$ is [not] a term
+      or formula of first-order logic with equality whose variables
+      are of type $\iota$ and whose nonlogical constants are members
+      of $\set{0_\iota,S_{\iota \tarrow \iota}}$.
+
+  \ee
+
+  \item[] \textbf{Axioms}
+
+  \be
+
+    \item $S \, x_\iota \not= 0_\iota$.
+
+    \item $S \, x_\iota = S \, y_\iota \Implies x_\iota =
+      y_\iota$.
+
+  \ee
+
+  \item[] \textbf{Transformers}
+
+  \be
+
+    \item $\pi_1$ for $\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon}$
+      is an efficient program that accesses the data stored in the
+      data structures that represent expressions.
+
+    \item $\pi_2$ for $\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon}$
+      uses the definition of $\mname{IS-FO-BT1}_{\epsilon \tarrow
+        \epsilon}$.
+
+  \ee
+
+\ei
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Simple Theory of $0$, $S$, and $+$]\em
+\bi
+
+  \item[]
+
+  \item[] \textbf{Extended Theories} 
+
+  \be
+
+    \item BT1.
+
+  \ee
+
+
+  \item[] \textbf{Primitive Constants}
+
+  \be
+
+    \setcounter{enumi}{2}
+
+    \item $+_{\iota \tarrow \iota \tarrow \iota}$ (infix).
+
+    \item $\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$ (infix).
+
+  \ee
+
+  \item[] \textbf{Defined Constants (selected)}
+
+  \be
+
+    \setcounter{enumi}{2}
+
+    \item $\mname{bnat}_{\iota \tarrow \iota \tarrow {\sf
+        nat}} = \LambdaApp x_\iota \mdot \LambdaApp y_\iota
+      \mdot ((x_\iota + x_\iota) + y_\iota)$.
+      
+    Notational definition:
+
+    \bi
+
+      \item[] $(0)_2 = \mname{bnat} \, 0_\iota \, 0_\iota$.
+  
+      \item[] $(1)_2 = \mname{bnat} \, 0_\iota \, 1_\iota$.
+  
+      \item[] $(a_1 \cdots a_n0)_2 = \mname{bnat} \, (a_1 \cdots
+        a_n)_2 \, 0_\iota$ {\sglsp} where each $a_i$ is 0 or 1.
+  
+      \item[] $(a_1 \cdots a_n1)_2 = \mname{bnat} \, (a_1 \cdots
+        a_n)_2 \, 1_\iota$ {\sglsp} where each $a_i$ is 0 or 1.
+  
+    \ei
+
+    \item $\mname{is-bnum}_{\epsilon \tarrow o} = 
+      \IotaApp f_{\epsilon \tarrow o} \mdot
+      \ForallApp \syn{u_\epsilon} \mdot
+      (f_{\epsilon \tarrow \epsilon} \, \syn{u_\epsilon} \Iff {}\\
+      \hspace*{2ex}\ForsomeApp \syn{v_\epsilon} \mdot 
+      \ForsomeApp \syn{w_\epsilon} \mdot
+      (\syn{u_\epsilon} = \syn{\synbrack{\mname{bnat} \, 
+      \commabrack{v_\epsilon} \, \commabrack{w_\epsilon}}} \And {}\\
+      \hspace*{4ex}(\syn{v_\epsilon} = \syn{\synbrack{0_\iota}} \OR 
+      f_{\epsilon \tarrow \epsilon} \, \syn{v_\epsilon}) \And
+      (\syn{w_\epsilon} = \syn{\synbrack{0_\iota}} \OR 
+      \syn{w_\epsilon} = \syn{\synbrack{1_\iota}})))$.
+
+    \item $\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon} = \LambdaApp
+      x_\epsilon \mdot \textbf{B}_\epsilon$ {\sglsp} where
+      $\textbf{B}_\epsilon$ is a complex expression such that
+      $\syn{(\LambdaApp x_\epsilon \mdot \textbf{B}_\epsilon) \,
+        \synbrack{\textbf{A}_\alpha}}$ equals $\syn{\synbrack{T_o}}$
+      [$\syn{\synbrack{F_o}}$] if $\textbf{A}_\alpha$ is [not] a term
+      or formula of first-order logic with equality whose variables
+      are of type $\iota$ and whose nonlogical constants are members
+      of $\set{0_\iota,S_{\iota \tarrow \iota},+_{\iota \tarrow \iota
+          \tarrow \iota}}$.
+      
+  \ee
+
+  \item[] \textbf{Axioms}
+
+  \be
+
+    \setcounter{enumi}{2}
+
+    \item $x_\iota + 0_\iota = x_\iota$.
+
+    \item $x_\iota + S \, y_\iota = S \, (x_\iota + y_{\sf
+      nat})$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies
+      \syn{u_\epsilon \; \mname{BPLUS} \; \synbrack{(0)_2}} =
+      \syn{u_\epsilon}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies
+      \syn{\synbrack{(0)_2} \; \mname{BPLUS} \; u_\epsilon} =
+      \syn{u_\epsilon}$.
+
+    \item $\syn{\synbrack{(1)_2} \; \mname{BPLUS} \;
+      \synbrack{(1)_2}} = \syn{\synbrack{(10)_2}}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 0_\iota} \; \mname{BPLUS} \;
+          \synbrack{(1)_2}} = \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 1_\iota}}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 1_\iota} \; \mname{BPLUS} \;
+          \synbrack{(1)_2}} = \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon \; \mname{BPLUS} \;
+              \synbrack{(1)_2}} \, 0_\iota}}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{(1)_2} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{u_\epsilon} \, 0_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon} \,
+            1_\iota}}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{(1)_2} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{u_\epsilon} \, 0_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon \;
+              \mname{BPLUS} \; \synbrack{(1)_2}} \, 0_\iota}}$.
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 0_\iota} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{v_\epsilon} 0_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon \;
+              \mname{BPLUS} \; v_\epsilon} \, 0_\iota}}$.
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 0_\iota} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{v_\epsilon} \, 1_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon \;
+              \mname{BPLUS} \; v_\epsilon} \, 1_\iota}}$.
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 1_\iota} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{v_\epsilon} \, 0_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon \;
+              \mname{BPLUS} \; v_\epsilon} \, 1_\iota}}$.
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 1_\iota} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{v_\epsilon} \, 1_\iota}} = {}\\
+        \hspace*{2ex}\syn{\synbrack{\mname{bnat} \,
+            \commabrack{(u_\epsilon \; \mname{BPLUS} \; v_\epsilon)
+              \; \mname{BPLUS} \; \synbrack{(1)_2}} \, 0_\iota}}$.
+
+  \ee
+
+  \item[] \textbf{Transformers}
+
+  \be
+
+      \setcounter{enumi}{2}
+
+    \item $\pi_3$ for $\mname{BPLUS}_{\epsilon \tarrow \epsilon
+      \tarrow \epsilon}$ is an efficient program that satisfies Axioms
+      5--15.
+
+    \item $\pi_4$ for $\mname{BPLUS}_{\epsilon \tarrow \epsilon
+      \tarrow \epsilon}$ uses Axioms 5--15 as conditional rewrite
+      rules.
+
+    \item $\pi_5$ for $\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon}$
+      is an efficient program that accesses the data stored in the
+      data structures that represent expressions.
+
+    \item $\pi_6$ for $\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon}$
+      uses the definition of $\mname{IS-FO-BT2}_{\epsilon \tarrow
+        \epsilon}$.
+
+  \ee
+    
+  \item[] \textbf{Theorems (selected)}
+
+    \be
+
+      \setcounter{enumi}{0}
+
+      \item Meaning formula schema for 
+      $\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$
+
+      $((\mname{is-bnum} \, \syn{\textbf{A}_\epsilon} \And 
+      \mname{is-bnum} \, \syn{\textbf{B}_\epsilon}) 
+      \Implies {}\\
+      \hspace*{2ex}(\mname{is-bnum} \, 
+      \syn{(\textbf{A}_\epsilon \; \mname{BPLUS} \; \textbf{B}_\epsilon)} \And {}\\
+      \hspace*{2.8ex}(\sembrack{\syn{\textbf{A}_\epsilon \; \mname{BPLUS} \; 
+      \textbf{B}_\epsilon}}_\iota = 
+      \sembrack{\syn{\textbf{A}_\epsilon}}_\iota + 
+      \sembrack{\syn{\textbf{B}_\epsilon}}_\iota)))$.
+
+    \ee
+
+\ei
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Simple Theory of $0$, $S$, $+$, and $*$]\em
+
+\bi
+
+  \item[]
+
+  \item[] \textbf{Extended Theories} 
+
+  \be
+
+    \setcounter{enumi}{1}
+
+    \item BT2.
+
+  \ee
+
+  \item[] \textbf{Primitive Constants}
+
+  \be
+
+    \setcounter{enumi}{4}
+
+    \item $*_{\iota \tarrow \iota \tarrow \iota}$ (infix).
+
+    \item $\mname{BTIMES}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$ (infix).
+
+  \ee
+
+  \item[] \textbf{Defined Constants (selected)}
+
+  \be
+
+    \setcounter{enumi}{3}
+
+    \item $\mname{IS-FO-BT3}_{\epsilon \tarrow \epsilon} = \LambdaApp
+      x_\epsilon \mdot \textbf{B}_\epsilon$ {\sglsp} where
+      $\textbf{B}_\epsilon$ is a complex expression such that
+      $\syn{(\LambdaApp x_\epsilon \mdot \textbf{B}_\epsilon) \,
+        \synbrack{\textbf{A}_\alpha}}$ equals $\syn{\synbrack{T_o}}$
+      [$\syn{\synbrack{F_o}}$] if $\textbf{A}_\alpha$ is [not] a term
+      or formula of first-order logic with equality whose variables
+      are of type $\iota$ and whose nonlogical constants are members
+      of $\set{0_\iota,S_{\iota \tarrow \iota},+_{\iota \tarrow \iota
+          \tarrow \iota},*_{\iota \tarrow \iota \tarrow \iota}}$.
+
+  \ee
+
+  \item[] \textbf{Axioms}
+
+  \be
+
+    \setcounter{enumi}{15}
+
+    \item $x_\iota * 0_\iota = 0_\iota$.
+
+    \item $x_\iota * S \, y_\iota = (x_\iota * y_{\sf
+      nat}) + x_\iota$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies
+      \syn{u_\epsilon \; \mname{BTIMES} \; \synbrack{(0)_2}} =
+      \syn{\synbrack{(0)_2}}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies \syn{
+      \synbrack{(0)_2} \; \mname{BTIMES} \; u_\epsilon} =
+      \syn{\synbrack{(0)_2}}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies
+      \syn{u_\epsilon \; \mname{BTIMES} \; \synbrack{(1)_2}} =
+      \syn{u_\epsilon}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies
+      \syn{\synbrack{(1)_2} \; \mname{BTIMES} \; u_\epsilon} =
+      \syn{u_\epsilon}$.
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 0} \; \mname{BTIMES} \;
+          \syn{v_\epsilon}} = \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon \; \mname{BTIMES} \; v_\epsilon} \,
+            0_\iota}}$.
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 1_\iota} \; \mname{BTIMES} \;
+          \syn{v_\epsilon}} = \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon \; \mname{BTIMES} \; v_\epsilon} \,
+            0_\iota} \; \mname{badd} \; v_\epsilon}$.
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\syn{v_\epsilon}\; \mname{BTIMES} \;
+          \synbrack{\mname{bnat} \, \commabrack{u_\epsilon} \, 0_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon \;
+              \mname{BTIMES} \; v_\epsilon} \, 0_\iota}}$.
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And 
+        \mname{is-bnum} \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\syn{v_\epsilon} \; \mname{BTIMES} \;
+          \synbrack{\mname{bnat} \, \commabrack{u_\epsilon} \, 1_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon \;
+              \mname{BTIMES} \; v_\epsilon} \, 0_\iota} \; \mname{badd} \;
+          v_\epsilon}$.
+
+
+  \ee
+
+  \item[] \textbf{Transformers}
+
+  \be
+
+      \setcounter{enumi}{6}
+
+    \item $\pi_7$ for $\mname{BTIMES}_{\epsilon \tarrow \epsilon
+      \tarrow \epsilon}$ is an efficient program that satisfies Axioms
+      18--25.
+
+    \item $\pi_8$ for $\mname{BTIMES}_{\epsilon \tarrow \epsilon
+      \tarrow \epsilon}$ uses Axioms 18--25 as conditional rewrite
+      rules.
+
+    \item $\pi_9$ for $\mname{IS-FO-BT3}_{\epsilon \tarrow \epsilon}$
+      is an efficient program that accesses the data stored in the
+      data structures that represent expressions.
+
+    \item $\pi_{10}$ for $\mname{IS-FO-BT3}_{\epsilon \tarrow
+      \epsilon}$ uses the definition of $\mname{IS-FO-BT3}_{\epsilon
+      \tarrow \epsilon}$.
+
+  \ee
+
+  \item[] \textbf{Theorems (selected)}
+
+  \be
+
+    \setcounter{enumi}{1}
+
+    \item Meaning formula schema for
+    $\mname{BTIMES}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$
+
+    $((\mname{is-bnum} \, \syn{\textbf{A}_\epsilon} \And 
+      \mname{is-bnum} \, \syn{\textbf{B}_\epsilon}) 
+      \Implies {}\\
+      \hspace*{2ex}(\mname{is-bnum} \, 
+      \syn{(\textbf{A}_\epsilon \; \mname{BTIMES} \; \textbf{B}_\epsilon)} \And {}\\
+      \hspace*{2.8ex}(\sembrack{\syn{\textbf{A}_\epsilon \; \mname{BTIMES} \; 
+      \textbf{B}_\epsilon}}_\iota = 
+      \sembrack{\syn{\textbf{A}_\epsilon}}_\iota * 
+      \sembrack{\syn{\textbf{B}_\epsilon}}_\iota)))$.
+
+  \ee
+
+\ei
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Robinson Arithmetic (Q)]\em
+\bi
+
+  \item[]
+
+  \item[] \textbf{Extended Theories} 
+
+  \be
+
+    \setcounter{enumi}{2}
+
+    \item BT3.
+
+  \ee
+
+  \item[] \textbf{Axioms}
+
+  \be
+
+    \setcounter{enumi}{25}
+
+    \item $x_\iota = 0_\iota \OR \ForsomeApp y_\iota \mdot S \,
+      y_\iota = x_\iota$.
+
+  \ee
+
+\ei
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Complete Theory of $0$ and $S$]\em
+
+\bi
+
+  \item[]
+
+  \item[] \textbf{Extended Theories} 
+
+  \be
+
+    \setcounter{enumi}{0}
+
+    \item BT1.
+
+  \ee
+
+  \item[] \textbf{Primitive Constants}
+
+  \be
+
+    \setcounter{enumi}{6}
+
+    \item $\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon}$.
+
+  \ee
+
+  \item[] \textbf{Defined Constants (selected)}
+
+  \be
+
+    \setcounter{enumi}{5}
+
+    \item $\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow \epsilon} = {}\\
+    \hspace*{2ex}\LambdaApp \syn{x_\epsilon} \mdot 
+    (\If \; (\mname{is-abs}_{\epsilon \tarrow o} \, \syn{x_\epsilon}) \;
+    \syn{(\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon} \,
+    (\mname{abs-body}_{\epsilon \tarrow \epsilon} \, x_\epsilon))} \;
+    \syn{\synbrack{F_o}})$.
+
+  \ee
+
+  \item[] \textbf{Axioms}
+
+  \be
+
+    \setcounter{enumi}{26}
+
+    \item Induction Schema for $S$
+
+    $\ForallApp \syn{f_\epsilon} \mdot 
+    ((\mname{is-expr}_{\epsilon \tarrow o}^{\iota \tarrow o} \, \syn{f_\epsilon} \And
+    \sembrack{\syn{\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow \epsilon} \, 
+    f_\epsilon}}_o) \Implies {} \\
+    \hspace*{2ex}((\sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 0_\iota \And
+    (\ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota \Implies
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 
+    (\mname{S} \, x_\iota))) \Implies 
+    \ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota))$.
+
+    \item Meaning Formula for $\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon}$
+
+    $\ForallApp \syn{u_\epsilon} \mdot 
+     ((\mname{is-expr}_{\epsilon \tarrow o}^{o} \, 
+     \syn{u_\epsilon} \And
+     \mname{is-closed}_{\epsilon \tarrow o} \, \syn{u_\epsilon} \And 
+     \sembrack{\syn{\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon} \, 
+     u_\epsilon}}_o) \Implies {}\\
+     \hspace*{2ex}((\syn{\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon} = 
+     \syn{\synbrack{T_o}} \OR 
+     \syn{\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon} = 
+     \syn{\synbrack{F_o}}) \And {}\\
+     \hspace*{3.1ex}
+     \sembrack{\syn{\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon}}_o =
+     \sembrack{\syn{u_\epsilon}}_o))$.
+
+  \ee
+
+  \item[] \textbf{Transformers}
+
+  \be
+
+    \setcounter{enumi}{10}
+
+    \item $\pi_{11}$ for $\mname{BT5-DEC-PROC}_{\epsilon \tarrow
+      \epsilon \tarrow \epsilon}$ is an efficient decision procedure
+      that satisfies Axiom 28.
+
+
+    \item $\pi_{12}$ for $\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow
+      \epsilon}$ is an efficient program that accesses the data stored
+      in the data structures that represent expressions.
+
+    \item $\pi_{13}$ for $\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow
+      \epsilon}$ uses the definition of
+      $\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow \epsilon}$.
+
+  \ee
+
+\ei
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Presburger Arithmetic]\em
+
+\bi
+
+  \item[]
+
+  \item[] \textbf{Extended Theories} 
+
+  \be
+
+    \item[1.] BT2.
+
+    \item[5.] BT5.
+
+  \ee
+    
+  \item[] \textbf{Primitive Constants}
+
+  \be
+
+    \setcounter{enumi}{7}
+
+    \item $\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon}$.
+
+  \ee
+
+  \item[] \textbf{Defined Constants (selected)}
+
+  \be
+
+    \setcounter{enumi}{6}
+
+    \item $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon} = {}\\
+    \hspace*{2ex}\LambdaApp \syn{x_\epsilon} \mdot 
+    (\If \; (\mname{is-abs}_{\epsilon \tarrow o} \, \syn{x_\epsilon}) \;
+    \syn{(\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon} \,
+    (\mname{abs-body}_{\epsilon \tarrow \epsilon} \, x_\epsilon))} \;
+    \syn{\synbrack{F_o}})$.
+
+  \ee
+
+  \item[] \textbf{Axioms}
+
+  \be
+
+    \setcounter{enumi}{28}
+
+    \item Induction Schema for $S$ and $+$
+
+    $\ForallApp \syn{f_\epsilon} \mdot 
+    ((\mname{is-expr}_{\epsilon \tarrow o}^{\iota \tarrow o} \, \syn{f_\epsilon} \And
+    \sembrack{\syn{\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon} \, 
+    f_\epsilon}}_o) \Implies {} \\
+    \hspace*{2ex}((\sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 0_\iota \And
+    (\ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota \Implies
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 
+    (\mname{S} \, x_\iota))) \Implies 
+    \ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota))$.
+
+    \item Meaning formula for $\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon}$.
+
+
+    $\ForallApp \syn{u_\epsilon} \mdot 
+    ((\mname{is-expr}_{\epsilon \tarrow o}^{o} \, 
+    \syn{u_\epsilon}  \And
+    \mname{is-closed}_{\epsilon \tarrow o} \, \syn{u_\epsilon} \And 
+    \sembrack{\syn{\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon} \, 
+    u_\epsilon}}_o) \Implies {}\\
+    \hspace*{2ex}((\syn{\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon} = 
+    \syn{\synbrack{T_o}} \OR 
+    \syn{\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon} = 
+    \syn{\synbrack{F_o}}) \And {}\\
+    \hspace*{3.1ex}
+    \sembrack{\syn{\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon}}_o =
+    \sembrack{\syn{u_\epsilon}}_o))$.
+
+  \ee
+
+  \item[] \textbf{Transformers}
+
+  \be
+
+    \setcounter{enumi}{13}
+
+    \item $\pi_{14}$ for $\mname{BT6-DEC-PROC}_{\epsilon \tarrow
+      \epsilon \tarrow \epsilon}$ is an efficient decision procedure
+      that satisfies Axiom 30.
+
+
+    \item $\pi_{15}$ for $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow
+      \epsilon}$ is an efficient program that accesses the data
+      stored in the data structures that represent expressions.
+
+    \item $\pi_{16}$ for $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow
+      \epsilon}$ uses the definition of
+      $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon}$.
+
+  \ee
+    
+  \item[] \textbf{Theorems (selected)}
+
+    \be
+
+      \setcounter{enumi}{2}
+
+      \item Meaning formula for 
+      $\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$
+
+      $\ForallApp \syn{u_\epsilon} \mdot \ForallApp \syn{v_\epsilon} \mdot
+      ((\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum} \, \syn{v_\epsilon}) 
+      \Implies {}\\
+      \hspace*{2ex}(\mname{is-bnum} \, 
+      \syn{(u_\epsilon \; \mname{BPLUS} \; v_\epsilon)} \And {}\\
+      \hspace*{2.8ex}(\sembrack{\syn{u_\epsilon \; \mname{BPLUS} \; 
+      v_\epsilon}}_\iota = 
+      \sembrack{\syn{u_\epsilon}}_\iota + \sembrack{\syn{v_\epsilon}}_\iota)))$.
+
+    \ee
+
+\ei
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: First-Order Peano Arithmetic]\em
+
+\bi
+
+  \item[]
+
+  \item[] \textbf{Extended Theories} 
+
+  \be
+
+    \item[3.] BT3.
+
+    \item[6.] BT6.
+
+  \ee
+
+  \item[] \textbf{Defined Constants (selected)}
+
+  \be
+
+    \setcounter{enumi}{7}
+
+    \item $\mname{IS-FO-BT3-ABS}_{\epsilon \tarrow \epsilon} = {}\\
+    \hspace*{2ex}\LambdaApp \syn{x_\epsilon} \mdot 
+    (\If \; (\mname{is-abs}_{\epsilon \tarrow o} \, \syn{x_\epsilon}) \;
+    \syn{(\mname{IS-FO-BT3}_{\epsilon \tarrow \epsilon} \,
+    (\mname{abs-body}_{\epsilon \tarrow \epsilon} \, x_\epsilon))} \;
+    \syn{\synbrack{F_o}})$.
+
+  \ee
+
+  \item[] \textbf{Axioms}
+
+  \be
+
+    \setcounter{enumi}{30}
+
+    \item Induction Schema for $S$, $+$, and $*$
+
+    $\ForallApp \syn{f_\epsilon} \mdot 
+    ((\mname{is-expr}_{\epsilon \tarrow o}^{\iota \tarrow o} \, \syn{f_\epsilon} \And
+    \sembrack{\syn{\mname{IS-FO-BT3-ABS}_{\epsilon \tarrow \epsilon} \, 
+    f_\epsilon}}_o) \Implies {} \\
+    \hspace*{2ex}((\sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 0_\iota \And
+    (\ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota \Implies
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 
+    (\mname{S} \, x_\iota))) \Implies 
+    \ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota))$.
+
+  \ee
+
+  \item[] \textbf{Transformers}
+
+  \be
+
+    \setcounter{enumi}{16}
+
+    \item $\pi_{17}$ for $\mname{IS-FO-BT3-ABS}_{\epsilon \tarrow
+      \epsilon}$ is an efficient program that accesses the data stored
+      in the data structures that represent expressions.
+
+    \item $\pi_{18}$ for $\mname{IS-FO-BT3-ABS}_{\epsilon \tarrow
+      \epsilon}$ uses the definition of
+      $\mname{IS-FO-BT3-ABS}_{\epsilon \tarrow \epsilon}$.
+
+  \ee
+
+  \item[] \textbf{Theorems (selected)}
+
+  \be
+
+    \setcounter{enumi}{3}
+
+    \item Axiom 26.
+
+    \item Meaning formula
+    $\mname{BTIMES}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$
+
+    $\ForallApp \syn{u_\epsilon} \mdot \ForallApp \syn{v_\epsilon} \mdot
+    ((\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum} \, \syn{v_\epsilon}) 
+    \Implies {}\\
+    \hspace*{2ex}(\mname{is-bnum} \, 
+    \syn{(u_\epsilon \; \mname{BTIMES} \; v_\epsilon)} \And {}\\
+    \hspace*{2.8ex}(\sembrack{\syn{u_\epsilon \; \mname{BTIMES} \; 
+    v_\epsilon}}_\iota = 
+    \sembrack{\syn{u_\epsilon}}_\iota * \sembrack{\syn{v_\epsilon}}_\iota)))$.
+
+  \ee
+
+\ei
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Higher-Order Peano Arithmetic]\em
+
+\bi
+
+  \item[]
+
+  \item[] \textbf{Extended Theories} 
+
+  \be
+
+    \setcounter{enumi}{0}
+
+    \item BT1.
+
+  \ee
+
+  \item[] \textbf{Defined Constants (selected)}
+
+  \be
+
+    \setcounter{enumi}{8}
+
+    \item $+_{\iota \tarrow \iota \tarrow \iota} =
+    \IotaApp f_{\iota \tarrow \iota \tarrow \iota} \mdot
+    \ForallApp x_\iota \mdot \ForallApp y_\iota \mdot {}\\
+    \hspace*{2ex} (f_{\iota \tarrow \iota \tarrow \iota} \, 
+    x_\iota \, 0_\iota = x_\iota \And {}\\
+    \hspace*{2.8ex}f_{\iota \tarrow \iota \tarrow \iota} \, 
+    x_\iota \, (S \, y_\iota) = S \, 
+    (f_{\iota \tarrow \iota \tarrow \iota} \, x_\iota \,
+    y_\iota))$.
+
+    \item $*_{\iota \tarrow \iota \tarrow \iota} =
+    \IotaApp f_{\iota \tarrow \iota \tarrow \iota} \mdot
+    \ForallApp x_\iota \mdot \ForallApp y_\iota \mdot {}\\
+    \hspace*{2ex} (f_{\iota \tarrow \iota \tarrow \iota} \, 
+    x_\iota \, 0_\iota = 0_\iota \And {}\\
+    \hspace*{2.8ex}f_{\iota \tarrow \iota \tarrow \iota} \, 
+    x_\iota \, (S \, y_\iota) =  
+    (f_{\iota \tarrow \iota \tarrow \iota} \, x_\iota \,
+    y_\iota) + x_\iota)$.
+
+  \ee
+
+
+
+  \item[] \textbf{Axioms}
+
+  \be
+
+    \setcounter{enumi}{31}
+
+    \item Induction Axiom for the Natural Numbers
+
+    $\ForallApp p_{\iota \tarrow o} \mdot ((p_{\iota \tarrow o} \, 0_\iota \And 
+    (\ForallApp x_\iota \mdot (p_{\iota \tarrow o} \, x_\iota \Implies 
+    p_{\iota \tarrow o} \, (S \, x_\iota)))) \Implies {}\\
+    \hspace*{2ex}\ForallApp x_\iota \mdot 
+    p_{\iota \tarrow o} \, x_\iota)$.
+
+  \ee
+
+  \item[] \textbf{Theorems (selected)}
+
+  \be
+
+    \setcounter{enumi}{5}
+
+    \item Axiom 27 (Induction Schema for $S$).
+
+    \item Axiom 39 (Induction Schema for $S$ and $+$).
+
+    \item Axiom 31 (Induction Schema for $S$, $+$, and $*$).
+
+  \ee
+
+\ei
+\end{biformthy}
+
+\begin{thymorphism}[BT4-to-BT7]\em
+\be
+
+  \item[]
+
+  \item[] \textbf{Source Theory} BT4.
+
+  \item[] \textbf{Target Theory} BT7.
+
+  \item[] \textbf{Translation} 
+
+  \bi
+
+    \item[] $\mu$ is defined as follows:
+
+    \bi
+
+      \item[] $\mu(o) = \LambdaApp x_o \mdot T_o$.
+
+      \item[] $\mu(\epsilon) = \LambdaApp x_\epsilon \mdot T_o$.
+
+      \item[] $\mu(\iota) = \LambdaApp x_\iota \mdot T_o$.
+
+    \ei
+
+    $\nu$ is the identity on the constants of BT4.
+
+  \ei
+
+  \item[] \textbf{Nontrivial Obligations} 
+
+  \bi
+
+    \item[] Axiom 26.
+
+  \ei  
+
+\ee
+\end{thymorphism}
+
+\begin{thymorphism}[BT7-to-BT8]\em
+\be
+
+  \item[]
+
+  \item[] \textbf{Source Theory} BT7.
+
+  \item[] \textbf{Target Theory} BT8.
+
+  \item[] \textbf{Translation} 
+
+  \bi
+
+    \item[] $\mu$ is defined as follows:
+
+    \bi
+
+      \item[] $\mu(o) = \LambdaApp x_o \mdot T_o$.
+
+      \item[] $\mu(\epsilon) = \LambdaApp x_\epsilon \mdot T_o$.
+
+      \item[] $\mu(\iota) = \LambdaApp x_\iota \mdot T_o$.
+
+    \ei
+
+    $\nu$ is the identity on the constants of BT7.
+
+  \ei
+
+  \item[] \textbf{Nontrivial Obligations} 
+
+  \bi
+
+    \item[] Axioms 3--25, 27--31.
+
+  \ei  
+
+\ee
+\end{thymorphism}

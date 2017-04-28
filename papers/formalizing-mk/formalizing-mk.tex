@@ -1,0 +1,1115 @@
+\documentclass[fleqn]{llncs}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{url}
+\usepackage{phonetic}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{arrows,decorations,decorations.pathmorphing}
+\usepackage[inline]{enumitem}
+\usepackage{etoolbox}
+
+% paper toggle
+
+\newtoggle{cicm}
+%%\toggletrue{cicm}     % CICM paper without appendices
+\togglefalse{cicm}      % arXiv paper with appendices
+\newcommand{\appendixref}[1]
+  {\iftoggle{cicm}
+    {appendix #1 of \cite{CaretteFarmerArxiv17}}
+    {appendix #1}%
+  }
+\newcommand{\appendicesref}[2]
+  {\iftoggle{cicm}
+    {appendices #1 and #2 of \cite{CaretteFarmerArxiv17}}
+    {appendices #1 and #2}%
+  }
+
+% for Agda
+\usepackage[references]{agda}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+
+\DeclareUnicodeCharacter{8799}{$\stackrel{?}{=}$}
+\DeclareUnicodeCharacter{931}{$\Sigma$}
+\DeclareUnicodeCharacter{9679}{\ensuremath{\bullet}}
+\DeclareUnicodeCharacter{945}{\ensuremath{\alpha}}
+\DeclareUnicodeCharacter{964}{\ensuremath{\tau}}
+\DeclareUnicodeCharacter{958}{\ensuremath{\xi}}
+\DeclareUnicodeCharacter{8759}{\ensuremath{\:\!\!\:}}
+
+
+% For Bill's macros
+\input{formalizing-mk-def}
+
+\title{Formalizing Mathematical Knowledge as a Biform Theory Graph: A
+  Case Study\thanks{This research was supported by NSERC.}}
+
+\author{Jacques Carette and William M. Farmer}
+
+\institute{%
+Computing and Software, McMaster University, Canada\\
+\url{http://www.cas.mcmaster.ca/~carette}\\
+\url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
+\today
+}
+
+\pagestyle{headings}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+A \emph{biform theory} is a combination of an axiomatic theory and an
+algorithmic theory that supports the integration of reasoning and
+computation.  These are ideal for formalizing algorithms that
+manipulate mathematical expressions.  A \emph{theory graph} is a
+network of \emph{theories} connected by meaning-preserving
+\emph{theory morphisms} that map the formulas of one theory to the
+formulas of another theory.  Theory graphs are in turn well suited for
+formalizing mathematical knowledge at the most convenient level of
+abstraction using the most convenient vocabulary.  We are interested
+in the problem of whether a body of mathematical knowledge can be
+effectively formalized as a theory graph of biform theories.  As a
+test case, we look at the graph of theories encoding natural number
+arithmetic.  We used two different formalisms to do this, which we
+describe and compare.  The first is realized in {\churchuqe}, a
+version of Church's type theory with quotation and evaluation, and the
+second is realized in Agda, a dependently typed programming language.
+\end{abstract}
+
+\iffalse 
+
+\textbf{Keywords:} Axiomatic mathematics, algorithmic mathematics,
+biform theories, theory graphs, symbolic computation, reasoning about
+syntax.
+
+\fi
+
+\section{Introduction}\label{sec:introduction}
+
+There are many methods for encoding mathematical knowledge.  The two
+most prevalent are the \emph{axiomatic} and the \emph{algorithmic}.
+The axiomatic method, famously employed by Euclid in his
+\emph{Elements} circa 300 BCE, encodes a body of knowledge as an
+\emph{axiomatic theory} composed of a language and a set of
+\emph{axioms} expressed in that language.  The axioms are assumptions
+about the \emph{concepts} of the language and the logical consequences
+of the axioms are the \emph{facts} about the concepts.  The
+algorithmic method in contrast uses an \emph{algorithmic theory},
+composed of a language and a set of \emph{algorithms} that perform
+symbolic computations over the expressions of the language.  Each
+algorithm procedurally encodes its input/output relation.  For
+example, an algorithm that symbolically adds expressions that
+represent rational numbers encodes the addition function $+ :
+\mathbb{Q} \times \mathbb{Q} \tarrow \mathbb{Q}$ over the rational
+numbers.
+
+A complex body of mathematical knowledge comprises many different
+theories; these can be captured by the
+\emph{little theories method}~\cite{FarmerEtAl92b} as a \emph{theory
+  graph}~\cite{Kohlhase14} consisting of theories as nodes and theory
+morphisms as directed edges.  A theory morphism is a
+meaning-preserving mapping from the formulas of one theory to the
+formulas of another.  The theories serve as abstract
+mathematical models and the morphisms serve as information
+conduits that enable definitions and theorems to be transported
+from one theory to another~\cite{BarwiseSeligman97}.  A theory graph enables
+mathematical knowledge to be formalized at the most convenient level
+of abstraction using the most convenient vocabulary.  Moreover, the
+structure of a theory graph provides the means to access relevant
+concepts and facts (c\&f), reduce the duplication of c\&f, and
+enable c\&f to be interpreted in multiple ways.
+
+The axiomatic method is the basis for formalizing mathematical
+knowledge in proof assistants and logical frameworks.  Although many
+proof assistants support the little theories method to some extent,
+very few provide the means to explicitly build theory graphs.  Notable
+exceptions are the {\imps} theorem proving system~\cite{FarmerEtAl93}
+and the {\mmt} module system for mathematical
+theories~\cite{RabeKohlhase13}.
+
+Computer algebra systems on the other hand are based on
+algorithmic theories, which are not usually
+organized as a graph.  An exception is the
+Axiom system~\cite{JenksSutor92} in which a
+network of abstract and concrete algorithmic theories are represented
+by Axiom categories and domains, respectively.  Algorithmic theories
+are challenging to fully formalize because a specification of
+a symbolic algorithm that encodes a mathematical function requires
+the ability to talk about the relationship between syntax and
+semantics.
+
+Axiomatic and algorithmic knowledge complement each other, and
+both are needed.  A \emph{biform theory}~\cite{CaretteFarmer08,Farmer07b} 
+combines both, and furthermore supports the
+integration of reasoning and computation.  We argue
+in~\cite{CaretteFarmer08} that biform theories are needed to build
+\emph{high-level theories} analogous to high-level programming
+languages.  Biform theories are challenging to formalize for the same
+reasons that algorithmic theories are challenging to formalize.
+
+We are interested in the problem of whether the little theories method
+can be applied to biform theories.  That is, can a body of
+mathematical knowledge be effectively formalized as a theory graph of
+biform theories?  We use a graph (of biform theories) encoding
+natural number arithmetic as a test case. We describe
+two different formalizations, and compare the
+results.  The first formalization is
+realized using the global approach in
+{\churchuqe}~\cite{FarmerArxiv17}, a variant of
+{\churchqe}~\cite{FarmerArxiv16,Farmer16}, a version of Church's type
+theory with quotation and evaluation, while the second is realized
+using the local approach in Agda~\cite{Norell07,Norell09} , a dependently typed
+programming language.  The dual formalization, contrasting the two 
+approaches, forms the core of our contribution; each formalization has 
+some smaller contributions, some of which may be of independent 
+interest.
+
+The rest of the paper is organized as follows.  The notion of a biform
+theory is defined and discussed in section~\ref{sec:biform}.  The
+theories that encode natural number arithmetic are presented in
+section~\ref{sec:test-case}.  The {\churchuqe} formalization is
+discussed in section~\ref{sec:cttuqe}, and the Agda version in
+section~\ref{sec:agda}.  These two are presented in full in
+\appendicesref{A}{B}.  Section~\ref{sec:comparison} compares the two
+formalizations.  The paper ends with conclusions and future work in
+section~\ref{sec:conclusion}.
+
+\section{Biform Theories}\label{sec:biform}
+
+Let $\sE$ be a set of expressions and $f : \sE^n \tarrow \sE$ be an
+$n$-ary function where $n \ge 1$.  A \emph{transformer for $f$} is an
+algorithm that implements $f$.  Transformers manipulate expressions
+$e$ in various ways: simple ones build bigger expressions from pieces,
+select components of $e$, or check whether $e$ satisfies some
+syntactic property.  More sophisticated transformers manipulate
+expressions in a mathematically meaningful way.  We call these kinds
+of transformers \emph{syntax-based mathematical algorithms
+  (SBMAs)}~\cite{Farmer13}.  Examples includes algorithms that apply
+arithmetic operations to numerals, factor polynomials, transpose
+matrices, and symbolically differentiate expressions with variables.
+The \emph{computational behavior} of a transformer is the relationship
+between its input and output expressions.  When the transformer is an
+SBMA, its \emph{mathematical meaning} is the relationship between the
+mathematical meanings of its input and output expressions.
+
+A \emph{biform theory} $T$ is a triple $(L,\Pi,\Gamma)$ where $L$ is a
+language of some underlying logic, $\Pi$ is a set of transformers for
+functions over expressions of $L$, and $\Gamma$ is a set of formulas
+of $L$.  $L$ is generated from a set of symbols that include, e.g.,
+types and constants.  Each symbol is the name for a concept of $T$.
+The transformers in $\Pi$ are for functions represented by symbols of
+$L$.  The members of $\Gamma$ are the \emph{axioms} of $T$.  They
+specify the concepts of $T$ including the computational behaviors of
+transformers and the mathematical meanings of SBMAs.  The underlying
+logic provides the semantic foundation for $T$.  We say $T$ is an
+\emph{axiomatic theory} if $\Pi$ is empty and an \emph{algorithmic
+ theory} if $\Gamma$ is empty.
+
+Expressing a biform theory in the underlying logic requires infrastructure for
+reasoning about expressions manipulated by the transformers as syntactic
+entities.  The infrastructure provides a basis for \emph{metareasoning
+ with reflection}~\cite{FarmerArxiv16}.
+There are two main approaches for obtaining this
+infrastructure~\cite{Farmer13}.  The \emph{local approach} is to
+produce a deep embedding of a sublanguage $L'$ of $L$ that include all
+the expressions manipulated by the transformers of $\Pi$.  The deep
+embedding consists of 
+\begin{enumerate*}[label=(\arabic*)]
+\item an inductive type of \emph{syntactic values}
+that represent the syntactic structures of the expressions in $L'$,
+\item an \emph{informal quotation operator} that maps the expressions in
+$L'$ to syntactic values, and 
+\item a \emph{formal evaluation operator}
+that maps syntactic values to the values of the expressions in $L'$
+that they represent.
+\end{enumerate*}
+The \emph{global approach} is to replace the underlying logic of $L$
+with a logic such as that of~\cite{FarmerArxiv16} that has
+\begin{enumerate*}[label=(\arabic*)]
+\item an inductive type of \emph{syntactic values} for all the
+expressions in $L$, 
+\item a \emph{global formal quotation operator}, and
+\item a \emph{global formal evaluation operator}.
+\end{enumerate*}
+
+There are several ways, in a proof assistant, to construct a
+transformer $\pi$ for $f : \sE^n \tarrow \sE$.  The simplest is to
+define $f$ as a lambda abstraction $A_f$, and then $\pi$ computes the
+value $f(e_1,\ldots,e_n)$ by reducing $A_f(e_1,\ldots,e_n)$ using
+$\beta$-reduction (and possibly other transformations such as
+$\delta$-reduction, etc).  Another method is to specify the
+computational behavior of $f$ by axioms, and then $\pi$ can be
+implemented as a tactic that applies the axioms to $f(e_1,\ldots,e_)$
+as, e.g., rewrite rules or conditional rewrite rules.  Finally, the
+computational behavior or mathematical meaning of $f$ can be specified
+by axioms, and then $\pi$ can be a program which satisfies these
+axioms; this program can operate on either internal or external data
+structures representing the expressions $e_1,\ldots,e_n$.
+
+\section{Natural Number Arithmetic: A Test Case}\label{sec:test-case}
+
+Figure~\ref{fig:biform-tg} shows a theory graph composed of biform
+theories encoding natural number arithmetic.  We start with eight
+axiomatic theories (seven in first-order logic (FOL) and one in simple
+type theory (STT)) and then add a variety of useful transformers in
+the appropriate theories.  These eight are chosen because they fit
+together closely and have simple axiomatizations.  Of the first-order
+theories, BT1 and BT5 are theories of $0$ and $S$; BT2 and BT6 are
+theories of $0$, $S$, and $+$; and BT3, BT4, and BT7 are theories of
+$0$, $S$, $+$, and $*$, Several other biform theories could be added
+to this graph, most notably Skolem arithmetic, the complete theory of
+$0$, $S$, and $*$, which has a very complicated
+axiomatization~\cite{Smorynski91}.  The details of each theory is
+given below.
+
+\begin{figure}
+\center
+\begin{tikzpicture}[scale=3.0]
+\node[thy] (bt1) at (0,0) {BT1};
+\node[thy] (bt2) at (1,0) {BT2};
+\node[thy] (bt3) at (2,0) {BT3};
+\node[thy] (bt4) at (3,0) {BT4};
+\node[thy] (bt5) at (0,1) {BT5};
+\node[thy] (bt6) at (1,1) {BT6};
+\node[thy] (bt7) at (2,1) {BT7};
+\node[thy] (bt8) at (3,1) {BT8};
+\draw[inclusion-arrow] (bt1) to (bt2);
+\draw[inclusion-arrow] (bt2) to (bt3);
+\draw[inclusion-arrow] (bt3) to (bt4);
+\draw[inclusion-arrow] (bt1) to (bt5);
+\draw[inclusion-arrow] (bt2) to (bt6);
+\draw[inclusion-arrow] (bt3) to (bt7);
+\draw[inclusion-arrow] (bt5) to (bt6);
+\draw[inclusion-arrow] (bt6) to (bt7);
+\draw[view-arrow] (bt4) to (bt7);
+\draw[view-arrow] (bt7) to (bt8);
+
+\end{tikzpicture}
+\caption{Biform Theory Graph Test Case}  \label{fig:biform-tg}
+\end{figure}
+
+Figure~\ref{fig:biform-tg} shows the morphisms that connect these
+theories.  The $\inclusion$ arrows denote strict theory inclusions.
+The morphism from BT4 to BT7 is the identity mapping.  It is
+meaning-preserving since each axiom of BT4 is a theorem of BT7.  In
+particular, A7 follows from the induction schema A10.  The theory
+morphism from BT7 to BT8 is interlogical since their logics are
+different.  It is defined by the mapping of $0, S, +, *$ to $0_\iota,
+S_{\iota \tarrow \iota}, +_{\iota \tarrow \iota \tarrow \iota},
+*_{\iota \tarrow \iota \tarrow \iota}$, respectively, where $+_{\iota
+  \tarrow \iota \tarrow \iota}$ and $*_{\iota \tarrow \iota \tarrow
+  \iota}$ are defined constants in BT8. It is meaning-preserving since
+A1--A6 and the instances of the induction schema A10 map to theorems
+of BT8.
+
+We have formalized this biform theory graph in two ways: the first in
+{\churchuqe} using the global approach and the second in Agda using
+the local approach.  These are discussed in the next
+two sections, while the full details are given in \appendicesref{A}{B}.
+A ``conventional'' mathematical presentation of the theories would be
+as follows.
+
+\begin{biformthy}[BT\thebiformthy: Simple Theory of $0$ and $S$]\em\ \\
+\emph{Logic}: FOL. \emph{Constants}: $0$ (0-ary), $S$ (unary).\\
+\emph{Axioms}:\\
+\indent A1. $S(x) \not= 0$.\\
+\indent A2. $S(x) = S(y) \Implies x = y$.\\
+\emph{Properties}: incomplete, undecidable.\\
+\emph{Transformers}: Recognizer for the formulas of the theory.
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Simple Theory of $0$, $S$, and $+$]\em\ \\
+Extends BT1.\\
+\emph{Logic}: FOL. \emph{Constants}: $+$ (binary, infix).\\
+\emph{Axioms}:\\
+\indent A3. $x + 0 = x$.\\
+\indent A4. $x + S(y) = S(x + y)$.\\
+\emph{Properties}: incomplete, undecidable.\\
+\emph{Transformers}: Recognizer for the formulas of the theory and  
+algorithm for adding binary numbers.
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Simple Theory of $0$, $S$, $+$, and $*$]\em\ \\
+Extends BT2.\\
+\emph{Logic}: FOL. \emph{Constants}: $*$ (binary, infix).\\
+\emph{Axioms}:\\
+\indent A5. $x * 0 = 0$.\\
+\indent A6. $x + S(y) = (x * y) + x$.\\
+\emph{Properties}: incomplete, undecidable.\\
+\emph{Transformers}: Recognizer for the formulas of the theory and  
+algorithm for multiplying binary numbers.
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Robinson Arithmetic (Q)]\em\ \\
+Extends BT3.\\
+\emph{Logic}: FOL.\\
+\emph{Axioms}:\\
+\indent A7. $x = 0 \OR \ForsomeApp y \mdot S(y) = x$.\\
+\emph{Properties}: essentially incomplete, essentially undecidable.
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Complete Theory of $0$ and $S$]\em\ \\
+Extends BT1.\\
+\emph{Logic}: FOL.\\
+\emph{Axioms}:\\
+\indent A8. $(A(0) \And \ForallApp x \mdot (A(x) \Implies A(S(x))))
+\Implies \ForallApp x \mdot A(x)$\\
+\indent
+where $A$ is any formula of BT{\thebiformthy} in which $x$ is not bound and $A(t)$
+is the result\\
+\indent
+of replacing each free occurrence of $x$ in $A$ with the term $t$.\\
+\emph{Properties}: complete, decidable.\\
+\emph{Transformers}: Generator for instances of the theory's induction schema 
+and decision procedure for the theory.
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Presburger Arithmetic]\em\ \\
+Extends BT2 and BT5.\\
+\emph{Logic}: FOL.\\
+\emph{Axioms}:\\
+\indent A9. $(A(0) \And \ForallApp x \mdot (A(x) \Implies A(S(x))))
+\Implies \ForallApp x \mdot A(x)$\\
+\indent 
+where $A$ is any formula of BT{\thebiformthy} in which $x$ is not bound and $A(t)$ 
+is the result\\
+\indent
+of replacing each free occurrence of $x$ in $A$ with the term $t$.\\
+\emph{Properties}: complete, decidable.\\
+\emph{Transformers}: Generator for instances of the theory's induction schema 
+and decision procedure for the theory.
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: First-Order Peano Arithmetic]\em\ \\
+Extends BT3 and BT6.\\ 
+\emph{Logic}: FOL.\\
+\emph{Axioms}:\\
+\indent A10. $(A(0) \And \ForallApp x \mdot (A(x) \Implies A(S(x))))
+\Implies \ForallApp x \mdot A(x)$\\
+\indent 
+where $A$ is any formula of BT{\thebiformthy} in which $x$ is not bound and $A(t)$
+is the result\\
+\indent
+of replacing each free occurrence of $x$ in $A$ with the term $t$.\\
+\emph{Properties}: essentially incomplete, essentially decidable.\\
+\emph{Transformers}: Generator for instances of the theory's induction schema.
+\end{biformthy}
+
+\begin{biformthy}[BT\thebiformthy: Higher-Order Peano Arithmetic]\em\ \\
+\emph{Logic}: STT. \emph{Types}: $\iota$. 
+\emph{Constants}: $0_\iota$, $S_{\iota \tarrow \iota}$.\\
+\emph{Axioms}:\\
+\indent A11. $S_{\iota \tarrow \iota}(x_\iota) \not= 0_\iota$.\\
+\indent A12. $S_{\iota \tarrow \iota}(x_\iota) = S_{\iota \tarrow \iota}(y_\iota) 
+\Implies x_\iota = y_\iota$.\\
+\indent A13. $(p_{\iota \tarrow o}(0) \And 
+\ForallApp x_\iota \mdot (p_{\iota \tarrow o}(x_\iota) 
+\Implies p_{\iota \tarrow o}(S(x_\iota)))) 
+\Implies \ForallApp x_\iota \mdot p_{\iota \tarrow o}(x_\iota)$.\\
+\emph{Properties}: essentially incomplete, essentially decidable, categorical for standard models.
+\end{biformthy}
+
+It is important to note that axioms A8, A9 and A10 are all different since 
+they are over different languages; in particular, {\bf BT6} adds $+$ to the
+language of {\bf BT5}, and {\bf BT7} adds $*$ to the language of {\bf BT6}.
+
+\section{Study 1: Test Case Formalized in ${\bf CTT}_{\bf uqe}$}\label{sec:cttuqe}
+
+{\churchuqe} supports the global approach for metareasoning with
+reflection.  {\churchuqe} contains%
+\renewcommand{\labelenumi}{(\theenumi)}
+\begin{enumerate*}
+\item a logical base type $\epsilon$ that
+is an inductive type of syntactic values called \emph{constructions}
+which are expressions of type $\epsilon$,
+\item a
+global quotation operator $\synbrack{\cdot}$ that maps each expression
+$\textbf{A}_\alpha$ of {\churchuqe} to a construction that represents
+the syntactic structure of $\textbf{A}_\alpha$, and
+\item a typed global evaluation operator $\sembrack{\cdot}_\alpha$
+that maps each construction $\textbf{B}_\epsilon$ of {\churchuqe}
+representing an expression $\textbf{A}_\alpha$ of type~$\alpha$ to an
+expression whose value is the same as $\textbf{A}_\alpha$.
+\end{enumerate*}
+\renewcommand{\labelenumi}{\theenumi.}
+See~\cite{FarmerArxiv17} for details.
+
+A \emph{biform theory} of {\churchuqe} is a triple $(L,\Pi,\Gamma)$
+where $L$ is a language generated by a set of base types and constants
+of {\churchuqe}, $\Pi$ is a set of transformers over expressions of
+$L$, and $\Gamma$ is a set of formulas of $L$.  Each transformer is
+for a constant in $L$ whose type has the form $\epsilon \tarrow \cdots
+\tarrow \epsilon$.  We present biform theories in {\churchuqe} as a
+set of base types, constants, axioms, transformers, and theorems.  The
+base types are divided into primitive and defined base types.  A
+defined base type is declared by a formula that equates the base type
+to a nonempty subset of some type of $L$.  Similarly, the constants
+are divided into primitive and defined constants.  A defined constant
+$\textbf{c}_\alpha$ is declared by an equation $\textbf{c}_\alpha =
+\textbf{A}_\alpha$ where $\textbf{A}_\alpha$ is defined.
+
+The biform theory graph test case given in section~\ref{sec:test-case}
+is formalized in {\churchuqe} as a theory graph of eight {\churchuqe}
+theories as shown in \appendixref{A}.  Since {\churchuqe} is
+not currently implemented, it is not possible to give the transformers
+as implemented algorithms.  Instead we described their intended
+behavior.
+
+We will concentrate our discussion on BT6 (given below).  We have
+elided the following components of BT6 that are redundant or are
+subsumed by other components: Constants
+$\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon}$,
+$\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon}$, and
+$\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow \epsilon}$; axioms 27 and 28;
+and transformers $\pi_1$, $\pi_2$, $\pi_{11}$, $\pi_{12}$, and
+$\pi_{13}$.  Expressions of type~$\epsilon$, i.e., expressions that
+denote constructions, are colored red to identify where reasoning
+about syntax occurs.
+
+BT6 has the usual constants ($0_\iota$, $S_{\iota \tarrow \iota}$, and
+$+_{\iota \tarrow \iota \tarrow \iota}$) and axioms (axioms 1--4 and
+29) of Presburger arithmetic.  Axiom 29 is the direct formalization of
+A9, the induction schema for Presburger arithmetic, stated in
+section~\ref{sec:test-case}.  It is expressed as a single universal
+formula in {\churchuqe} that ranges over constructions representing
+function abstractions of the form $\LambdaApp \textbf{x}_\iota \mdot
+\textbf{A}_o$.  These constructions are identified by the transformers
+$\pi_{15}$ and $\pi_{16}$ for the defined constant
+$\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon}$.  $\pi_{15}$ works
+by accessing data about variables, constants, and other subexpressions
+stored in the data structure for an expression, while $\pi_{16}$ works
+by expanding the definition of $\mname{IS-FO-BT2-ABS}_{\epsilon
+  \tarrow \epsilon}$.  $\pi_{15} $ is sound if the definition
+expansion mechanism is sound.  Showing the soundness of $\pi_{14}$
+would require a formal verification of the implementation of the data
+structure for expressions.  Of course, the results of $\pi_{14}$ could
+be checked using $\pi_{15}$.
+
+This biform theory has a defined constant $\mname{bnat}_{\iota \tarrow
+  \iota \tarrow {\sf nat}}$ with the usual base~2 notation for
+expressing natural numbers in a binary form.  There is a constant
+$\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$ specified
+by axioms 5--15 for adding quotations of these binary natural numbers.
+$\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$ is
+implemented by transformers $\pi_3$ and $\pi_4$.  $\pi_3$ is some
+efficient algorithm implemented outside of {\churchuqe}, and $\pi_4$
+is an algorithm that uses axioms 5--15 as conditional rewrite rules.
+$\pi_4$ is sound if the rewriting mechanism is sound.  Showing the
+soundness of $\pi_3$ would require a formal verification of its
+program.  The meaning formula for $\mname{BPLUS}_{\epsilon \tarrow
+  \epsilon \tarrow \epsilon}$, theorem 3, follows from axioms 5--15.
+
+This biform theory also has a transformer $\pi_{14}$ for
+$\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon}$ that implements an
+efficient decision procedure for the first-order formulas of the
+theory that is specified by axiom 30.  The first-order formulas of the
+theory are identified by the transformers $\pi_{5}$ and $\pi_{6}$ for
+the defined constant $\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon}$
+that are analogous to the transformers $\pi_{15}$ and $\pi_{16}$ for
+$\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon}$.
+
+\setcounter{biformthy}{5}
+
+\begin{biformthy}[BT\thebiformthy: Presburger Arithmetic]\em
+\bi
+
+  \item[] 
+
+  \item[] \textbf{Primitive Base Types}
+
+  \be
+
+    \item $\iota$ (type of natural numbers).
+
+  \ee
+
+  \item[] \textbf{Primitive Constants}
+
+  \be
+
+    \item $0_\iota$.
+
+    \item $S_{\iota \tarrow \iota}$.
+
+    \item $+_{\iota \tarrow \iota \tarrow \iota}$ (infix).
+
+    \item $\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$ (infix).
+
+    \setcounter{enumi}{5}
+
+    \iffalse
+    \item $\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon}$.
+    \fi
+
+    \item $\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon}$.
+
+  \ee
+
+  \item[] \textbf{Defined Constants (selected)}
+
+  \be
+
+    \item $1_\iota = S \, 0_\iota$.
+
+    \setcounter{enumi}{2}
+
+    \iffalse
+    \item $\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon} = \LambdaApp
+      x_\epsilon \mdot \textbf{B}_\epsilon$ {\sglsp} where
+      $\textbf{B}_\epsilon$ is a complex expression such that
+      $\syn{(\LambdaApp x_\epsilon \mdot \textbf{B}_\epsilon) \,
+        \synbrack{\textbf{A}_\alpha}}$ equals $\syn{\synbrack{T_o}}$
+      [$\syn{\synbrack{F_o}}$] if $\textbf{A}_\alpha$ is [not] a term
+      or formula of first-order logic with equality whose variables
+      are of type $\iota$ and whose nonlogical constants are members
+      of $\set{0_\iota,S_{\iota \tarrow \iota}}$.  \fi
+
+    \item $\mname{bnat}_{\iota \tarrow \iota \tarrow {\sf
+        nat}} = \LambdaApp x_\iota \mdot \LambdaApp y_\iota
+      \mdot ((x_\iota + x_\iota) + y_\iota)$.
+      
+    Notational definition:
+
+    \bi
+
+      \item[] $(0)_2 = \mname{bnat} \, 0_\iota \, 0_\iota$.
+  
+      \item[] $(1)_2 = \mname{bnat} \, 0_\iota \, 1_\iota$.
+  
+      \item[] $(a_1 \cdots a_n0)_2 = \mname{bnat} \, (a_1 \cdots
+        a_n)_2 \, 0_\iota$ {\sglsp} where each $a_i$ is 0 or 1.
+  
+      \item[] $(a_1 \cdots a_n1)_2 = \mname{bnat} \, (a_1 \cdots
+        a_n)_2 \, 1_\iota$ {\sglsp} where each $a_i$ is 0 or 1.
+  
+    \ei
+
+    \item $\mname{is-bnum}_{\epsilon \tarrow o} = 
+      \IotaApp f_{\epsilon \tarrow o} \mdot
+      \ForallApp \syn{u_\epsilon} \mdot
+      (f_{\epsilon \tarrow \epsilon} \, \syn{u_\epsilon} \Iff {}\\
+      \hspace*{2ex}\ForsomeApp \syn{v_\epsilon} \mdot 
+      \ForsomeApp \syn{w_\epsilon} \mdot
+      (\syn{u_\epsilon} = \syn{\synbrack{\mname{bnat} \, 
+      \commabrack{v_\epsilon} \, \commabrack{w_\epsilon}}} \And {}\\
+      \hspace*{4ex}(\syn{v_\epsilon} = \syn{\synbrack{0_\iota}} \OR 
+      f_{\epsilon \tarrow \epsilon} \, \syn{v_\epsilon}) \And
+      (\syn{w_\epsilon} = \syn{\synbrack{0_\iota}} \OR 
+      \syn{w_\epsilon} = \syn{\synbrack{1_\iota}})))$.
+
+    \item $\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon} = \LambdaApp
+      x_\epsilon \mdot \textbf{B}_\epsilon$ {\sglsp} where
+      $\textbf{B}_\epsilon$ is a complex expression such that
+      $\syn{(\LambdaApp x_\epsilon \mdot \textbf{B}_\epsilon) \,
+        \synbrack{\textbf{A}_\alpha}}$ equals $\syn{\synbrack{T_o}}$
+      [$\syn{\synbrack{F_o}}$] if $\textbf{A}_\alpha$ is [not] a term
+      or formula of first-order logic with equality whose variables
+      are of type $\iota$ and whose nonlogical constants are members
+      of $\set{0_\iota,S_{\iota \tarrow \iota},+_{\iota \tarrow \iota
+          \tarrow \iota}}$.
+
+    \setcounter{enumi}{6}
+
+    \iffalse
+
+    \item $\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow \epsilon} = {}\\
+    \hspace*{2ex}\LambdaApp \syn{x_\epsilon} \mdot 
+    (\If \; (\mname{is-abs}_{\epsilon \tarrow o} \, \syn{x_\epsilon}) \;
+    \syn{(\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon} \,
+    (\mname{abs-body}_{\epsilon \tarrow \epsilon} \, x_\epsilon))} \;
+    \syn{\synbrack{F_o}})$.
+
+    \fi
+
+    \item $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon} = {}\\
+    \hspace*{2ex}\LambdaApp \syn{x_\epsilon} \mdot 
+    (\If \; (\mname{is-abs}_{\epsilon \tarrow o} \, \syn{x_\epsilon}) \;
+    \syn{(\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon} \,
+    (\mname{abs-body}_{\epsilon \tarrow \epsilon} \, x_\epsilon))} \;
+    \syn{\synbrack{F_o}})$.
+
+  \ee
+
+  \item[] \textbf{Axioms}
+
+  \be
+
+    \item $S \, x_\iota \not= 0_\iota$.
+
+    \item $S \, x_\iota = S \, y_\iota \Implies x_\iota =
+      y_\iota$.
+
+    \item $x_\iota + 0_\iota = x_\iota$.
+
+    \item $x_\iota + S \, y_\iota = S \, (x_\iota + y_{\sf
+      nat})$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies
+      \syn{u_\epsilon \; \mname{BPLUS} \; \synbrack{(0)_2}} =
+      \syn{u_\epsilon}$.
+
+    \item[] $\vdots$
+
+    \iffalse
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies
+      \syn{\synbrack{(0)_2} \; \mname{BPLUS} \; u_\epsilon} =
+      \syn{u_\epsilon}$.
+
+    \item $\syn{\synbrack{(1)_2} \; \mname{BPLUS} \;
+      \synbrack{(1)_2}} = \syn{\synbrack{(10)_2}}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 0_\iota} \; \mname{BPLUS} \;
+          \synbrack{(1)_2}} = \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 1_\iota}}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 1_\iota} \; \mname{BPLUS} \;
+          \synbrack{(1)_2}} = \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon \; \mname{BPLUS} \;
+              \synbrack{(1)_2}} \, 0_\iota}}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{(1)_2} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{u_\epsilon} \, 0_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon} \,
+            1_\iota}}$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{(1)_2} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{u_\epsilon} \, 0_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon \;
+              \mname{BPLUS} \; \synbrack{(1)_2}} \, 0_\iota}}$.
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 0_\iota} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{v_\epsilon} 0_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon \;
+              \mname{BPLUS} \; v_\epsilon} \, 0_\iota}}$.
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 0_\iota} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{v_\epsilon} \, 1_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon \;
+              \mname{BPLUS} \; v_\epsilon} \, 1_\iota}}$.
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 1_\iota} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{v_\epsilon} \, 0_\iota}} =
+        \syn{\synbrack{\mname{bnat} \, \commabrack{u_\epsilon \;
+              \mname{BPLUS} \; v_\epsilon} \, 1_\iota}}$.
+    \fi
+
+    \setcounter{enumi}{14}
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\\
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 1_\iota} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{v_\epsilon} \, 1_\iota}} = {}\\
+        \hspace*{2ex}\syn{\synbrack{\mname{bnat} \,
+            \commabrack{(u_\epsilon \; \mname{BPLUS} \; v_\epsilon)
+              \; \mname{BPLUS} \; \synbrack{(1)_2}} \, 0_\iota}}$.
+
+    \iffalse
+    \item Induction Schema for $S$
+
+    $\ForallApp \syn{f_\epsilon} \mdot 
+    ((\mname{is-expr}_{\epsilon \tarrow o}^{\iota \tarrow o} \, \syn{f_\epsilon} \And
+    \sembrack{\syn{\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow \epsilon} \, 
+    f_\epsilon}}_o) \Implies {} \\
+    \hspace*{2ex}((\sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 0_\iota \And
+    (\ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota \Implies
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 
+    (\mname{S} \, x_\iota))) \Implies 
+    \ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota))$.
+
+    \item Meaning Formula for $\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon}$
+
+    $\ForallApp \syn{u_\epsilon} \mdot 
+    ((\mname{is-expr}_{\epsilon \tarrow o}^{o} \, 
+    \syn{u_\epsilon} \And
+    \mname{is-closed}_{\epsilon \tarrow o} \, \syn{u_\epsilon} \And 
+    \sembrack{\syn{\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon} \, 
+    u_\epsilon}}_o) \Implies {}\\
+    \hspace*{2ex}((\syn{\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon} = 
+    \syn{\synbrack{T_o}} \OR 
+    \syn{\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon} = 
+    \syn{\synbrack{F_o}}) \And {}\\
+    \hspace*{3.1ex}
+    \sembrack{\syn{\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon}}_o =
+    \sembrack{\syn{u_\epsilon}}_o))$.
+    \fi
+
+    \setcounter{enumi}{28}
+
+    \item Induction Schema for $S$ and $+$
+
+    $\ForallApp \syn{f_\epsilon} \mdot 
+    ((\mname{is-expr}_{\epsilon \tarrow o}^{\iota \tarrow o} \, \syn{f_\epsilon} \And
+    \sembrack{\syn{\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon} \, 
+    f_\epsilon}}_o) \Implies {} \\
+    \hspace*{2ex}((\sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 0_\iota \And
+    (\ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota \Implies
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 
+    (\mname{S} \, x_\iota))) \Implies 
+    \ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota))$.
+
+    \item Meaning formula for $\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon}$.
+
+    $\ForallApp \syn{u_\epsilon} \mdot 
+    ((\mname{is-expr}_{\epsilon \tarrow o}^{o} \, 
+    \syn{u_\epsilon}  \And
+    \mname{is-closed}_{\epsilon \tarrow o} \, \syn{u_\epsilon} \And 
+    \sembrack{\syn{\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon} \, 
+    u_\epsilon}}_o) \Implies {}\\
+    \hspace*{2ex}((\syn{\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon} = 
+    \syn{\synbrack{T_o}} \OR 
+    \syn{\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon} = 
+    \syn{\synbrack{F_o}}) \And {}\\
+    \hspace*{3.1ex}
+    \sembrack{\syn{\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon}}_o =
+    \sembrack{\syn{u_\epsilon}}_o))$.
+
+  \ee
+
+  \item[] \textbf{Transformers}
+
+  \be
+
+    \iffalse
+
+    \item $\pi_1$ for $\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon}$
+      is an efficient program that accesses the data stored in the
+      data structures that represent expressions.
+
+    \item $\pi_2$ for $\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon}$
+      uses the definition of $\mname{IS-FO-BT1}_{\epsilon \tarrow
+        \epsilon}$.  
+
+    \fi
+
+    \setcounter{enumi}{2}
+
+    \item $\pi_3$ for $\mname{BPLUS}_{\epsilon \tarrow \epsilon
+      \tarrow \epsilon}$ is an efficient program that satisfies Axioms
+      5--15.
+
+    \item $\pi_4$ for $\mname{BPLUS}_{\epsilon \tarrow \epsilon
+      \tarrow \epsilon}$ uses Axioms 5--15 as conditional rewrite
+      rules.
+
+    \item $\pi_5$ for $\mname{IS-FO-BT2}_{\epsilon \tarrow
+      \epsilon}$ is an efficient program that accesses the data
+      stored in the data structures that represent expressions.
+
+    \item $\pi_6$ for $\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon}$
+      uses the definition of $\mname{IS-FO-BT2}_{\epsilon \tarrow
+        \epsilon}$.
+
+    \iffalse
+
+    \item $\pi_{11}$ for $\mname{BT5-DEC-PROC}_{\epsilon \tarrow
+      \epsilon \tarrow \epsilon}$ is an efficient decision procedure
+      that satisfies Axiom 28.
+
+    \item $\pi_{12}$ for $\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow
+      \epsilon}$ is an efficient program that accesses the data stored
+      in the data structures that represent expressions.
+
+    \item $\pi_{13}$ for $\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow
+      \epsilon}$ uses the definition of
+      $\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow \epsilon}$.  
+
+    \fi
+
+    \setcounter{enumi}{13}
+
+    \item $\pi_{14}$ for $\mname{BT6-DEC-PROC}_{\epsilon \tarrow
+      \epsilon \tarrow \epsilon}$ is an efficient decision procedure
+      that satisfies Axiom 30.
+
+    \item $\pi_{15}$ for $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow
+      \epsilon}$ is an efficient program that accesses the data stored
+      in the data structures that represent expressions.
+
+    \item $\pi_{16}$ for $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow
+      \epsilon}$ uses the definition of
+      $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon}$.
+
+  \ee
+
+  \item[] \textbf{Theorems (selected)}
+
+    \be
+
+      \setcounter{enumi}{2}
+
+      \item Meaning formula for 
+      $\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$
+
+      $\ForallApp \syn{u_\epsilon} \mdot \ForallApp \syn{v_\epsilon} \mdot
+      ((\mname{is-bnum} \, \syn{u_\epsilon} \And \mname{is-bnum} \, \syn{v_\epsilon}) 
+      \Implies {}\\
+      \hspace*{2ex}(\mname{is-bnum} \, 
+      \syn{(u_\epsilon \; \mname{BPLUS} \; v_\epsilon)} \And {}
+      \hspace*{2.8ex}(\sembrack{\syn{u_\epsilon \; \mname{BPLUS} \; 
+      v_\epsilon}}_\iota = 
+      \sembrack{\syn{u_\epsilon}}_\iota + \sembrack{\syn{v_\epsilon}}_\iota)))$.
+
+    \ee
+
+\ei
+\end{biformthy}
+
+\section{Study 2: Test Case Formalized in Agda}\label{sec:agda}
+
+As our goal is to, in part, compare the global approach and the local
+approach, the formalization in Agda eschews the use of its reflection
+capabilities\footnote{As of early $2007$, there is no official
+  publication describing these features outside of the Agda
+  documentation, but see~\cite{VanDerWalt12,VanDerWaltSwierstra12}}.
+Thus this formalization replaces the global type $\epsilon$ (of
+{\churchuqe}) by a \emph{set} of inductive types, one for each of the
+biform theories.  This is still reflection, just hand-rolled.  We also
+need to express formulas in FOL (as syntax), thus we need a type for
+that as well.  To be more modular, that is broken up as a type for
+propositional logic with equality over any ground language, and a type
+for first-order logic which builds on that.  We display some
+illustrative samples here; the full code is available
+in~\appendixref{B}.
+
+\iffalse
+and at~\cite{agda-code}.
+\fi
+
+An abstract theory is modeled as a \emph{record}, with fields for the
+new type (pronounced \AgdaPrimitiveType{Set} in Agda), the two constants,
+and the two axioms.  The host logic is dependently typed, and so the
+axioms refer to the constants just defined.  \AgdaFunction{One} is not
+a field, but a defined constant.
+\input{T1.tex}
+One of the languages needed is an extension of the naturals which
+allows variables:
+
+\input{NatVar.tex}
+
+But where the informal description in section~\ref{sec:test-case} can
+get away with saying ``Logic: FOL'' and ``Transformers: Recognizers for
+the formulas of the theory'', here we need to be very explicit.  To do
+so, we need to define some language infrastructure.
+
+\input{Language.tex}
+\input{T6.tex}
+
+\input{Numerals.tex}
+\input{T2a.tex}
+
+\section{Comparison of the Two Formalizations}\label{sec:comparison}
+
+As expected, we were able to formalize this network of theories using
+both methods.  Neither are fully complete; both are missing the actual
+decision procedures (which would be large undertakings).  In particular,
+\begin{itemize}
+\item The {\churchuqe} formalization is missing the definition of the language
+recognizers, as well as the full assurance of being mechanically checked.
+It has no ``implementation'' of any transformers.
+\item The Agda version implements evaluation but not substitution --- which means
+that the induction statement in BT5--BT7 are not quite the same as in
+{\churchuqe}; the models will be the same however.  It also does not implement
+any theory morphisms, as record definitions are not first-class in Agda. 
+\end{itemize}
+
+More importantly, because of our (explicit) choice to contrast the
+global and local approaches, each version uses different infrastructure to
+reason about syntax.
+\begin{itemize}
+\item {\churchuqe} has a built-in inductive type of ``all syntax'',
+along with quotation and evaluation operators for the entire language
+of expressions.
+\item In the local approach, a new inductive type for each new
+``language'' (the numerals, the numerals with plus, the numerals with
+plus and times, all three of these augmented with variables, first order
+logic, binary digits, binary numerals) has to be created.  For many of 
+these, a variety of traversals (folds) have to be implemented ``by hand''
+even though the recursion patterns are obvious, at least to humans.
+Some of these are evaluation operators (one per language).  There is no
+formal quotation operator.
+\end{itemize}
+
+The Agda version has a number of extra features: some transformers (such as
+for \AgdaFunction{bplus} and \AgdaFunction{btimes}) are implemented.
+Furthermore, the \emph{meaning formula} for \AgdaFunction{bplus} is
+shown to be a theorem.  A variety of coherence theorems are also shown,
+to gain confidence that the theories really are the ones we want.
+
+It is worth remarking that defining the language of first-order formulas
+is complicated in \emph{both} versions.  This has been noticed before by
+people doing programming language meta-theory with proof assistants: 
+encoding languages, especially languages with binders (such as FOL) along
+with traversals and basic reasoning can be very tedious~\cite{poplmark}.
+
+The most notable differences in the two formalizations are:
+\begin{enumerate}
+\item Because FOL is classical, but Agda's host logic is constructive,
+a double-negation embedding was needed.
+\item The use of \emph{type equivalence} instead of boolean equality for
+verifying that the interpretation of a formula of FOL and the results
+of the decision procedure are ``the same'',
+\item Borrowing the notion of \emph{contractibility} from 
+HoTT~\cite{hottbook}, to encode \emph{definite description}.
+\item Extending the decision procedure to \emph{closeable} terms (by
+providing an explicit, total valuation) instead of restricting to
+closed terms.
+\end{enumerate}
+The first is basically forced upon us by Agda: it has no Prop type (unlike
+Coq), and so we do not know a priori that all interpretations of
+first-order formulas are actually $0$-types.  The second is an active
+design decision: the infrastructure required to define the meaning of
+\emph{closed} which is useful in a constructive setting is quite complex%
+\footnote{It would require us to define \emph{paths} in terms, bound and
+free variables along paths, quantification over paths, etc.}.  We believe
+the third is novel.  The fourth point requires deeper investigating.
+
+\section{Conclusion}\label{sec:conclusion}
+
+\iffalse
+\begin{verbatim}
+Outline:
+
+  1. Both CTT_uqe and Agda can be used to formalize the biform theories
+     involved in the network in Fig.1.
+
+  2. CTT_uqe provides a built-in infrastructure for reasoning about
+     syntax, but it is a nonstandard language with an unfamiliar
+     semantics that has not been implemented.
+
+  3. Agda is implemented, but by using the local approach,
+     (1) the size of its infrastructure for
+     reasoning about syntax depends on the size of the biform theory
+     graph that is formalized and (2) it does not have an implemented
+     notion of theory morphism (Is this true?).  This is not inherently
+     a fault of Agda's.
+
+  4. Recommendation: CTT_uqe is implemented, and then the test study
+     is fully formalized in this implementation.
+
+  5. Recommendation: implementing the global approach using Agda's
+     reflection mechanism, to see how that compares to the global
+     approach in CTT_uqe.
+
+  6. To better understand the local approach, some automation to 
+     derive languages related to each theory should be implemented.
+\end{verbatim}
+\fi
+
+We have proposed a biform theory graph test case composed of eight
+theories that encode natural number arithmetic and include a variety
+of useful transformers.  We have formalized this test case (as a set
+of biform theories and theory morphisms) in {\churchuqe} using the
+global approach (for metareasoning with reflection) and in Agda using
+the local approach.  In both cases, we have produced substantial
+partial formalizations that indicate that full formalizations could be
+obtained with additional work.
+
+Our results show that, by providing a built-in global infrastructure,
+the global approach has a significant advantage over the local
+approach.  The local approach is burdened by the necessity to define
+an infrastructure --- consisting of an inductive type and an
+evaluation operator for the type --- for every set of expressions
+manipulated by a transformer.  In general, new local infrastructures
+must be created each time a new theory is added to the theory graph.
+On the other hand, the global approach employs an infrastructure ---
+consisting of an inductive type, a quotation operator, and an
+evaluation operator --- for the entire set of expressions in the
+logic.  This single infrastructure is used for every theory in the
+theory graph.
+
+We recommend that future research is directed toward making the global
+approach for metareasoning with reflection into a practical method for
+formalizing biform theories.  This can be done by developing and
+implementing logics such as {\churchqe}~\cite{FarmerArxiv16,Farmer16}
+and {\churchuqe}~\cite{FarmerArxiv17} and by adding global
+infrastructures to proof systems such as Agda and Coq
+(see~\cite{VanDerWalt12,VanDerWaltSwierstra12} for work in this
+direction).
+
+\bibliography{imps}
+\bibliographystyle{plain}
+
+\iftoggle{cicm}{}{%
+\appendix
+\input{app-ctt.tex}
+\section{Agda Formalization}\label{app:agda}
+First, some infrastructure, then the theories themselves.
+
+\long\def\AgdaHide#1{#1}
+\subsection{Definite Description}
+\input{DefiniteDescr.tex}
+\subsection{Equivalences of Types}
+\input{Equiv.tex}
+\subsection{Numerals}
+\input{Numerals.tex}
+\subsection{NumPlus}
+\input{NumPlus.tex}
+\subsection{NumPlusTimes}
+\input{NumPlusTimes.tex}
+\subsection{Naturals as variables, and with variables}
+\input{NatVar.tex}
+\subsection{Language infrastructure}
+Note that much of this code is in the main paper already.
+
+\input{Language.tex}
+
+\subsection{Some languages of variables}
+\input{Variables.tex}
+
+\subsection{T1}
+\input{T1.tex}
+
+\subsection{T2}
+\input{T2.tex}
+
+\subsection{T2a}
+\input{T2a.tex}
+
+\subsection{T3}
+\input{T3.tex}
+
+\subsection{T4}
+\input{T4.tex}
+
+\subsection{T5}
+\input{T5.tex}
+
+\subsection{T6}
+\input{T6.tex}
+
+\subsection{T7}
+\input{T7.tex}
+
+\subsection{T8}
+\input{T8.tex}
+
+}
+
+\end{document}
