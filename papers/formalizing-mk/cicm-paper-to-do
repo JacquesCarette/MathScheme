@@ -1,0 +1,63 @@
+BILL
+
+1. Finalize sections 1-4 and appendix A
+
+2. Remove color from cicm paper but keep it for arxiv paper.
+
+3. Implement Reviewer 1's suggestions:
+
+- page 7, end of paragraph 1: the two occurrences of "defined" in "A _defined_ constant ..., where A_\alpha is _defined_.", albeit intuitively clear, are maybe a bit confusing.
+
+- page 7, paragraph 3: The constants and axioms referred to here are not contained in the paper, but only in the appendix of the extended version [4]. So, it does not really make sense to mention that they have been elided ...
+
+- page 7, paragraph 3: Coloring syntax-related expressions in red is a nice idea, though I'm not sure whether the printed proceedings are in color.
+
+- page 7, paragraph 5 (and also later): What is type "nat"? I thought "i" was the type of natural numbers? Also, on page 8, what is the type of terms "(a_1 ... a_n)_2"? Since they appear both as arguments of "bnat" and as results thereof, their type should be both "i" and "nat" ...
+
+- page 8: The meaning of the floor-brackets, e.g. in the definition of "is-bnum", is not explained.
+
+- page 3, paragraph 1, line 7: "Examples include_ algorithms ..."
+
+- page 4, section 3, paragraph 1, line 7: "... +, and *_._ Several other ..."
+
+- page 5, Biform Theory 3, axiom A6: "x _*_ S(y) = ..."
+
+- page 7, end of paragraph 4: I think instead of "\pi_14" and "\pi_15" you mean "\pi_15" and "\pi_16", respectively.
+
+4. Implement Reviewer 2's suggestions:
+
+Page 2 line -9: I think the sentence would be better starting with "This" instead of "The"
+Page 3 line 5 of paragraph 3: "that include" should be "that includes"
+Page 3 line -3: The closing parenthesis should not be within the subscript.
+Page 4: line 9: The unary operator S is undefined at first use here.
+Page 4: I think the paragraph after Figure 1 may be better placed after the detailing of the theories (since it requires the reading of these to make any sense). 
+Page 4/5: The choice of logical symbols was a little unnatural for me (set inclusion for implies, dot for and).  I understand these are commonly used in some places but perhaps it would help the reader to have a sentence defining them before the listing of the theories.
+Page 5: In BT2 and BT3 should "binary numbers" not be "natural numbers"
+Page 7 paragraph 3: Many of the details here are undefined (in this paper at least) and so I am not sure what the significance of their elision is.  Also, I would choose a verb other than elide here.
+Page 15: Reference 4 is incomplete
+
+----------------------------------------------------------------------
+
+JACQUES
+
+1. Finalize sections 5-7 and appendix B
+
+2. Implement Reviewer 1's suggestion
+
+- page 10 onward: It might be better to first introduce the auxiliary concepts needed in the definition of "nat-lang", like "GroundLanguage", "LogicOverL" etc. Otherwise readers might wonder what they are, and whether they are built-in components of Agda (at least readers who do not know Agda very well).
+
+- page 12, paragraph 3: What is "PredL"?
+
+- page 9, section 5, paragraph 1, last line: I think it is appendix B.
+
+- page 9, footnote: Do you mean 2017?
+
+- page 11, right before "module FOL ...": "... definition of first _order_ logic ..."
+
+3. Finalize Reviewer 2's suggestions
+
+Page 9: Perhaps a citation for Agda, or a url to the Agda homepage, would be good at the start of Section 2.
+Page 9: In the footnote I assume it should read "early 2017" not "early 2007"?
+Page 11: "first logic" should be "first order logic" I assume.
+Page 15: Is there a url for Reference [19] that could be provided?
+
