@@ -65,7 +65,9 @@ indicate which theory it belongs to).\\
 }
 The accompanying code furthermore proves some basic coherence
 theorems which are elided here.  We make two further definitions
-which will be explained in more detail below.
+(\AgdaRecord{GroundLanguage} describing some language features,
+and \AgdaModule{FOL} as our definition of first order logic)
+which will be explained in more detail on the next page.
 
 \begin{code}
   nat-lang : GroundLanguage nat
