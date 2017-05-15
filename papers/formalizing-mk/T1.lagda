@@ -41,6 +41,12 @@ record BT₁ : Set₁ where
   One = S Z
 \end{code} 
 
+\noindent where we see a field \AgdaField{nat} for the
+new type (pronounced \AgdaPrimitiveType{Set} in Agda), the two constants,
+and the two axioms.  The host logic is dependently typed, and so the
+axioms refer to the constants just defined.  \AgdaFunction{One} is not
+a field, but a defined constant.
+
 For simplicity, we will take the built-in type $\mathbb{N}$,
 defined as an inductive type, as the \emph{syntax} for natural
 numbers, which is also the syntax associated to the theory

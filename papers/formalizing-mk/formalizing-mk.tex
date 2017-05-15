@@ -905,22 +905,18 @@ documentation, but see~\cite{VanDerWalt12,VanDerWaltSwierstra12}}.
 Thus this formalization replaces the global type $\epsilon$ (of
 {\churchuqe}) by a \emph{set} of inductive types, one for each of the
 biform theories.  This is still reflection, just hand-rolled.  We also
-need to express formulas in FOL (as syntax), thus we need a type for
-that as well.  To be more modular, that is broken up as a type for
-propositional logic with equality over any ground language, and a type
-for first-order logic which builds on that.  We display some
-illustrative samples here; the full code is available
+need to express formulas in FOL (as syntax), so we need a type for
+that as well.  To be more modular, this is done as a type for
+first-order logic (with equality) over any ground language.
+We display some illustrative samples here; the full code is available
 in~\appendixref{B}.
 
 \iffalse
 and at~\cite{agda-code}.
 \fi
 
-An abstract theory is modeled as a \emph{record}, with fields for the
-new type (pronounced \AgdaPrimitiveType{Set} in Agda), the two constants,
-and the two axioms.  The host logic is dependently typed, and so the
-axioms refer to the constants just defined.  \AgdaFunction{One} is not
-a field, but a defined constant.
+An abstract theory is modeled as a \emph{record}.  For example, we have
+\AgdaRecord{BT₁}:
 \input{T1.tex}
 One of the languages needed is an extension of the naturals which
 allows variables:
