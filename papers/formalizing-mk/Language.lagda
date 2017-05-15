@@ -69,7 +69,7 @@ record LogicOverL (T : Set₀) (L : GroundLanguage T) : Set₁ where
     ⟦_⟧_ : ∀ {V} → Logic V → (Carrier V → T) → Set₀
 \end{code}
 
-The definition of first logic is then straightforward.
+The definition of first order logic is then straightforward.
 
 \begin{code}
 module FOL {T : Set₀} (L : GroundLanguage T) where

@@ -59,7 +59,7 @@ Here is a guide to understanding the above definition:
 inhabitant, \AgdaInductiveConstructor{x}.
 \item All fields of \AgdaModule{BT₂} are made publicly visible for
 \AgdaModule{BT₆}.
-\item The language of first-order logic \AgdaDatatype{PredL} over
+\item The language of first-order logic \AgdaDatatype{FOL} over
 \AgdaBound{t₂} (and some of its constructors) is also made visible.
 \item \AgdaSymbol{(λ} \AgdaSymbol{\{}\AgdaInductiveConstructor{x} \AgdaSymbol{→} \AgdaBound{y}\AgdaSymbol{\})} denotes a substitution for the single
 variable \AgdaInductiveConstructor{x}.

@@ -9,5 +9,5 @@ module Examples where
     
   -- an example: ∀ x. not (S x == S (S x))
     open fo₁
-    ex : PredL XV 
+    ex : FOL XV 
     ex = all x (P (s (v x) == s (s (v x))))
