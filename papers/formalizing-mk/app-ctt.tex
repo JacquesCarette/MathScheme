@@ -160,9 +160,9 @@ theory morphisms in the test case:
 
     \setcounter{enumi}{2}
 
-    \item $\mname{bnat}_{\iota \tarrow \iota \tarrow {\sf
-        nat}} = \LambdaApp x_\iota \mdot \LambdaApp y_\iota
-      \mdot ((x_\iota + x_\iota) + y_\iota)$.
+    \item $\mname{bnat}_{\iota \tarrow \iota \tarrow \iota} =
+      \LambdaApp x_\iota \mdot \LambdaApp y_\iota \mdot ((x_\iota +
+      x_\iota) + y_\iota)$.
       
     Notational definition:
 
@@ -214,8 +214,7 @@ theory morphisms in the test case:
 
     \item $x_\iota + 0_\iota = x_\iota$.
 
-    \item $x_\iota + S \, y_\iota = S \, (x_\iota + y_{\sf
-      nat})$.
+    \item $x_\iota + S \, y_\iota = S \, (x_\iota + y_\iota)$.
 
     \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies
       \syn{u_\epsilon \; \mname{BPLUS} \; \synbrack{(0)_2}} =
@@ -391,8 +390,7 @@ theory morphisms in the test case:
 
     \item $x_\iota * 0_\iota = 0_\iota$.
 
-    \item $x_\iota * S \, y_\iota = (x_\iota * y_{\sf
-      nat}) + x_\iota$.
+    \item $x_\iota * S \, y_\iota = (x_\iota * y_\iota) + x_\iota$.
 
     \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies
       \syn{u_\epsilon \; \mname{BTIMES} \; \synbrack{(0)_2}} =

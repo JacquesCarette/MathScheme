@@ -16,8 +16,8 @@
 % paper toggle
 
 \newtoggle{cicm}
-%%\toggletrue{cicm}     % CICM paper without appendices
-\togglefalse{cicm}      % arXiv paper with appendices
+\toggletrue{cicm}     % CICM paper without appendices
+%%\togglefalse{cicm}      % arXiv paper with appendices
 \newcommand{\appendixref}[1]
   {\iftoggle{cicm}
     {appendix #1 of \cite{CaretteFarmerArxiv17}}
@@ -44,6 +44,11 @@
 
 
 % For Bill's macros
+
+\iftoggle{cicm} 
+  {\newcommand{\syn}[1]{#1}}
+  {\newcommand{\syn}[1]{\textcolor{red}{#1}}}
+
 \input{formalizing-mk-def}
 
 \title{Formalizing Mathematical Knowledge as a Biform Theory Graph: A
@@ -55,7 +60,7 @@
 Computing and Software, McMaster University, Canada\\
 \url{http://www.cas.mcmaster.ca/~carette}\\
 \url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
-\today
+\iftoggle{cicm}{}{\today}
 }
 
 \pagestyle{headings}
@@ -166,7 +171,7 @@ realized using the global approach in
 {\churchqe}~\cite{FarmerArxiv16,Farmer16}, a version of Church's type
 theory with quotation and evaluation, while the second is realized
 using the local approach in Agda~\cite{Norell07,Norell09} , a dependently typed
-programming language.  The dual formalization, contrasting the two 
+programming language.  This dual formalization, contrasting the two 
 approaches, forms the core of our contribution; each formalization has 
 some smaller contributions, some of which may be of independent 
 interest.
@@ -181,6 +186,9 @@ section~\ref{sec:agda}.  These two are presented in full in
 formalizations.  The paper ends with conclusions and future work in
 section~\ref{sec:conclusion}.
 
+The authors are grateful to the reviewers for their comments and
+suggestions.
+
 \section{Biform Theories}\label{sec:biform}
 
 Let $\sE$ be a set of expressions and $f : \sE^n \tarrow \sE$ be an
@@ -191,7 +199,7 @@ select components of $e$, or check whether $e$ satisfies some
 syntactic property.  More sophisticated transformers manipulate
 expressions in a mathematically meaningful way.  We call these kinds
 of transformers \emph{syntax-based mathematical algorithms
-  (SBMAs)}~\cite{Farmer13}.  Examples includes algorithms that apply
+  (SBMAs)}~\cite{Farmer13}.  Examples include algorithms that apply
 arithmetic operations to numerals, factor polynomials, transpose
 matrices, and symbolically differentiate expressions with variables.
 The \emph{computational behavior} of a transformer is the relationship
@@ -246,7 +254,7 @@ value $f(e_1,\ldots,e_n)$ by reducing $A_f(e_1,\ldots,e_n)$ using
 $\beta$-reduction (and possibly other transformations such as
 $\delta$-reduction, etc).  Another method is to specify the
 computational behavior of $f$ by axioms, and then $\pi$ can be
-implemented as a tactic that applies the axioms to $f(e_1,\ldots,e_)$
+implemented as a tactic that applies the axioms to $f(e_1,\ldots,e_n)$
 as, e.g., rewrite rules or conditional rewrite rules.  Finally, the
 computational behavior or mathematical meaning of $f$ can be specified
 by axioms, and then $\pi$ can be a program which satisfies these
@@ -261,13 +269,13 @@ axiomatic theories (seven in first-order logic (FOL) and one in simple
 type theory (STT)) and then add a variety of useful transformers in
 the appropriate theories.  These eight are chosen because they fit
 together closely and have simple axiomatizations.  Of the first-order
-theories, BT1 and BT5 are theories of $0$ and $S$; BT2 and BT6 are
-theories of $0$, $S$, and $+$; and BT3, BT4, and BT7 are theories of
-$0$, $S$, $+$, and $*$, Several other biform theories could be added
-to this graph, most notably Skolem arithmetic, the complete theory of
-$0$, $S$, and $*$, which has a very complicated
-axiomatization~\cite{Smorynski91}.  The details of each theory is
-given below.
+theories, BT1 and BT5 are theories of $0$ and $S$ (which denotes the
+successor function); BT2 and BT6 are theories of $0$, $S$, and $+$;
+and BT3, BT4, and BT7 are theories of $0$, $S$, $+$, and $*$.  Several
+other biform theories could be added to this graph, most notably
+Skolem arithmetic, the complete theory of $0$, $S$, and $*$, which has
+a very complicated axiomatization~\cite{Smorynski91}.  The details of
+each theory is given below.
 
 \begin{figure}
 \center
@@ -333,7 +341,7 @@ Extends BT1.\\
 \indent A4. $x + S(y) = S(x + y)$.\\
 \emph{Properties}: incomplete, undecidable.\\
 \emph{Transformers}: Recognizer for the formulas of the theory and  
-algorithm for adding binary numbers.
+algorithm for adding natural numbers as binary numerals.
 \end{biformthy}
 
 \begin{biformthy}[BT\thebiformthy: Simple Theory of $0$, $S$, $+$, and $*$]\em\ \\
@@ -341,10 +349,10 @@ Extends BT2.\\
 \emph{Logic}: FOL. \emph{Constants}: $*$ (binary, infix).\\
 \emph{Axioms}:\\
 \indent A5. $x * 0 = 0$.\\
-\indent A6. $x + S(y) = (x * y) + x$.\\
+\indent A6. $x * S(y) = (x * y) + x$.\\
 \emph{Properties}: incomplete, undecidable.\\
 \emph{Transformers}: Recognizer for the formulas of the theory and  
-algorithm for multiplying binary numbers.
+algorithm for multiplying natural numbers as binary numerals.
 \end{biformthy}
 
 \begin{biformthy}[BT\thebiformthy: Robinson Arithmetic (Q)]\em\ \\
@@ -453,7 +461,7 @@ defined base type is declared by a formula that equates the base type
 to a nonempty subset of some type of $L$.  Similarly, the constants
 are divided into primitive and defined constants.  A defined constant
 $\textbf{c}_\alpha$ is declared by an equation $\textbf{c}_\alpha =
-\textbf{A}_\alpha$ where $\textbf{A}_\alpha$ is defined.
+\textbf{A}_\alpha$ where $\textbf{A}_\alpha$ is a defined expression.
 
 The biform theory graph test case given in section~\ref{sec:test-case}
 is formalized in {\churchuqe} as a theory graph of eight {\churchuqe}
@@ -462,16 +470,19 @@ not currently implemented, it is not possible to give the transformers
 as implemented algorithms.  Instead we described their intended
 behavior.
 
-We will concentrate our discussion on BT6 (given below).  We have
-elided the following components of BT6 that are redundant or are
-subsumed by other components: Constants
+We will concentrate our discussion on BT6 (given below).  We have not
+included the following components of BT6 (that should be in BT6
+according to its definition in section~\ref{sec:test-case}) that are
+redundant or are subsumed by other components: Constants
 $\mname{BT5-DEC-PROC}_{\epsilon \tarrow \epsilon}$,
 $\mname{IS-FO-BT1}_{\epsilon \tarrow \epsilon}$, and
 $\mname{IS-FO-BT1-ABS}_{\epsilon \tarrow \epsilon}$; axioms 27 and 28;
 and transformers $\pi_1$, $\pi_2$, $\pi_{11}$, $\pi_{12}$, and
-$\pi_{13}$.  Expressions of type~$\epsilon$, i.e., expressions that
-denote constructions, are colored red to identify where reasoning
-about syntax occurs.
+$\pi_{13}$.  See~\cite{FarmerArxiv17} for details.
+%
+\iftoggle{cicm}{}{Expressions of type~$\epsilon$, i.e., expressions
+  that denote constructions, are colored red to identify where
+  reasoning about syntax occurs.}
 
 BT6 has the usual constants ($0_\iota$, $S_{\iota \tarrow \iota}$, and
 $+_{\iota \tarrow \iota \tarrow \iota}$) and axioms (axioms 1--4 and
@@ -490,21 +501,22 @@ by expanding the definition of $\mname{IS-FO-BT2-ABS}_{\epsilon
 expansion mechanism is sound.  Showing the soundness of $\pi_{14}$
 would require a formal verification of the implementation of the data
 structure for expressions.  Of course, the results of $\pi_{14}$ could
-be checked using $\pi_{15}$.
+be checked using $\pi_{16}$.
 
 This biform theory has a defined constant $\mname{bnat}_{\iota \tarrow
-  \iota \tarrow {\sf nat}}$ with the usual base~2 notation for
-expressing natural numbers in a binary form.  There is a constant
+  \iota \tarrow \iota}$ with the usual base~2 notation for expressing
+natural numbers in a binary form.  There is a constant
 $\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$ specified
-by axioms 5--15 for adding quotations of these binary natural numbers.
-$\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$ is
-implemented by transformers $\pi_3$ and $\pi_4$.  $\pi_3$ is some
-efficient algorithm implemented outside of {\churchuqe}, and $\pi_4$
-is an algorithm that uses axioms 5--15 as conditional rewrite rules.
-$\pi_4$ is sound if the rewriting mechanism is sound.  Showing the
-soundness of $\pi_3$ would require a formal verification of its
-program.  The meaning formula for $\mname{BPLUS}_{\epsilon \tarrow
-  \epsilon \tarrow \epsilon}$, theorem 3, follows from axioms 5--15.
+by axioms 5--15 for adding quotations of these natural numbers in
+binary form.  $\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow
+  \epsilon}$ is implemented by transformers $\pi_3$ and $\pi_4$.
+$\pi_3$ is some efficient algorithm implemented outside of
+{\churchuqe}, and $\pi_4$ is an algorithm that uses axioms 5--15 as
+conditional rewrite rules.  $\pi_4$ is sound if the rewriting
+mechanism is sound.  Showing the soundness of $\pi_3$ would require a
+formal verification of its program.  The meaning formula for
+$\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$, theorem
+3, follows from axioms 5--15.
 
 This biform theory also has a transformer $\pi_{14}$ for
 $\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon}$ that implements an
@@ -571,9 +583,9 @@ $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon}$.
       are of type $\iota$ and whose nonlogical constants are members
       of $\set{0_\iota,S_{\iota \tarrow \iota}}$.  \fi
 
-    \item $\mname{bnat}_{\iota \tarrow \iota \tarrow {\sf
-        nat}} = \LambdaApp x_\iota \mdot \LambdaApp y_\iota
-      \mdot ((x_\iota + x_\iota) + y_\iota)$.
+    \item $\mname{bnat}_{\iota \tarrow \iota \tarrow \iota} =
+      \LambdaApp x_\iota \mdot \LambdaApp y_\iota \mdot ((x_\iota +
+      x_\iota) + y_\iota)$.
       
     Notational definition:
 
@@ -599,10 +611,13 @@ $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon}$.
       \ForsomeApp \syn{w_\epsilon} \mdot
       (\syn{u_\epsilon} = \syn{\synbrack{\mname{bnat} \, 
       \commabrack{v_\epsilon} \, \commabrack{w_\epsilon}}} \And {}\\
-      \hspace*{4ex}(\syn{v_\epsilon} = \syn{\synbrack{0_\iota}} \OR 
+      \hspace*{4ex}(\syn{v_\epsilon} = \syn{\synbrack{0_\iota}} \OR
       f_{\epsilon \tarrow \epsilon} \, \syn{v_\epsilon}) \And
-      (\syn{w_\epsilon} = \syn{\synbrack{0_\iota}} \OR 
-      \syn{w_\epsilon} = \syn{\synbrack{1_\iota}})))$.
+      (\syn{w_\epsilon} = \syn{\synbrack{0_\iota}} \OR
+      \syn{w_\epsilon} =
+      \syn{\synbrack{1_\iota}})))$.\footnote{Notation of the form
+        $\synbrack{\cdots\commabrack{\cdot}\cdots}$ represents a
+        quasiquotation; see~\cite{FarmerArxiv16} for details.}
 
     \item $\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon} = \LambdaApp
       x_\epsilon \mdot \textbf{B}_\epsilon$ {\sglsp} where
@@ -648,8 +663,7 @@ $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon}$.
 
     \item $x_\iota + 0_\iota = x_\iota$.
 
-    \item $x_\iota + S \, y_\iota = S \, (x_\iota + y_{\sf
-      nat})$.
+    \item $x_\iota + S \, y_\iota = S \, (x_\iota + y_\iota)$.
 
     \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies
       \syn{u_\epsilon \; \mname{BPLUS} \; \synbrack{(0)_2}} =
