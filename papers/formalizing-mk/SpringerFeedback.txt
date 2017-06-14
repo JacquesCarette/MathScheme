@@ -1,0 +1,37 @@
+AQ1: both authors should be 'corresponding'.  The email should show as
+{carette, wmfarmer}@mcmaster.ca
+
+AQ2: confirmed
+
+AQ3: The bibtex would be
+@ARTICLE{2017arXiv170402253C,
+   author = {{Carette}, J. and {Farmer}, W.~M.},
+    title = "{Formalizing Mathematical Knowledge as a Biform Theory Graph: A Case Study}",
+  journal = {ArXiv e-prints},
+archivePrefix = "arXiv",
+   eprint = {1704.02253},
+ primaryClass = "cs.LO",
+ keywords = {Computer Science - Logic in Computer Science, 68T30 (Primary), 03B15, 03B35 (Secondary), F.4.1, I.2.4},
+     year = 2017,
+    month = apr,
+   adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170402253C},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+AQ4: confirm
+
+AQ5: confirm
+
+Other errors:
+- It would be nice if the last 2 lines of p.5 would not be orphaned from
+  the contents which is on p.6
+- All of the code in Section 5 should be *left-aligned* and NOT centered.
+  (there is 1 listing on p.9, 4 on p.10, 3 on p. 11, 2 on p.12
+  and 2 on p.13.  Almost all are affected with this problem.
+- in several places in section 5 (first occurence on p.10) where things
+  like "{ V}" are badly typeset, with the V overlapping with the }.  The
+  V should be centered between the { and }.  [4 on p.10, 2 on p.11, etc.
+  there are also "f)" that are not well typeset on p.12.
+- some of the baselines for the inline Agda is off -- see "Set_0" in
+  the middle paragraph on p.11, BT_6 and BT_2 on p.12, the \lambda expression
+  on p.12 and 'bplus' on p.12.
