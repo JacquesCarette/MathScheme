@@ -16,8 +16,8 @@
 % paper toggle
 
 \newtoggle{cicm}
-\toggletrue{cicm}     % CICM paper without appendices
-%%\togglefalse{cicm}      % arXiv paper with appendices
+%%\toggletrue{cicm}     % CICM paper without appendices
+\togglefalse{cicm}      % arXiv paper with appendices
 \newcommand{\appendixref}[1]
   {\iftoggle{cicm}
     {appendix #1 of \cite{CaretteFarmerArxiv17}}
@@ -150,14 +150,15 @@ a symbolic algorithm that encodes a mathematical function requires
 the ability to talk about the relationship between syntax and
 semantics.
 
-Axiomatic and algorithmic knowledge complement each other, and
-both are needed.  A \emph{biform theory}~\cite{CaretteFarmer08,Farmer07b} 
-combines both, and furthermore supports the
-integration of reasoning and computation.  We argue
-in~\cite{CaretteFarmer08} that biform theories are needed to build
-\emph{high-level theories} analogous to high-level programming
-languages.  Biform theories are challenging to formalize for the same
-reasons that algorithmic theories are challenging to formalize.
+Axiomatic and algorithmic knowledge complement each other, and both
+are needed.  A \emph{biform
+  theory}~\cite{CaretteFarmer08,FarmerMohrenschildt03,Farmer07b}
+combines both, and furthermore supports the integration of reasoning
+and computation.  We argue in~\cite{CaretteFarmer08} that biform
+theories are needed to build \emph{high-level theories} analogous to
+high-level programming languages.  Biform theories are challenging to
+formalize for the same reasons that algorithmic theories are
+challenging to formalize.
 
 We are interested in the problem of whether the little theories method
 can be applied to biform theories.  That is, can a body of
@@ -886,7 +887,7 @@ $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon}$.
       \Implies {}\\
       \hspace*{2ex}(\mname{is-bnum} \, 
       \syn{(u_\epsilon \; \mname{BPLUS} \; v_\epsilon)} \And {}
-      \hspace*{2.8ex}(\sembrack{\syn{u_\epsilon \; \mname{BPLUS} \; 
+      (\sembrack{\syn{u_\epsilon \; \mname{BPLUS} \; 
       v_\epsilon}}_\iota = 
       \sembrack{\syn{u_\epsilon}}_\iota + \sembrack{\syn{v_\epsilon}}_\iota)))$.
 
@@ -958,7 +959,7 @@ along with quotation and evaluation operators for the entire language
 of expressions.
 \item In the local approach, a new inductive type for each new
 ``language'' (the numerals, the numerals with plus, the numerals with
-plus and times, all three of these augmented with variables, first order
+plus and times, all three of these augmented with variables, first-order
 logic, binary digits, binary numerals) has to be created.  For many of 
 these, a variety of traversals (folds) have to be implemented ``by hand''
 even though the recursion patterns are obvious, at least to humans.

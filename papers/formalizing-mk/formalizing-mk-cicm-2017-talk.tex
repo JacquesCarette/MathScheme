@@ -1,0 +1,935 @@
+\documentclass[t,12pt,numbers,fleqn]{beamer}
+%\documentclass[t,12pt,numbers,fleqn,handout]{beamer}
+
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{wasysym}
+\usepackage{color}
+\usepackage{url}
+\usepackage{phonetic}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{arrows,decorations,decorations.pathmorphing}
+\usepackage{array}
+\usepackage{pgf}
+\usepackage{pgfpages} 
+\usepackage{multirow} 
+
+%\iffalse
+% for Agda
+\usepackage[references]{agda}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\DeclareUnicodeCharacter{8799}{$\stackrel{?}{=}$}
+\DeclareUnicodeCharacter{931}{$\Sigma$}
+\DeclareUnicodeCharacter{9679}{\ensuremath{\bullet}}
+\DeclareUnicodeCharacter{945}{\ensuremath{\alpha}}
+\DeclareUnicodeCharacter{964}{\ensuremath{\tau}}
+\DeclareUnicodeCharacter{958}{\ensuremath{\xi}}
+\DeclareUnicodeCharacter{8759}{\ensuremath{\:\!\!\:}}
+%\fi
+
+%\pgfpagesuselayout{resize to}[letterpaper, border shrink=5mm,landscape] 
+%\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm] 
+
+\usepackage{fancybox}
+%\usepackage{times}
+
+\useoutertheme{split}
+
+\mode<presentation>{}
+
+%\mode<presentation>{
+%\usecolortheme{whale}
+%\usecolortheme{orchid}
+%\useinnertheme[shadow]{rounded}
+%}
+
+%\setbeamerfont{structure}{series=\bfseries}
+%\usefonttheme[stillsansseriftext,stillsansserifmath]{serif}
+%\usetheme{Madrid}
+
+\setbeamertemplate{navigation symbols}{} 
+\setbeamertemplate{itemize item}[ball]
+\setbeamersize{text margin left = 4mm}
+\setbeamersize{text margin right = 4mm}
+
+\input{def-beamer}
+
+\newcommand{\qzero}{${\cal Q}_0$}
+\newcommand{\qzerou}{${\cal Q}^{\rm u}_{0}$}
+\newcommand{\qzerouqe}{${\cal Q}^{\rm uqe}_{0}$}
+\newcommand{\churchqe}{$\mbox{\sc ctt}_{\rm qe}$}
+\newcommand{\churchuqe}{$\mbox{\sc ctt}_{\rm uqe}$}
+\newcommand{\syn}[1]{\textcolor{red}{#1}}
+
+\newtheorem{biformthy}{Biform Theory}
+\newtheorem{thymorphism}{Theory Morphism}
+
+\newcommand{\inclusion}{\hookrightarrow}
+\newcommand{\view}{\leadsto}
+\tikzstyle{thy}=[draw, circle, thick]
+\tikzstyle{inclusion-arrow}= [right hook-angle 45, thick]
+\tikzstyle{preview}=[decorate,
+                     decoration={coil,aspect=0,amplitude=1pt,
+                                 segment length=6pt,
+                                 pre=lineto,pre length=5pt,
+                                 post=lineto,post length=7pt},
+                     thick]
+\tikzstyle{view-arrow}= [preview,-angle 45, thick]
+
+\title{ {\normalsize \bgreen{\bf CICM 2017}}\\[1.5ex] {\large \bf
+    Formalizing Mathematical Knowledge as a Biform Theory Graph: A
+    Case Study}
+\vspace{-1.5ex}
+}
+
+\author[Farmer]{
+Jacques Carette and \underline{William M. Farmer}\\
+\vspace*{-1.5ex}
+}
+
+\institute{
+Department of Computing and Software\\
+McMaster University
+\vspace*{-1.5ex}
+} 
+
+\date{
+{\small 18 July 2017}
+
+\bc
+ \includegraphics[scale = 0.2, keepaspectratio]
+{$HOME/doc/images/mcmaster-logo-full-color.jpg}%$
+\ec
+}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setbeamertemplate{footline}{}
+\begin{frame}
+\vspace{-1.5ex} 
+\titlepage
+\end{frame}
+
+\setbeamertemplate{footline}{
+\begin{beamercolorbox}{sectioninhead/foot}
+\bblue{\hrulefill}
+
+\vspace{1ex}
+\hspace{1ex}
+{\tiny W. M. Farmer
+\hfill 
+Formalizing Mathematical Knowledge as a Biform Theory Graph: A Case Study
+\hfill
+\insertframenumber/\ref{lastframe}}
+\vspace{1ex}
+\end{beamercolorbox}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{MathScheme Project {\small \bbrown{[CFO11]}}}
+\bi
+
+  \item A long-term project at McMaster University lead by Jacques
+    Carette and William Farmer.
+
+  \item Its objective is to develop a new approach to mechanized
+    mathematics in which \bgreen{axiomatic and algorithmic mathematics are
+    tightly integrated.}
+
+  \item \bbrown{Two key ideas}: 
+
+  \be
+
+    \item \bblue{Little theories method}.
+
+    \item \bblue{Biform theories}.
+
+  \ee
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Little Theories Method {\small \bbrown{[FGT92]}}}
+\bi
+
+  \item A complex body of mathematical knowledge is encoded by the
+    \bblue{little theories method} as a \bblue{theory graph}
+    \bbrown{[Kol14]} in which:
+
+  \be
+
+    \item The nodes are \bblue{theories}.
+
+    \item The edges are \bblue{theory morphisms}, meaning-preserving
+      mappings from one theory to another.
+
+  \ee
+
+  \item The theory morphisms are \bgreen{information conduits} that
+    enable definitions and theorems to be transported between
+    theories.
+
+  \item A theory graph enables formalization at the most convenient
+    level of abstraction using the most convenient vocabulary.
+
+  \item The \bblue{tiny theories method} is a refinement in which each
+    theory is obtained from another theory by the addition of a single
+    concept.
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Biform Theories {\small \bbrown{[FM03,CF08]}}}
+\bi
+
+  \item A \bblue{biform theory} is a triple $T =
+    (L,\Pi,\Gamma)$ where:
+
+  \be
+
+    \item $L$ is a language of some underlying logic that is generated from a
+      set of \bblue{symbols} (e.g., types and constants).
+
+    \item The expressions in $L$ denote mathematical values that
+      include \bblue{syntactic values} representing the expressions of
+      $L$.
+
+    \item $\Pi$ is a set of \bblue{transformers} that implement
+      functions on the expressions of $L$ and are represented by
+      symbols of $L$.
+
+    \item $\Gamma$ is a set of \bblue{axioms} (formulas of $L$) that
+      express properties about the symbols (and thus about the
+      transformers) of $L$.
+
+  \ee
+
+  \item Transformers may be specified in $T$ but implemented externally.
+
+  \item $T$ is an \bblue{axiomatic theory} if $\Pi$ is empty and an
+    \bblue{algorithmic theory} if $\Gamma$ is empty.
+
+  \item An implementation of a biform theory requires a
+    \bgreen{metareasoning infrastructure with reflection} using a
+    \bgreen{local} or \bgreen{global} approach.
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Metareasoning Infrastructure}
+\begin{figure}
+\center
+\begin{tikzpicture}[scale=.6]
+  \filldraw[very thick, fill=gray!20] (0,0) circle (3);
+    \draw (-1.8,+1.8) node {\Large $L$};
+  \filldraw[very thick, fill=yellow!40] (+1,0) circle (1);
+    \draw (+1,0) node {\Large $L_{\rm obj}$};
+  \filldraw[very thick, fill=brown!40] (+6,0) circle (1);
+    \draw (+6,0) node {\Large $L_{\rm syn}$};
+  \draw[-triangle 45, very thick, color=blue!80!black] (+1,+1) -- (+6,+1);
+    \draw[right] (+2.8,+1.7) node {\Large \bblue{quotation}};
+  \draw[-triangle 45, very thick, color=red!80!black] (+6,-1) -- (+1,-1);
+    \draw[right] (+2.8,-1.7) node {\Large \bred{evaluation}};
+  \draw[-triangle 45, color=green!55!black] (7,0) .. controls 
+    (8.5,.5) and (8.13,-2.13) .. (6.71,-.71);
+    \draw[right] (7.9,-.4) node {\bgreen{alg}};
+\end{tikzpicture}
+\end{figure}
+
+\medskip
+
+\bi
+
+  \item[] $L$: language of the logic.
+
+  \item[] $L_{\rm obj}$: language on which to perform computation.
+
+  \item[] $L_{\rm syn}$: language of syntactic values for $L_{\rm
+    obj}$ (in the metalogic).
+
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Metareasoning with Local Reflection}
+\begin{figure}
+\center
+\begin{tikzpicture}[scale=.6]
+  \filldraw[very thick, fill=gray!20] (3.5,0) ellipse (6 and 4);
+    \draw (0,+2.6) node {\Large $L$};
+  \filldraw[very thick, fill=yellow!40] (+1,0) circle (1);
+    \draw (+1,0) node {\Large $L_{\rm obj}$};
+  \filldraw[very thick, fill=brown!40] (+6,0) circle (1);
+    \draw (+6,0) node {\Large $L_{\rm syn}$};
+  \draw[-triangle 45, very thick, color=blue!80!black] (+1,+1) -- (+6,+1);
+    \draw[right] (+1.8,+1.7) node {\Large \bblue{quotation}};
+  \draw[-triangle 45, very thick, color=red!80!black] (+6,-1) -- (+1,-1);
+    \draw[right] (+1.8,-1.7) node {\Large \bred{evaluation}};
+  \draw[-triangle 45, color=green!55!black] (7,0) .. controls 
+    (8.5,.5) and (8.13,-2.13) .. (6.71,-.71);
+    \draw[right] (7.9,-.4) node {\bgreen{alg}};
+\end{tikzpicture}
+\end{figure}
+
+\medskip
+
+\bi
+
+  \item[] \bblue{Advantages}: (1) $L_{\rm syn}$ resides in the logic and\\
+    (2) the approach is implementable in many logics.
+
+  \item[] \bblue{Disadvantage}: Does not scale up --- many of these
+    infrastructures are needed.
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Metareasoning with Global Reflection}
+\vspace*{-3ex}
+\begin{figure}
+\center
+\begin{tikzpicture}[scale=.6]
+  \filldraw[very thick, fill=yellow!40] (3.5,0) ellipse (6 and 4);
+    \draw (+1.4,+2.6) node {\Large $L=L_{\rm obj}$};
+  \filldraw[very thick, fill=brown!40] (+6,0) circle (1);
+    \draw (+6,0) node {\Large $L_{\rm syn}$};
+  \draw[-triangle 45, very thick, color=blue!80!black] (3.5,4) .. controls
+    (5.5,5.5) and (6,2).. (6,1);
+    \draw[right] (5,4.5) node {\Large \bblue{quotation}};
+  \draw[-triangle 45, very thick, color=red!80!black] (6,-1) .. controls
+    (6,-2) and (5.5,-5.5) .. (3.5,-4);
+    \draw[right] (5,-4.5) node {\Large \bred{evaluation}};
+  \draw[-triangle 45, color=green!55!black] (7,0) .. controls 
+    (8.5,.5) and (8.13,-2.13) .. (6.71,-.71);
+    \draw[right] (7.9,-.4) node {\bgreen{alg}};
+\end{tikzpicture}
+\end{figure}
+\vspace*{-1ex}
+
+\bi
+
+  \item[] \bblue{Advantages}: (1) $L_{\rm syn}$ resides in the logic
+    and\\ (2) this approach scales up --- only one infrastructure is
+    needed.
+
+  \item[] \bblue{Disadvantage}: Requires a nontrivial modification of
+    the logic.
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{MathScheme Framework}
+\be
+
+  \item Biform theories are used to combine axiomatic and algorithmic
+    mathematical knowledge.
+
+  \item Biform theories are expressed in a formal logic that supports
+    \bgreen{undefinedness} and \bgreen{metareasoning with global
+      reflection}.
+
+  \bi
+
+    \item Undefinedness: {\sc pf}, $\mbox{\sc pf}^*$, {\lutins}, {\nbgstar},
+      {\stmm}, {\qzerou}.
+
+    \item Quotation and evaluation: Chiron, {\qzerouqe}, {\churchqe},
+      {\churchuqe}.
+
+  \ei
+
+  \item A body of mathematical knowledge is encoded as a \bgreen{graph of
+    biform theories} using the little/tiny theories method.
+
+  \item Algorithms are implemented as generic programs that are
+    specialized using \bgreen{code generation}.
+
+\ee
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Open Question}
+\bi
+
+  \item Can the little/tiny theories method be applied to biform
+    theories?
+
+  \item \bblue{Test case}: A graph of eight biform theories that encode
+    natural number arithmetic and include a variety of transformers.
+
+  \item We describe and compare two formalizations of the test case:
+
+  \be
+
+    \item In {\churchuqe} \bbrown{[Far17]} using \bred{global reflection}.
+
+    \bi
+
+      \item {\churchuqe} is a variant of {\churchqe}
+        \bbrown{[Far16,Far16a]}, a version of Church's type theory
+        with \bgreen{global quotation and evaluation operators}.
+
+      \item {\churchuqe} includes a notion of a \bgreen{theory
+        morphism}.
+
+      \item {\churchuqe} and {\churchqe} are not yet implemented.
+
+    \ei
+
+    \item In Agda using \bred{local reflection}.
+
+    \bi
+
+      \item Agda is an implemented, \bgreen{dependently typed
+        programming language}.
+
+      \item Work is being done to add global reflection to Agda \bbrown{[WS12]}.
+
+    \ei
+
+  \ee
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Test Case: The Biform Theories}
+\vspace{-2ex}
+\footnotesize
+\bc
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+& \textbf{Logic} & \textbf{Constants} & \textbf{Induction} & \textbf{Transformers} & \textbf{Decidability} \\ \hline \hline
+\textbf{BT1} & FOL & $0,S$ & & IS-FO-BT1 & ${\sf undecidable}^*$\\ 
+  & & & & & \\\hline
+\textbf{BT2} & FOL & $0,S,+$ & & IS-FO-BT2, & ${\sf undecidable}^*$\\  
+  & & & & BPLUS & \\\hline
+\textbf{BT3} & FOL & $0,S,+,*$ & & IS-FO-BT3, & ${\sf undecidable}^*$\\  
+  & & & & BTIMES & \\\hline
+\textbf{BT4} & FOL & $0,S,+,*$ & $x = 0 \Orr {}$ & & essentially\\  
+  & & & $\ForsomeApp y \mdot S(y) = x$ & & undecidable\\\hline
+\textbf{BT5} & FOL & $0,S$ & induction & BT5-DEC-PROC & decidable\\  
+  & & & schema & & \\\hline
+\textbf{BT6} & FOL & $0,S,+$ & induction & BT6-DEC-PROC & decidable\\  
+  & & & schema & & \\\hline
+\textbf{BT7} & FOL & $0,S,+,*$ & induction &   & essentially \\  
+  & & & schema & & undecidable\\\hline
+\textbf{BT8} & STT & $0,S$ & induction & & essentially \\  
+  & & & axiom & & undecidable\\\hline
+\end{tabular}
+\ec
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\vspace{-1ex}
+\frametitle{Test Case: The Biform Theory Graph}
+\bc
+\begin{tikzpicture}[scale=2.8]
+\node[thy] (bt1) at (0,0) {BT1};
+\node[thy] (bt2) at (1,0) {BT2};
+\node[thy] (bt3) at (2,0) {BT3};
+\node[thy] (bt4) at (3,0) {BT4};
+  \draw (3.1,-.2) node[below] {\parbox{12ex}{\borange{Robinson\\ Arithmetic}}};
+\node[thy] (bt5) at (0,1) {BT5};
+\node[thy] (bt6) at (1,1) {BT6};
+  \draw (1.1,1.2) node[above] {\parbox{12ex}{\borange{Presburger\\ Arithmetic}}};
+\node[thy] (bt7) at (2,1) {BT7};
+  \draw (2.1,1.2) node[above] {\parbox{12ex}{\borange{First-Order\\ Peano\\ Arithmetic}}};
+\node[thy] (bt8) at (3,1) {BT8};
+  \draw (3.1,1.2) node[above] {\parbox{12ex}{\borange{Higher-Order Peano\\ Arithmetic}}};
+\draw[inclusion-arrow] (bt1) to (bt2);
+\draw[inclusion-arrow] (bt2) to (bt3);
+\draw[inclusion-arrow] (bt3) to (bt4);
+\draw[inclusion-arrow] (bt1) to (bt5);
+\draw[inclusion-arrow] (bt2) to (bt6);
+\draw[inclusion-arrow] (bt3) to (bt7);
+\draw[inclusion-arrow] (bt5) to (bt6);
+\draw[inclusion-arrow] (bt6) to (bt7);
+\draw[view-arrow] (bt4) to (bt7);
+\draw[view-arrow] (bt7) to (bt8);
+\end{tikzpicture}
+\ec
+\vspace{-2ex}
+The $\inclusion$ arrows denote theory inclusions.\\
+The $\view$ arrows denote theory morphisms that are not inclusions.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{BT6 (Presburger Arithmetic) in {\churchqe} [1/5]}
+\small
+\bi
+
+  \item[] \textbf{Primitive Base Types}
+
+  \be
+
+    \item $\iota$ (type of natural numbers).
+
+  \ee
+
+  \item[] \textbf{Primitive Constants}
+
+  \be
+
+    \item $0_\iota$.
+
+    \item $S_{\iota \tarrow \iota}$.
+
+    \item $+_{\iota \tarrow \iota \tarrow \iota}$ (infix).
+
+    \item $\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$ (infix).
+
+    \setcounter{enumi}{5}
+
+    \item $\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon}$.
+
+  \ee
+
+  \item[] \textbf{Defined Constants (selected)}
+
+  \be
+
+    \item $1_\iota = S \, 0_\iota$.
+
+  \ee
+
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{BT6 (Presburger Arithmetic) in {\churchqe} [2/5]}
+\small
+\vspace{-2ex}
+\bi
+
+  \item[] 
+
+  \be
+
+    \setcounter{enumi}{2}
+
+    \item $\mname{bnat}_{\iota \tarrow \iota \tarrow \iota} =
+      \LambdaApp x_\iota \mdot \LambdaApp y_\iota \mdot ((x_\iota +
+      x_\iota) + y_\iota)$.
+      
+    Notational definition:
+
+    \bi
+
+      \item[] $(0)_2 = \mname{bnat} \, 0_\iota \, 0_\iota$.
+  
+      \item[] $(1)_2 = \mname{bnat} \, 0_\iota \, 1_\iota$.
+  
+      \item[] $(a_1 \cdots a_n0)_2 = \mname{bnat} \, (a_1 \cdots
+        a_n)_2 \, 0_\iota$ {\sglsp} where each $a_i$ is 0 or 1.
+  
+      \item[] $(a_1 \cdots a_n1)_2 = \mname{bnat} \, (a_1 \cdots
+        a_n)_2 \, 1_\iota$ {\sglsp} where each $a_i$ is 0 or 1.
+  
+    \ei
+
+    \item $\mname{is-bnum}_{\epsilon \tarrow o} = 
+      \IotaApp f_{\epsilon \tarrow o} \mdot
+      \ForallApp \syn{u_\epsilon} \mdot
+      (f_{\epsilon \tarrow \epsilon} \, \syn{u_\epsilon} \Iff {}\newline
+      \hspace*{2ex}\ForsomeApp \syn{v_\epsilon} \mdot 
+      \ForsomeApp \syn{w_\epsilon} \mdot
+      (\syn{u_\epsilon} = \syn{\synbrack{\mname{bnat} \, 
+      \commabrack{v_\epsilon} \, \commabrack{w_\epsilon}}} \Andd {}\newline
+      \hspace*{4ex}(\syn{v_\epsilon} = \syn{\synbrack{0_\iota}} \Orr
+      f_{\epsilon \tarrow \epsilon} \, \syn{v_\epsilon}) \Andd
+      (\syn{w_\epsilon} = \syn{\synbrack{0_\iota}} \Orr
+      \syn{w_\epsilon} =
+      \syn{\synbrack{1_\iota}})))$.
+
+    \item $\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon} = \LambdaApp
+      x_\epsilon \mdot \textbf{B}_\epsilon$ {\sglsp} where
+      $\textbf{B}_\epsilon$ is a complex expression such that
+      $\syn{(\LambdaApp x_\epsilon \mdot \textbf{B}_\epsilon) \,
+        \synbrack{\textbf{A}_\alpha}}$ equals $\syn{\synbrack{T_o}}$
+      [$\syn{\synbrack{F_o}}$] if $\textbf{A}_\alpha$ is [not] a term
+      or formula of first-order logic whose variables are of type
+      $\iota$ and nonlogical constants are members of
+      $\set{0_\iota,S_{\iota \tarrow \iota},+_{\iota \tarrow \iota
+          \tarrow \iota}}$.
+
+    \setcounter{enumi}{6}
+
+    \item $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon} = {}\newline
+    \LambdaApp \syn{x_\epsilon} \mdot 
+    (\If \; (\mname{is-abs}_{\epsilon \tarrow o} \, \syn{x_\epsilon}) \;
+    \syn{(\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon} \,
+    (\mname{abs-body}_{\epsilon \tarrow \epsilon} \, x_\epsilon))} \;
+    \syn{\synbrack{F_o}})$.
+
+  \ee
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{BT6 (Presburger Arithmetic) in {\churchqe} [3/5]}
+\small
+\bi
+
+  \item[] \textbf{Axioms}
+
+  \be
+
+    \item $S \, x_\iota \not= 0_\iota$.
+
+    \item $S \, x_\iota = S \, y_\iota \Implies x_\iota =
+      y_\iota$.
+
+    \item $x_\iota + 0_\iota = x_\iota$.
+
+    \item $x_\iota + S \, y_\iota = S \, (x_\iota + y_\iota)$.
+
+    \item $\mname{is-bnum} \, \syn{u_\epsilon} \Implies
+      \syn{u_\epsilon \; \mname{BPLUS} \; \synbrack{(0)_2}} =
+      \syn{u_\epsilon}$.
+
+    \item[] $\vdots$
+
+    \setcounter{enumi}{14}
+
+    \item $(\mname{is-bnum} \, \syn{u_\epsilon} \Andd \mname{is-bnum}
+      \, \syn{v_\epsilon}) \Implies {}\newline
+        \hspace*{2ex} \syn{\synbrack{\mname{bnat} \,
+            \commabrack{u_\epsilon} \, 1_\iota} \; \mname{BPLUS} \;
+          \synbrack{\mname{bnat} \, \commabrack{v_\epsilon} \, 1_\iota}} = {}\newline
+        \hspace*{2ex}\syn{\synbrack{\mname{bnat} \,
+            \commabrack{(u_\epsilon \; \mname{BPLUS} \; v_\epsilon)
+              \; \mname{BPLUS} \; \synbrack{(1)_2}} \, 0_\iota}}$.
+
+    \setcounter{enumi}{28}
+
+    \item Induction Schema for $S$ and $+$
+
+    $\ForallApp \syn{f_\epsilon} \mdot 
+    ((\mname{is-expr}_{\epsilon \tarrow o}^{\iota \tarrow o} \, \syn{f_\epsilon} \Andd
+    \sembrack{\syn{\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon} \, 
+    f_\epsilon}}_o) \Implies {} \newline
+    \hspace*{2ex}((\sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 0_\iota \Andd
+    (\ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota \Implies
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, 
+    (\mname{S} \, x_\iota))) \Implies {}\newline
+    \hspace*{4ex}\ForallApp x_\iota \mdot 
+    \sembrack{\syn{f_\epsilon}}_{\iota \tarrow o} \, x_\iota))$.
+
+  \ee
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{BT6 (Presburger Arithmetic) in {\churchqe} [4/5]}
+\small
+\vspace{-2ex}
+\bi
+
+  \item[]
+
+  \be
+
+    \setcounter{enumi}{28}
+
+    \item Meaning formula for $\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon}$.
+
+    $\ForallApp \syn{u_\epsilon} \mdot 
+    ((\mname{is-expr}_{\epsilon \tarrow o}^{o} \, 
+    \syn{u_\epsilon}  \Andd
+    \mname{is-closed}_{\epsilon \tarrow o} \, \syn{u_\epsilon} \Andd 
+    \sembrack{\syn{\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon} \, 
+    u_\epsilon}}_o) \Implies {}\newline
+    \hspace*{2ex}((\syn{\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon} = 
+    \syn{\synbrack{T_o}} \Orr {}\newline
+    \hspace*{3.9ex}\syn{\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon} = 
+    \syn{\synbrack{F_o}}) \Andd {}\newline
+    \hspace*{3.1ex}
+    \sembrack{\syn{\mname{BT6-DEC-PROC}_{\epsilon \tarrow \epsilon} \, u_\epsilon}}_o =
+    \sembrack{\syn{u_\epsilon}}_o))$.
+
+  \ee
+
+  \item[] \textbf{Transformers}
+
+  \be
+
+    \setcounter{enumi}{2}
+
+    \item $\pi_3$ for $\mname{BPLUS}_{\epsilon \tarrow \epsilon
+      \tarrow \epsilon}$ is an efficient program that satisfies Axioms
+      5--15.
+
+    \item $\pi_4$ for $\mname{BPLUS}_{\epsilon \tarrow \epsilon
+      \tarrow \epsilon}$ uses Axioms 5--15 as conditional rewrite
+      rules.
+
+    \item $\pi_5$ for $\mname{IS-FO-BT2}_{\epsilon \tarrow
+      \epsilon}$ is an efficient program that accesses the data
+      stored in the data structures that represent expressions.
+
+    \item $\pi_6$ for $\mname{IS-FO-BT2}_{\epsilon \tarrow \epsilon}$
+      uses the definition of $\mname{IS-FO-BT2}_{\epsilon \tarrow
+        \epsilon}$.
+
+    \setcounter{enumi}{13}
+
+    \item $\pi_{14}$ for $\mname{BT6-DEC-PROC}_{\epsilon \tarrow
+      \epsilon \tarrow \epsilon}$ is an efficient decision procedure
+      that satisfies Axiom 30.
+
+  \ee
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{BT6 (Presburger Arithmetic) in {\churchqe} [5/5]}
+\small
+\vspace{-2ex}
+\bi
+
+  \item[]
+
+  \be
+
+    \setcounter{enumi}{14}
+
+    \item $\pi_{15}$ for $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow
+      \epsilon}$ is an efficient program that accesses the data stored
+      in the data structures that represent expressions.
+
+    \item $\pi_{16}$ for $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow
+      \epsilon}$ uses the definition of
+      $\mname{IS-FO-BT2-ABS}_{\epsilon \tarrow \epsilon}$.
+
+  \ee
+
+  \item[] \textbf{Theorems (selected)}
+
+    \be
+
+      \setcounter{enumi}{2}
+
+      \item Meaning formula for 
+      $\mname{BPLUS}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$
+
+      $\ForallApp \syn{u_\epsilon} \mdot \ForallApp \syn{v_\epsilon} \mdot
+      ((\mname{is-bnum} \, \syn{u_\epsilon} \Andd \mname{is-bnum} \, \syn{v_\epsilon}) 
+      \Implies {}\newline
+      \hspace*{2ex}(\mname{is-bnum} \, 
+      \syn{(u_\epsilon \; \mname{BPLUS} \; v_\epsilon)} \Andd {}\newline
+      \hspace*{2.6ex}(\sembrack{\syn{u_\epsilon \; \mname{BPLUS} \; 
+      v_\epsilon}}_\iota = 
+      \sembrack{\syn{u_\epsilon}}_\iota + \sembrack{\syn{v_\epsilon}}_\iota)))$.
+
+    \ee
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{BT6 (Presburger Arithmetic) in Agda}
+\begin{code}%
+\>\AgdaKeyword{module} \AgdaModule{T6} \AgdaKeyword{where}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Relation.Binary} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{DecSetoid}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Level} \AgdaKeyword{using} \AgdaSymbol{()} \AgdaKeyword{renaming} \AgdaSymbol{(}\AgdaPrimitive{zero} \AgdaSymbol{to} \AgdaPrimitive{lzero}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{DT} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁}\<%
+\\
+\>\AgdaFunction{DT} \AgdaSymbol{=} \AgdaRecord{DecSetoid} \AgdaPrimitive{lzero} \AgdaPrimitive{lzero}\<%
+\\
+%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{T1} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{BT₁}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{T2} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{BT₂}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{T5} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{BT₅}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Relation.Binary.PropositionalEquality} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{\_≡\_}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Empty} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{⊥}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Sum} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{\_⊎\_}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Product} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{Σ}\AgdaSymbol{;}\AgdaFunction{\_×\_}\AgdaSymbol{;}\AgdaInductiveConstructor{\_,\_}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Bool} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{Bool}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Equiv} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{\_≃\_}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Variables} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaKeyword{module} \AgdaModule{VarLangs}\AgdaSymbol{;} \AgdaFunction{NoVars}\AgdaSymbol{;} \AgdaFunction{DBool}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Language}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{using} \AgdaSymbol{(}\AgdaKeyword{module} \AgdaModule{FOL}\AgdaSymbol{;}\<%
+\\
+\>[2]\AgdaIndent{9}{}\<[9]%
+\>[9]\AgdaKeyword{module} \AgdaModule{LogicOverL}\AgdaSymbol{)}\<%
+\end{code}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Conclusion}
+\bi
+
+  \item We have proposed a biform theory graph test case encoding
+    natural number arithmetic and including various transformers.
+
+\pause
+
+  \item We have formalized the test case in (1) {\churchuqe} using 
+    global reflection and (2) Agda using the local reflection.
+
+  \bi
+
+    \item We have obtain substantial partial formalizations that
+      indicate full formalizations could be obtain with additional
+      work.
+
+  \ei
+
+\pause
+
+  \item Our results show that the global approach has a significant
+    advantage over the local approach ---
+
+  \bi
+
+    \item[] since the local approach requires a separate
+      infrastructure for each set of expressions manipulated by a
+      transformer.
+ 
+  \ei
+
+\pause
+
+  \item We recommend that future research be directed to making the
+    global approach practical for formalizing biform theories.
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}\label{lastframe}
+\frametitle{References}
+\scriptsize
+\bi
+
+  \item \bbrown{[WS12]} P. van der Walt and W. Swierstra,
+    ``Engineering proof by reflection in Agda'', in:
+    \emph{Implementation and Application of Functional Languages},
+    LNCS~8241:157--173, 2012.
+
+  \item \bbrown{[CF08]} J. Carette and W. M. Farmer, ``High-level
+    theories'', in: \emph{Intelligent Computer Mathematics}, LNCS
+    5144:232--245, 2008.
+
+  \item \bbrown{[CFO11]} J. Carette, W. M. Farmer, and R. O'Connor,
+    ``MathScheme: Project description'', in: \emph{Intelligent
+    Computer Mathematics}, LNCS~6824:287--288, 2011.
+
+  \item \bbrown{[Far16]} W. M. Farmer, ``Incorporating quotation and
+    evaluation into Church's type theory: Syntax and semantics'', in:
+    \emph{Intelligent Computer Mathematics}, LNCS 9791:83--98, 2016
+
+  \item \bbrown{[Far16a]} W. M. Farmer, ``Incorporating quotation and
+    evaluation into Church's type theory'', in: CoRR, abs/1612.02785
+    (72 pp.), 2016.
+
+  \item \bbrown{[Far17]} W. M. Farmer, ``Theory morphisms in Church's
+    type theory with quotation and evaluation'', in: \emph{Intelligent
+      Computer Mathematics}, LNCS 10383, 16~pp., 2017.
+
+  \item \bbrown{[FGT92]} W. M. Farmer, J. D. Guttman, and
+    F. J. Thayer, ``Little theories'', in: \emph{Automated Deduction
+      --- CADE-11}, LNCS 607:567--581, 1992.
+
+  \item \bbrown{[FM03]} W. M. Farmer and M. von Mohrenschildt, ``An
+    overview of a Formal Framework for Managing Mathematics'', Annals
+    of Mathematics and Artificial Intelligence 38:165--191, 2003.
+
+  \item \bbrown{[Kol14]} M. Kohlhase, ``Mathematical knowledge
+    management: Transcending the one-brain-barrier with theory
+    graphs'', EMS Newletter 92:22--27, 2014.
+
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\iffalse
+
+\begin{frame}
+\frametitle{}
+\bi
+
+  \item 
+
+\ei
+\end{frame}
+
+\fi
+
+\end{document}
