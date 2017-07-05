@@ -97,14 +97,12 @@ McMaster University
 \vspace*{-1.5ex}
 } 
 
-\date{
-{\small 18 July 2017}
-
-\bc
- \includegraphics[scale = 0.2, keepaspectratio]
-{$HOME/doc/images/mcmaster-logo-full-color.jpg}%$
-\ec
-}
+\date{ {\small 18 July 2017} }
+% Jacques: comment this out as the file should be in the repo too.  
+%\bc
+% \includegraphics[scale = 0.2, keepaspectratio]{$HOME/doc/images/mcmaster-logo-full-color.jpg}
+%\ec
+% }
 
 \begin{document}
 
@@ -775,56 +773,106 @@ The $\view$ arrows denote theory morphisms that are not inclusions.
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{BT1 in Agda}
+\hspace*{-1.3cm}
+\begin{minipage}{\textwidth}
+{\footnotesize
+\begin{code}%
+\>\<%
+\\
+\>\AgdaKeyword{record} \AgdaRecord{BT₁} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{field}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{nat} \AgdaSymbol{:} \AgdaPrimitiveType{Set₀}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{Z} \AgdaSymbol{:} \AgdaField{nat}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{S} \AgdaSymbol{:} \AgdaField{nat} \AgdaSymbol{→} \AgdaField{nat}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{S≠Z} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{x} \AgdaSymbol{→} \AgdaFunction{¬} \AgdaSymbol{(}\AgdaField{S} \AgdaBound{x} \AgdaDatatype{≡} \AgdaField{Z}\AgdaSymbol{)}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{inj} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{x} \AgdaBound{y} \AgdaSymbol{→} \AgdaField{S} \AgdaBound{x} \AgdaDatatype{≡} \AgdaField{S} \AgdaBound{y} \AgdaSymbol{→} \AgdaBound{x} \AgdaDatatype{≡} \AgdaBound{y}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{One} \AgdaSymbol{:} \AgdaField{nat}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{One} \AgdaSymbol{=} \AgdaField{S} \AgdaField{Z}\<%
+\end{code} 
+}
+\end{minipage}
+\end{frame}
 
 \begin{frame}
 \frametitle{BT6 (Presburger Arithmetic) in Agda}
+\hspace*{-1.3cm}
+\begin{minipage}{\textwidth}
+{\footnotesize
 \begin{code}%
-\>\AgdaKeyword{module} \AgdaModule{T6} \AgdaKeyword{where}\<%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Relation.Binary} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{DecSetoid}\AgdaSymbol{)}\<%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Level} \AgdaKeyword{using} \AgdaSymbol{()} \AgdaKeyword{renaming} \AgdaSymbol{(}\AgdaPrimitive{zero} \AgdaSymbol{to} \AgdaPrimitive{lzero}\AgdaSymbol{)}\<%
-\\
-%
-\\
-\>\AgdaFunction{DT} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁}\<%
-\\
-\>\AgdaFunction{DT} \AgdaSymbol{=} \AgdaRecord{DecSetoid} \AgdaPrimitive{lzero} \AgdaPrimitive{lzero}\<%
-\\
-%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{T1} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{BT₁}\AgdaSymbol{)}\<%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{T2} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{BT₂}\AgdaSymbol{)}\<%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{T5} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{BT₅}\AgdaSymbol{)}\<%
-\\
-%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Relation.Binary.PropositionalEquality} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{\_≡\_}\AgdaSymbol{)}\<%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Empty} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{⊥}\AgdaSymbol{)}\<%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Sum} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{\_⊎\_}\AgdaSymbol{)}\<%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Product} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{Σ}\AgdaSymbol{;}\AgdaFunction{\_×\_}\AgdaSymbol{;}\AgdaInductiveConstructor{\_,\_}\AgdaSymbol{)}\<%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Bool} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{Bool}\AgdaSymbol{)}\<%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Equiv} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaRecord{\_≃\_}\AgdaSymbol{)}\<%
-\\
-%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Variables} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaKeyword{module} \AgdaModule{VarLangs}\AgdaSymbol{;} \AgdaFunction{NoVars}\AgdaSymbol{;} \AgdaFunction{DBool}\AgdaSymbol{)}\<%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Language}\<%
+\>\AgdaKeyword{record} \AgdaRecord{BT₆} \AgdaSymbol{\{}\AgdaBound{t₁} \AgdaSymbol{:} \AgdaRecord{BT₁}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{t₂} \AgdaSymbol{:} \AgdaRecord{BT₂} \AgdaBound{t₁}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{t₅} \AgdaSymbol{:} \AgdaRecord{BT₅} \AgdaBound{t₁}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁} \AgdaKeyword{where}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{using} \AgdaSymbol{(}\AgdaKeyword{module} \AgdaModule{FOL}\AgdaSymbol{;}\<%
+\>[2]\AgdaKeyword{open} \AgdaModule{VarLangs} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaFunction{XV}\AgdaSymbol{;} \AgdaInductiveConstructor{x}\AgdaSymbol{)}\<%
 \\
-\>[2]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaKeyword{module} \AgdaModule{LogicOverL}\AgdaSymbol{)}\<%
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{DecSetoid} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaField{Carrier}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{BT₂} \AgdaBound{t₂} \AgdaKeyword{public}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{fo₂} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{FOL}\AgdaSymbol{;} \AgdaInductiveConstructor{tt}\AgdaSymbol{;} \AgdaInductiveConstructor{ff}\AgdaSymbol{;} \AgdaFunction{LoL-FOL}\AgdaSymbol{;} \AgdaInductiveConstructor{\_and\_}\AgdaSymbol{;} \AgdaInductiveConstructor{all}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{LogicOverL} \AgdaFunction{LoL-FOL}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{field}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{induct} \AgdaSymbol{:} \AgdaSymbol{(}\AgdaBound{e} \AgdaSymbol{:} \AgdaDatatype{FOL} \AgdaFunction{XV}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaFunction{⟦} \AgdaBound{e} \AgdaFunction{⟧} \AgdaSymbol{(λ} \AgdaSymbol{\{} \AgdaInductiveConstructor{x} \AgdaSymbol{→} \AgdaFunction{⟦} \AgdaNumber{0} \AgdaFunction{⟧₁} \AgdaSymbol{\})} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaSymbol{(∀} \AgdaBound{y} \AgdaSymbol{→} \AgdaFunction{⟦} \AgdaBound{e} \AgdaFunction{⟧} \AgdaSymbol{(λ} \AgdaSymbol{\{}\AgdaInductiveConstructor{x} \AgdaSymbol{→} \AgdaBound{y}\AgdaSymbol{\})} \AgdaSymbol{→} \AgdaFunction{⟦} \AgdaBound{e} \AgdaFunction{⟧} \AgdaSymbol{(λ} \AgdaSymbol{\{}\AgdaInductiveConstructor{x} \AgdaSymbol{→} \AgdaFunction{S} \AgdaBound{y}\AgdaSymbol{\}))} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaSymbol{∀} \AgdaBound{y} \AgdaSymbol{→} \AgdaFunction{⟦} \AgdaBound{e} \AgdaFunction{⟧} \AgdaSymbol{(λ} \AgdaSymbol{\{}\AgdaInductiveConstructor{x} \AgdaSymbol{→} \AgdaBound{y}\AgdaSymbol{\})}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{postulate}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaPostulate{decide} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaSymbol{(}\AgdaField{Carrier} \AgdaBound{W} \AgdaSymbol{→} \AgdaFunction{nat}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{W} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaFunction{NoVars}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaPostulate{meaning-decide} \AgdaSymbol{:} \AgdaSymbol{\{}\AgdaBound{W} \AgdaSymbol{:} \AgdaFunction{DT}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{env} \AgdaSymbol{:} \AgdaField{Carrier} \AgdaBound{W} \AgdaSymbol{→} \AgdaFunction{nat}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaSymbol{(}\AgdaBound{env′} \AgdaSymbol{:} \AgdaDatatype{⊥} \AgdaSymbol{→} \AgdaFunction{nat}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaSymbol{(}\AgdaBound{e} \AgdaSymbol{:} \AgdaDatatype{FOL} \AgdaBound{W}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaKeyword{let} \AgdaBound{res} \AgdaSymbol{=} \AgdaPostulate{decide} \AgdaBound{env} \AgdaBound{e} \AgdaKeyword{in}\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaSymbol{(}\AgdaBound{res} \AgdaDatatype{≡} \AgdaInductiveConstructor{tt} \AgdaDatatype{⊎} \AgdaBound{res} \AgdaDatatype{≡} \AgdaInductiveConstructor{ff}\AgdaSymbol{)} \AgdaFunction{×} \AgdaSymbol{(}\AgdaFunction{⟦} \AgdaBound{e} \AgdaFunction{⟧} \AgdaBound{env}\AgdaSymbol{)} \AgdaRecord{≃} \AgdaSymbol{(}\AgdaFunction{⟦} \AgdaBound{res} \AgdaFunction{⟧} \AgdaBound{env′}\AgdaSymbol{)}\<%
 \end{code}
+}
+\end{minipage}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
