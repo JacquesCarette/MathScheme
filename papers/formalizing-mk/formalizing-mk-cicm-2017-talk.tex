@@ -1,6 +1,9 @@
 \documentclass[t,12pt,numbers,fleqn]{beamer}
 %\documentclass[t,12pt,numbers,fleqn,handout]{beamer}
 
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+
 \usepackage{latexsym}
 \usepackage{amssymb}
 \usepackage{stmaryrd}
@@ -14,14 +17,12 @@
 \usetikzlibrary{arrows,decorations,decorations.pathmorphing}
 \usepackage{array}
 \usepackage{pgf}
-\usepackage{pgfpages} 
+%\usepackage{pgfpages} 
 \usepackage{multirow} 
 
 %\iffalse
 % for Agda
 \usepackage[references]{agda}
-\usepackage{ucs}
-\usepackage[utf8x]{inputenc}
 \DeclareUnicodeCharacter{8799}{$\stackrel{?}{=}$}
 \DeclareUnicodeCharacter{931}{$\Sigma$}
 \DeclareUnicodeCharacter{9679}{\ensuremath{\bullet}}
@@ -80,21 +81,20 @@
                      thick]
 \tikzstyle{view-arrow}= [preview,-angle 45, thick]
 
+\begin{document}
+
 \title{ {\normalsize \bgreen{\bf CICM 2017}}\\[1.5ex] {\large \bf
     Formalizing Mathematical Knowledge as a Biform Theory Graph: A
     Case Study}
-\vspace{-1.5ex}
 }
 
 \author[Farmer]{
-Jacques Carette and \underline{William M. Farmer}\\
-\vspace*{-1.5ex}
+Jacques Carette and William M. Farmer
 }
 
 \institute{
 Department of Computing and Software\\
 McMaster University
-\vspace*{-1.5ex}
 } 
 
 \date{ {\small 18 July 2017} }
@@ -103,8 +103,6 @@ McMaster University
 % \includegraphics[scale = 0.2, keepaspectratio]{$HOME/doc/images/mcmaster-logo-full-color.jpg}
 %\ec
 % }
-
-\begin{document}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -773,9 +771,12 @@ The $\view$ arrows denote theory morphisms that are not inclusions.
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
+
+% Notes: This is just like BT1 in CTT_uqe.  Also defines an injection
+% from Agda's naturals (taken as syntax) to our interface to nat.
+\begin{frame}[fragile]
 \frametitle{BT1 in Agda}
-\hspace*{-1.3cm}
+\hspace*{-0.9cm}
 \begin{minipage}{\textwidth}
 {\footnotesize
 \begin{code}%
@@ -808,10 +809,346 @@ The $\view$ arrows denote theory morphisms that are not inclusions.
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{One} \AgdaSymbol{=} \AgdaField{S} \AgdaField{Z}\<%
-\end{code} 
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{⟦\_⟧₁} \AgdaSymbol{:} \AgdaDatatype{ℕ} \AgdaSymbol{→} \AgdaField{nat}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{⟦} \AgdaNumber{0} \AgdaFunction{⟧₁} \AgdaSymbol{=} \AgdaField{Z}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{⟦} \AgdaInductiveConstructor{suc} \AgdaBound{x} \AgdaFunction{⟧₁} \AgdaSymbol{=} \AgdaField{S} \AgdaFunction{⟦} \AgdaBound{x} \AgdaFunction{⟧₁}\<%
+\end{code}
 }
 \end{minipage}
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%
+
+% Notes: in the local approach, need to define everything 'as
+% syntax'.  binary digits are defined explicitly, and then
+% binary numerals are defined as length>=1 strings of
+% digits, written in low-to-high order (i.e. backwards).
+% << is *2, and +1 is, well, + 1.
+% finally actually define, as a total terminating function,
+% bplus, which works on syntax.
+%
+% we can prove (see online code) the "meaning function"
+% for bplus.
+\begin{frame}[fragile]
+\frametitle{Numerals in Agda}
+\hspace*{-0.9cm}
+\begin{minipage}{\textwidth}
+{\scriptsize
+\begin{code}%
+\>\AgdaKeyword{data} \AgdaDatatype{BinDigit} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where} \AgdaInductiveConstructor{zero} \AgdaInductiveConstructor{one} \AgdaSymbol{:} \AgdaDatatype{BinDigit}\<%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{BNum} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{bn} \AgdaSymbol{:}
+\AgdaSymbol{\{}\AgdaBound{n} \AgdaSymbol{:}
+\AgdaDatatype{ℕ}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Vec}
+\AgdaDatatype{BinDigit} \AgdaSymbol{(}\AgdaInductiveConstructor{suc}
+\AgdaBound{n}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{BNum}\<%
+\\
+%
+\\
+\>\AgdaFunction{<<} \AgdaSymbol{:} \AgdaDatatype{BNum} \AgdaSymbol{→} \AgdaDatatype{BNum}\<%
+\\
+\>\AgdaFunction{<<} \AgdaSymbol{(}\AgdaInductiveConstructor{bn}
+\AgdaBound{l}\AgdaSymbol{)} \AgdaSymbol{=}
+\AgdaInductiveConstructor{bn}
+\AgdaSymbol{(}\AgdaInductiveConstructor{zero}
+\AgdaInductiveConstructor{∷} \AgdaBound{l}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{+1} \AgdaSymbol{:} \AgdaDatatype{BNum} \AgdaSymbol{→} \AgdaDatatype{BNum}\<%
+\\
+\>\AgdaFunction{+1} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaSymbol{(}\AgdaInductiveConstructor{zero} \AgdaInductiveConstructor{∷} \AgdaBound{l}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaInductiveConstructor{bn} \AgdaSymbol{(}\AgdaInductiveConstructor{one} \AgdaInductiveConstructor{∷} \AgdaBound{l}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{+1} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaSymbol{(}\AgdaInductiveConstructor{one} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaInductiveConstructor{bn} \AgdaSymbol{(}\AgdaInductiveConstructor{zero} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{one} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{+1} \AgdaSymbol{(}\AgdaInductiveConstructor{bn}
+\AgdaSymbol{(}\AgdaInductiveConstructor{one}
+\AgdaInductiveConstructor{∷} \AgdaBound{x}
+\AgdaInductiveConstructor{∷} \AgdaBound{l}\AgdaSymbol{))}
+\AgdaSymbol{=} \AgdaFunction{<<} \AgdaSymbol{(}\AgdaFunction{+1}
+\AgdaSymbol{(}\AgdaInductiveConstructor{bn}
+\AgdaSymbol{(}\AgdaBound{x} \AgdaInductiveConstructor{∷}
+\AgdaBound{l}\AgdaSymbol{)))}\<%
+\\
+%
+\\
+\>\AgdaFunction{bplus} \AgdaSymbol{:} \AgdaDatatype{BNum} \AgdaSymbol{→} \AgdaDatatype{BNum} \AgdaSymbol{→} \AgdaDatatype{BNum}\<%
+\\
+\>\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaSymbol{\{}\AgdaNumber{0}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{zero} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaBound{y} \AgdaSymbol{=} \AgdaBound{y}\<%
+\\
+\>\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaSymbol{\{}\AgdaNumber{0}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{one} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaBound{y} \AgdaSymbol{=} \AgdaFunction{+1} \AgdaBound{y}\<%
+\\
+\>\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaSymbol{\{}\AgdaInductiveConstructor{suc} \AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{d₀} \AgdaInductiveConstructor{∷} \AgdaBound{l₀}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaSymbol{\{}\AgdaInductiveConstructor{ℕ.zero}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{zero} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaInductiveConstructor{bn} \AgdaSymbol{(}\AgdaBound{d₀} \AgdaInductiveConstructor{∷} \AgdaBound{l₀}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaSymbol{\{}\AgdaInductiveConstructor{suc} \AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{d₀} \AgdaInductiveConstructor{∷} \AgdaBound{l₀}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaSymbol{\{}\AgdaInductiveConstructor{ℕ.zero}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{one} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaFunction{+1} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaSymbol{(}\AgdaBound{d₀} \AgdaInductiveConstructor{∷} \AgdaBound{l₀}\AgdaSymbol{))}\<%
+\\
+\>\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn}
+\AgdaSymbol{\{}\AgdaInductiveConstructor{suc}
+\AgdaBound{n}\AgdaSymbol{\}}
+\AgdaSymbol{(}\AgdaInductiveConstructor{zero}
+\AgdaInductiveConstructor{∷} \AgdaBound{l₀}\AgdaSymbol{))}
+\AgdaSymbol{(}\AgdaInductiveConstructor{bn}
+\AgdaSymbol{\{}\AgdaInductiveConstructor{suc}
+\AgdaBound{m}\AgdaSymbol{\}}
+\AgdaSymbol{(}\AgdaInductiveConstructor{zero}
+\AgdaInductiveConstructor{∷} \AgdaBound{l₁}\AgdaSymbol{))}
+\AgdaSymbol{=} \AgdaFunction{<<} \AgdaSymbol{(}\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaBound{l₀}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaBound{l₁}\AgdaSymbol{))}\<%
+\\
+\>\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn}
+\AgdaSymbol{\{}\AgdaInductiveConstructor{suc}
+\AgdaBound{n}\AgdaSymbol{\}}
+\AgdaSymbol{(}\AgdaInductiveConstructor{one}
+\AgdaInductiveConstructor{∷} \AgdaBound{l₀}\AgdaSymbol{))}
+\AgdaSymbol{(}\AgdaInductiveConstructor{bn}
+\AgdaSymbol{\{}\AgdaInductiveConstructor{suc}
+\AgdaBound{m}\AgdaSymbol{\}}
+\AgdaSymbol{(}\AgdaInductiveConstructor{zero}
+\AgdaInductiveConstructor{∷} \AgdaBound{l₁}\AgdaSymbol{))}
+\AgdaSymbol{=} \AgdaFunction{+1} \AgdaSymbol{(}\AgdaFunction{<<} \AgdaSymbol{(}\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaBound{l₀}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaBound{l₁}\AgdaSymbol{)))}\<%
+\\
+\>\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn}
+\AgdaSymbol{\{}\AgdaInductiveConstructor{suc}
+\AgdaBound{n}\AgdaSymbol{\}}
+\AgdaSymbol{(}\AgdaInductiveConstructor{zero}
+\AgdaInductiveConstructor{∷} \AgdaBound{l₀}\AgdaSymbol{))}
+\AgdaSymbol{(}\AgdaInductiveConstructor{bn}
+\AgdaSymbol{\{}\AgdaInductiveConstructor{suc}
+\AgdaBound{m}\AgdaSymbol{\}}
+\AgdaSymbol{(}\AgdaInductiveConstructor{one}
+\AgdaInductiveConstructor{∷} \AgdaBound{l₁}\AgdaSymbol{))}
+\AgdaSymbol{=} \AgdaFunction{+1} \AgdaSymbol{(}\AgdaFunction{<<} \AgdaSymbol{(}\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaBound{l₀}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaBound{l₁}\AgdaSymbol{)))}\<%
+\\
+\>\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaSymbol{\{}\AgdaInductiveConstructor{suc} \AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{one} \AgdaInductiveConstructor{∷} \AgdaBound{l₀}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaSymbol{\{}\AgdaInductiveConstructor{suc} \AgdaBound{m}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{one} \AgdaInductiveConstructor{∷} \AgdaBound{l₁}\AgdaSymbol{))} \AgdaSymbol{=} \<[56]%
+\>[56]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{+1} \AgdaSymbol{(}\AgdaFunction{+1} \AgdaSymbol{(}\AgdaFunction{<<} \AgdaSymbol{(}\AgdaFunction{bplus} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaBound{l₀}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{bn} \AgdaBound{l₁}\AgdaSymbol{))))}\<%
+\end{code}
+}
+\end{minipage}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%
+
+% Notes: Addition, bnat -- and an interpretation of binary numerals
+% into the (base) nat.
+\begin{frame}
+\frametitle{BT2 in Agda}
+\hspace*{-0.8cm}
+\begin{minipage}{\textwidth}
+{\footnotesize
+\begin{code}%
+\>\AgdaKeyword{record} \AgdaRecord{BT₂} \AgdaSymbol{(}\AgdaBound{t1} \AgdaSymbol{:} \AgdaRecord{BT₁}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{BT₁} \AgdaBound{t1} \AgdaKeyword{public}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{field}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{\_+\_} \AgdaSymbol{:} \AgdaFunction{nat} \AgdaSymbol{→} \AgdaFunction{nat} \AgdaSymbol{→} \AgdaFunction{nat}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{right-0} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{x} \AgdaSymbol{→} \AgdaBound{x} \AgdaField{+} \AgdaFunction{Z} \AgdaDatatype{≡} \AgdaBound{x}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{x+Sy≡Sx+y} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{x} \AgdaBound{y} \AgdaSymbol{→} \AgdaBound{x} \AgdaField{+} \AgdaFunction{S} \AgdaBound{y} \AgdaDatatype{≡} \AgdaFunction{S} \AgdaSymbol{(}\AgdaBound{x} \AgdaField{+} \AgdaBound{y}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{bnat} \AgdaSymbol{:} \AgdaFunction{nat} \AgdaSymbol{→} \AgdaFunction{nat} \AgdaSymbol{→} \AgdaFunction{nat}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{bnat} \AgdaBound{x} \AgdaBound{y} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaBound{x} \AgdaField{+} \AgdaBound{x}\AgdaSymbol{)} \AgdaField{+} \AgdaBound{y}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{dig-to-nat} \AgdaSymbol{:} \AgdaDatatype{BinDigit} \AgdaSymbol{→} \AgdaFunction{nat}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{dig-to-nat} \AgdaInductiveConstructor{zero} \AgdaSymbol{=} \AgdaFunction{Z}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{dig-to-nat} \AgdaInductiveConstructor{one} \AgdaSymbol{=} \AgdaFunction{S} \AgdaFunction{Z}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{unroll} \AgdaSymbol{:} \AgdaSymbol{\{}\AgdaBound{n} \AgdaSymbol{:} \AgdaDatatype{ℕ}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Vec} \AgdaDatatype{BinDigit} \AgdaBound{n} \AgdaSymbol{→} \AgdaFunction{nat}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{unroll} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaFunction{Z}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{unroll} \AgdaSymbol{(}\AgdaBound{x} \AgdaInductiveConstructor{∷} \AgdaBound{l}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{bnat} \AgdaSymbol{(}\AgdaFunction{unroll} \AgdaBound{l}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{dig-to-nat} \AgdaBound{x}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{⟦\_⟧₂} \AgdaSymbol{:} \AgdaDatatype{BNum} \AgdaSymbol{→} \AgdaFunction{nat}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{⟦} \AgdaInductiveConstructor{bn} \AgdaSymbol{(}\AgdaBound{x} \AgdaInductiveConstructor{∷} \AgdaBound{l}\AgdaSymbol{)} \AgdaFunction{⟧₂} \AgdaSymbol{=} \AgdaFunction{bnat} \AgdaSymbol{(}\AgdaFunction{unroll} \AgdaBound{l}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{dig-to-nat} \AgdaBound{x}\AgdaSymbol{)}\<%
+\\
+\end{code}
+}
+\end{minipage}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%
+
+% Notes:
+% - Ground language: a 'language' (with decidable equality), and
+% evaluation
+% - LogicOverL: a 'Logic' (seen as a language), and an interpretation
+% back into the host
+% - FOL: definition of FOL over any ground language (see _==_ )
+\begin{frame}
+\frametitle{Language infrastructure}
+\hspace*{-1.3cm}
+\begin{minipage}{\textwidth}
+{\scriptsize
+\begin{code}%
+\>\AgdaKeyword{record} \AgdaRecord{GroundLanguage} \AgdaSymbol{(}\AgdaBound{T} \AgdaSymbol{:} \AgdaPrimitiveType{Set₀}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{field}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{Lang} \AgdaSymbol{:} \AgdaFunction{DT} \AgdaSymbol{→} \AgdaPrimitiveType{Set₀}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{value} \AgdaSymbol{:} \AgdaSymbol{\{}\AgdaBound{V}
+\AgdaSymbol{:} \AgdaFunction{DT}\AgdaSymbol{\}} \AgdaSymbol{→}
+\AgdaField{Lang} \AgdaBound{V} \AgdaSymbol{→}
+\AgdaSymbol{(}\AgdaField{Carrier} \AgdaBound{V} \AgdaSymbol{→}
+\AgdaBound{T}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaBound{T}\<%
+\\
+%
+\\
+\>\AgdaKeyword{record} \AgdaRecord{LogicOverL} \AgdaSymbol{(}\AgdaBound{T} \AgdaSymbol{:} \AgdaPrimitiveType{Set₀}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{L} \AgdaSymbol{:} \AgdaRecord{GroundLanguage} \AgdaBound{T}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{field}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{Logic} \AgdaSymbol{:} \AgdaFunction{DT} \AgdaSymbol{→} \AgdaPrimitiveType{Set₀}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{⟦\_⟧\_} \AgdaSymbol{:} \AgdaSymbol{∀}
+\AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}
+\AgdaField{Logic} \AgdaBound{V} \AgdaSymbol{→}
+\AgdaSymbol{(}\AgdaField{Carrier} \AgdaBound{V} \AgdaSymbol{→}
+\AgdaBound{T}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaPrimitiveType{Set₀}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{FOL} \AgdaSymbol{\{}\AgdaBound{T} \AgdaSymbol{:} \AgdaPrimitiveType{Set₀}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{L} \AgdaSymbol{:} \AgdaRecord{GroundLanguage} \AgdaBound{T}\AgdaSymbol{)} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{data} \AgdaDatatype{FOL} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaFunction{DT}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{tt} \AgdaSymbol{:} \AgdaDatatype{FOL} \AgdaBound{V}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{ff} \AgdaSymbol{:} \AgdaDatatype{FOL} \AgdaBound{V}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_and\_} \AgdaSymbol{:} \AgdaDatatype{FOL} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_or\_} \AgdaSymbol{:} \AgdaDatatype{FOL} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{not} \AgdaSymbol{:} \AgdaDatatype{FOL} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_⊃\_} \AgdaSymbol{:} \AgdaDatatype{FOL} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_==\_} \AgdaSymbol{:} \AgdaField{Lang} \AgdaBound{V} \AgdaSymbol{→} \AgdaField{Lang} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{all} \AgdaSymbol{:} \AgdaField{Carrier} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{exist} \AgdaSymbol{:} \AgdaField{Carrier} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{V}\<%
+\end{code}
+}
+\end{minipage}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%
+
+% Notes: Need to *interpret* our terms of classical logic into the
+% host logic.  As it is constructive, need double-negation embedding
+\begin{frame}
+\frametitle{Logic over a Language, back into Agda}
+\hspace*{-1.8cm}
+\begin{minipage}{\textwidth}
+{\footnotesize
+\begin{code}%
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{LoL-FOL} \AgdaSymbol{:} \AgdaRecord{LogicOverL} \AgdaBound{T} \AgdaBound{L}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{LoL-FOL} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \AgdaField{Logic} \AgdaSymbol{=} \AgdaDatatype{FOL} \AgdaSymbol{;} \AgdaField{⟦\_⟧\_} \AgdaSymbol{=} \AgdaFunction{interp} \AgdaSymbol{\}}\<%
+\\
+\>[2]\AgdaIndent{3}{}\<[3]%
+\>[3]\AgdaKeyword{where}\<%
+\\
+\>[3]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{interp} \AgdaSymbol{:} \AgdaSymbol{\{}\AgdaBound{Var} \AgdaSymbol{:} \AgdaFunction{DT}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{FOL} \AgdaBound{Var} \AgdaSymbol{→} \AgdaSymbol{(}\AgdaField{Carrier} \AgdaBound{Var} \AgdaSymbol{→} \AgdaBound{T}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaPrimitiveType{Set₀}\<%
+\\
+\>[3]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{interp} \AgdaInductiveConstructor{tt} \AgdaBound{env} \AgdaSymbol{=} \AgdaRecord{⊤}\<%
+\\
+\>[3]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{interp} \AgdaInductiveConstructor{ff} \AgdaBound{env} \AgdaSymbol{=} \AgdaDatatype{⊥}\<%
+\\
+\>[3]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{interp} \AgdaSymbol{(}\AgdaBound{e} \AgdaInductiveConstructor{and} \AgdaBound{f}\AgdaSymbol{)} \AgdaBound{env} \AgdaSymbol{=} \AgdaFunction{interp} \AgdaBound{e} \AgdaBound{env} \AgdaFunction{×} \AgdaFunction{interp} \AgdaBound{f} \AgdaBound{env}\<%
+\\
+\>[3]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{interp} \AgdaSymbol{(}\AgdaBound{e} \AgdaInductiveConstructor{or} \AgdaBound{f}\AgdaSymbol{)} \AgdaBound{env} \AgdaSymbol{=} \AgdaFunction{¬} \AgdaFunction{¬} \AgdaSymbol{(}\AgdaFunction{interp} \AgdaBound{e} \AgdaBound{env} \AgdaDatatype{⊎} \AgdaFunction{interp} \AgdaBound{f} \AgdaBound{env}\AgdaSymbol{)}\<%
+\\
+\>[3]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{interp} \AgdaSymbol{(}\AgdaInductiveConstructor{not} \AgdaBound{e}\AgdaSymbol{)} \AgdaBound{env} \AgdaSymbol{=} \AgdaFunction{¬} \AgdaSymbol{(}\AgdaFunction{interp} \AgdaBound{e} \AgdaBound{env}\AgdaSymbol{)}\<%
+\\
+\>[3]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{interp} \AgdaSymbol{(}\AgdaBound{e} \AgdaInductiveConstructor{⊃} \AgdaBound{f}\AgdaSymbol{)} \AgdaBound{env} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaFunction{interp} \AgdaBound{e} \AgdaBound{env}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaSymbol{(}\AgdaFunction{interp} \AgdaBound{f} \AgdaBound{env}\AgdaSymbol{)}\<%
+\\
+\>[3]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{interp} \AgdaSymbol{(}\AgdaBound{x} \AgdaInductiveConstructor{==} \AgdaBound{y}\AgdaSymbol{)} \AgdaBound{env} \AgdaSymbol{=} \AgdaField{value} \AgdaBound{x} \AgdaBound{env} \AgdaDatatype{≡} \AgdaField{value} \AgdaBound{y} \AgdaBound{env}\<%
+\\
+\>[3]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{interp} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{all} \AgdaBound{x} \AgdaBound{p}\AgdaSymbol{)} \AgdaBound{env} \<[31]%
+\>[31]\AgdaSymbol{=} \AgdaSymbol{∀} \AgdaBound{z} \AgdaSymbol{→} \AgdaFunction{interp} \AgdaBound{p} \AgdaSymbol{(}\AgdaFunction{override} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{env} \AgdaBound{x} \AgdaBound{z}\AgdaSymbol{)}\<%
+\\
+\>[3]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{interp} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{exist} \AgdaBound{x} \AgdaBound{p}\AgdaSymbol{)} \AgdaBound{env} \AgdaSymbol{=} \AgdaFunction{¬} \AgdaFunction{¬} \AgdaSymbol{(}\AgdaRecord{Σ} \AgdaBound{T} \AgdaSymbol{(λ} \AgdaBound{t} \AgdaSymbol{→} \AgdaFunction{interp} \AgdaBound{p} \AgdaSymbol{(}\AgdaFunction{override} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{env} \AgdaBound{x} \AgdaBound{t}\AgdaSymbol{)))}\<%
+\end{code}
+}
+\end{minipage}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
 \frametitle{BT6 (Presburger Arithmetic) in Agda}
@@ -876,6 +1213,7 @@ The $\view$ arrows denote theory morphisms that are not inclusions.
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \begin{frame}
 \frametitle{Conclusion}
