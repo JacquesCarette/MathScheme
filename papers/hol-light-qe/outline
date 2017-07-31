@@ -1,0 +1,47 @@
+HOL Light with Quotation and Evaluation
+
+  1. Introduction
+    o Benefits and costs of global reflection
+    o CTT_qe
+    o HOL Light QE project
+    o Outline of paper
+
+  2. CTT_qe
+    o Syntax
+    o Semantics
+    o Proof System
+
+  3. HOL Light
+    o Syntax
+    o Semantics
+    o Proof system
+
+  4. HOL Light QE Implementation
+    o Overview
+        - Exploitation of HOL type variables
+        - Definition of HOL epsilon type
+        - Modification OCaml term type
+        - Modification of the proof system
+    o Inductive type epsilon of constructions
+    o Quotation and quasiquotation
+        - Quotation rules
+        - Change of vsubst
+    o Evaluation
+        - Evaluation rules
+        - Change of vsubst
+    o Test theorems
+
+  5. Examples
+    o Law of excluded middle
+    o Induction schema
+    o Meaning formula for polynomial differentiation
+
+  6. Metatheorems
+      o Satisfiability
+      o Conservativity
+      o Soundness
+      o Completeness for eval-free formulas
+
+  7. Related work
+
+  8. Conclusion

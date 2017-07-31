@@ -1,0 +1,31 @@
+HOL Light with Quotation and Evaluation
+
+  1. Introduction
+
+  2. CTT_qe
+
+  3. HOL Light
+
+  4. HOL Light QE Implementation
+
+      o Constructions
+
+      o Quotation and quasiquotation
+
+      o Evaluation
+
+  5. Metatheorems
+
+      o Semantics
+
+      o Satisfiability
+
+      o Conservativity
+
+      o Soundness
+
+      o Completeness for eval-free formulas
+
+  6. Examples
+
+  7. Conclusion
