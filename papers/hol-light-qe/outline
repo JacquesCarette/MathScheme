@@ -2,11 +2,18 @@ HOL Light with Quotation and Evaluation
 
   1. Introduction
     o Benefits and costs of global reflection
+    o Three problems
     o CTT_qe
+    o Can CTT_qe be implemented
     o HOL Light QE project
     o Outline of paper
 
   2. CTT_qe
+    o Design ideas
+        - Inductive type of constructions
+        - Quotation and evaluation
+        - Effective in
+        - Substitution via beta-reduction
     o Syntax
     o Semantics
     o Proof System
