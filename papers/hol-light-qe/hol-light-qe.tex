@@ -1,14 +1,21 @@
 \documentclass[fleqn]{llncs}
 \usepackage{latexsym}
-\usepackage{amssymb}
+\usepackage{amssymb,amsmath}
 \usepackage{stmaryrd}
 \usepackage{graphicx}
-\usepackage{color}
-\usepackage{url}
+%\usepackage{color}
+\usepackage{hyperref}
 \usepackage{phonetic}
-\usepackage{amsmath}
+\usepackage{xargs}
+\usepackage[pdftex,dvipsnames]{xcolor}
 
 \input{hol-light-qe-def}
+
+\usepackage[colorinlistoftodos,textsize=tiny]{todonotes}
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
 
 \title{\HLQE\thanks{This research was supported by NSERC.}}
 
@@ -159,7 +166,7 @@ Section~\ref{sec:related-work} is devoted to related work.  And the
 paper ends with some final remarks in section~\ref{sec:conclusion}
 including a brief discussion on future work.
 
-\section{${\rm CTT}_{\rm qe}$}\label{sec:ctt-qe}
+\section{\churchqe}\label{sec:ctt-qe}
 
 The syntax and semantics of {\churchqe} as well as the proof system
 for {\churchqe} are defined in~\cite{FarmerArxiv16}.  In this section
@@ -272,8 +279,12 @@ $\mname{abs}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$, and
 $\mname{quo}_{\epsilon \tarrow \epsilon}$.  As we will see shortly,
 constructions serve as syntactic values.
 
-Let $\sE$ be the function mapping eval-free expressions to
-constructions that is defined inductively as follows:
+{Let $\sE$ be the function mapping eval-free expressions to
+constructions that is defined inductively as follows:}
+\unsure{The definition below seems trivial, it just maps from
+one syntax to another. On the flip-side, if a reader is expecting
+a $\lambda$-calculus, then $\sE$ in the \mname{app} case is ill-defined
+as you can't pattern match on an application.}
 
 \be
 
@@ -337,6 +348,9 @@ extend the rules for beta-reduction, define the logical constants of
 properties of quotation and evaluation.  We prove
 in~\cite{FarmerArxiv16} that this proof system is sound for all
 formulas and complete for eval-free formulas.
+\unsure{I think that some, if not most, of these rules should be
+shown. They either need to be here or in the implementation section,
+with a forward pointer.}
 
 Substitution is performed in the proof system for {\churchqe} using
 the properties of beta-reduction as Andrews does in the proof system
@@ -356,6 +370,8 @@ free in $\textbf{B}_\beta$'' on eval-free expressions since
 $\textbf{x}_\alpha$ is free in $\textbf{x}_\alpha =
 \textbf{x}_\alpha$, but $\textbf{x}_\alpha$ is not effective in
 $\textbf{x}_\alpha = \textbf{x}_\alpha$.
+\unsure{Because substitution is so important, I think more will be
+needed -- in the same vein as above.}
 
 \subsection{Design Problems} 
 
@@ -370,18 +386,18 @@ beta-reductions that embody a double substitution.
 
 \section{\HL}\label{sec:hol-light}
 
-\HL~\cite{Harrison09} is an open-source software system
-developed by John Harrison at the Intel Corporation that assists users
-in proving mathematical conjectures in a version of Church's type
+\HL~\cite{Harrison09} is an open-source proof assistant
+developed by John Harrison.  It implements a logic (HOL)
+which is a version of Church's type
 theory.  It is a simple implementation of the HOL proof
 assistant~\cite{GordonMelham93} written in OCaml and hosted on GitHub
 at \url{https://github.com/jrh13/hol-light/}.  Although it is a
 relatively small system, it has been used to formalize many kinds of
-mathematics and to proof-check many proofs including the lion's share
+mathematics and to check many proofs including the lion's share
 of Tom Hale's proof of the Kepler conjecture~\cite{HalesEtAl17}.
 
 \HL{} is very well suited to serve as a foundation on which to
-build an implementation of {\churchqe}.  First, it is an open-source
+build an implementation of {\churchqe}:  First, it is an open-source
 system that can be freely modified as long as certain very minimal
 conditions are satisfied.  Second, it is an implementation of a
 version of simple type theory that is essentially {\qzero}, the
@@ -393,11 +409,18 @@ inductive types so that $\epsilon$ can be straightforwardly defined.
 
 \section{Implementation}\label{sec:implementation}
 
+The implementation is available at
+\url{https://github.com/JacquesCarette/hol-light}.
+
 \section{Examples}\label{sec:examples}
 
 \section{Related Work}\label{sec:related-work}
 
 \section{Conclusion}\label{sec:conclusion}
+
+\setcounter{tocdepth}{1}
+\listoftodos
+\setcounter{tocdepth}{0}
 
 \bibliography{imps,hol-light-qe}
 \bibliographystyle{plain}
