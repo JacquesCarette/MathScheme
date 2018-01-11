@@ -16,6 +16,7 @@
 
 \institute{%
 Computing and Software, McMaster University, Canada\\
+\url{http://www.cas.mcmaster.ca/~carette}\\
 \url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
 5 January 2018
 }
@@ -27,9 +28,16 @@ Computing and Software, McMaster University, Canada\\
 \maketitle
 
 \begin{abstract}
+We are interested in algorithms that manipulate mathematical
+expressions in mathematically meaningful ways. Expressions are
+syntactic, but most logics do not allow one to discuss syntax.
 {\churchqe} is a version of Church's type theory that includes
 quotation and evaluation operators that are similar to quote and eval
-in the Lisp programming language. ...
+in the Lisp programming language. Church's type theory is not so
+different from HOL Light, and to prove that {\churchqe} is
+implementable, we decided to add quotation and evaluation to
+HOL Light to demonstrate this. Here we document our design and the
+challenges that needed to be overcome.
 \end{abstract}
 
 \iffalse 
