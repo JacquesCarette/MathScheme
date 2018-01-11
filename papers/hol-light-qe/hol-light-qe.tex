@@ -10,7 +10,7 @@
 
 \input{hol-light-qe-def}
 
-\title{HOL Light QE\thanks{This research was supported by NSERC.}}
+\title{\HLQE\thanks{This research was supported by NSERC.}}
 
 \author{Jacques Carette, William M. Farmer, and Patrick Laskowski}
 
@@ -34,9 +34,9 @@ syntactic, but most logics do not allow one to discuss syntax.
 {\churchqe} is a version of Church's type theory that includes
 quotation and evaluation operators that are similar to quote and eval
 in the Lisp programming language. Church's type theory is not so
-different from HOL Light, and to prove that {\churchqe} is
+different from \HL, and to prove that {\churchqe} is
 implementable, we decided to add quotation and evaluation to
-HOL Light to demonstrate this. Here we document our design and the
+\HL{} to demonstrate this. Here we document our design and the
 challenges that needed to be overcome.
 \end{abstract}
 
@@ -138,16 +138,16 @@ show in~\cite{FarmerArxiv16} that it is suitable for defining,
 applying, and reasoning about SBMAs.
 
 To demonstrate that {\churchqe} is indeed implementable, we have
-implemented {\churchqe} by modifying HOL Light~\cite{Harrison09}, a
+implemented {\churchqe} by modifying \HL~\cite{Harrison09}, a
 simple implementation of the HOL logic~\cite{GordonMelham93}.  The
-resulting version of HOL Light is called HOL Light QE.  This paper
-presents the HOL Light QE implementation.
+resulting version of \HL{} is called \HLQE.  This paper
+presents the \HLQE{} implementation.
 
 The rest of the paper is organized as follows.
 Section~\ref{sec:ctt-qe} presents the key ideas underlying {\churchqe}
 and explains how {\churchqe} solves the three design problems given
 above.  Section~\ref{sec:hol-light} offers a brief overview of HOL
-Light.  The HOL Light QE implementation is described in
+Light.  The \HLQE{} implementation is described in
 section~\ref{sec:implementation}, and examples of how quotation and
 evaluation are used in it are discussed in section~\ref{sec:examples}.
 Section~\ref{sec:related-work} is devoted to related work.  And the
@@ -159,7 +159,7 @@ including a brief discussion on future work.
 The syntax and semantics of {\churchqe} as well as the proof system
 for {\churchqe} are defined in~\cite{FarmerArxiv16}.  In this section
 we will only introduce the definitions and results of {\churchqe} that
-are key to understanding how HOL Light QE implements {\churchqe}.  The
+are key to understanding how \HLQE{} implements {\churchqe}.  The
 reader is encouraged to consult~\cite{FarmerArxiv16} when additional
 details are required.
 
@@ -363,9 +363,9 @@ axioms as described above.  The Double Substitution Problem is eluded
 by using a beta-reduction axiom for evaluations that excludes
 beta-reductions that embody a double substitution.
 
-\section{HOL Light}\label{sec:hol-light}
+\section{\HL}\label{sec:hol-light}
 
-HOL Light~\cite{Harrison09} is an open-source software system
+\HL~\cite{Harrison09} is an open-source software system
 developed by John Harrison at the Intel Corporation that assists users
 in proving mathematical conjectures in a version of Church's type
 theory.  It is a simple implementation of the HOL proof
@@ -375,7 +375,7 @@ relatively small system, it has been used to formalize many kinds of
 mathematics and to proof-check many proofs including the lion's share
 of Tom Hale's proof of the Kepler conjecture~\cite{HalesEtAl17}.
 
-HOL Light is very well suited to serve as a foundation on which to
+\HL{} is very well suited to serve as a foundation on which to
 build an implementation of {\churchqe}.  First, it is an open-source
 system that can be freely modified as long as certain very minimal
 conditions are satisfied.  Second, it is an implementation of a
@@ -383,7 +383,7 @@ version of simple type theory that is essentially {\qzero}, the
 version of Church's type theory underlying {\churchqe}, plus
 polymorphic type variables.  The type variables in the implemented
 logic are not a hindrance; they actually facilitate the implementation
-of {\churchqe}.  And third, HOL Light supports the definition of
+of {\churchqe}.  And third, \HL{} supports the definition of
 inductive types so that $\epsilon$ can be straightforwardly defined.
 
 \section{Implementation}\label{sec:implementation}
