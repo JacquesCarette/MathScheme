@@ -61,8 +61,9 @@ how the expressions are manipulated by the SBMA and what the
 manipulations mean mathematically.
 
 We argue in~\cite{Farmer13} that the combination of quotation and
-evaluation provides the means to reason about the interplay between
-syntax and semantics that is needed for reasoning about SBMAs.
+evaluation, along with some inference rules, provides the means to 
+reason about the interplay between syntax and semantics, which is
+what is needed for reasoning about SBMAs.
 \emph{Quotation} is an operation that maps an expression $e$ to a
 special value called a \emph{syntactic value} that represents the
 syntax tree of $e$.  Quotation enables expressions to be manipulated
@@ -71,7 +72,8 @@ syntactic value $s$ to the value of the expression that is represented
 by $s$.  Evaluation enables meta-level reasoning via syntactic values
 to be reflected into object-level reasoning.  Quotation and evaluation
 thus form an infrastructure for integrating meta-level and
-object-level reasoning.
+object-level reasoning. The words \emph{reflection} and \emph{reification}
+are also frequently used to refer to quotation and evaluation.
 
 Incorporating quotation and evaluation operators --- like quote and
 eval in the Lisp programming language --- into a traditional logic
@@ -93,7 +95,7 @@ $e$ as $\synbrack{e}$ and $\sembrack{e}$, respectively.
     evaluation operators.  Therefore, the evaluation operator must be
     partial and the law of disquotation cannot hold universally (i.e.,
     for some expressions $e$, $\sembrack{\synbrack{e}} \not= e$).  As
-    a result, reasoning with evaluation is cumbersome and leads to
+    a result, reasoning with evaluation can be cumbersome and leads to
     undefined expressions.
 
   \item \emph{Variable Problem.}  The variable $x$ is not free in the
@@ -118,7 +120,10 @@ $e$ as $\synbrack{e}$ and $\sembrack{e}$, respectively.
     evaluation, the value of $\sembrack{e}$ is the \emph{value} of the
     expression whose syntax tree is represented by the \emph{value} of
     $e$.  Hence the semantics of evaluation involves a double
-    valuation.  If the value of a variable $x$ is $\synbrack{x}$, then
+    valuation.  This is most apparent when the value of a variable
+    involves a syntax tree which refers to the name of that same
+    variable. For example, if
+    the value of a variable $x$ is $\synbrack{x}$, then
     $\sembrack{x} = \sembrack{\synbrack{x}} = x = \synbrack{x}$.
     Hence the substitution of $\synbrack{x}$ for $x$ in $\sembrack{x}$
     requires one substitution inside the argument of the evaluation
@@ -133,15 +138,15 @@ theory~\cite{Church40} with quotation and evaluation that solves these
 three design problems.  It is based on {\qzero}~\cite{Andrews02},
 Peter Andrews' version of Church's type theory.  We believe
 {\churchqe} is the first readily implementable version of simple type
-theory that includes global quotation and evaluation operators.  We
+theory that includes \emph{global} quotation and evaluation operators.  We
 show in~\cite{FarmerArxiv16} that it is suitable for defining,
 applying, and reasoning about SBMAs.
 
 To demonstrate that {\churchqe} is indeed implementable, we have
 implemented {\churchqe} by modifying \HL~\cite{Harrison09}, a
-simple implementation of the HOL logic~\cite{GordonMelham93}.  The
-resulting version of \HL{} is called \HLQE.  This paper
-presents the \HLQE{} implementation.
+compact implementation of the HOL logic~\cite{GordonMelham93}.  The
+resulting version of \HL{} is called \HLQE.  Here we present its
+design, implementation and the challenges to doing so.
 
 The rest of the paper is organized as follows.
 Section~\ref{sec:ctt-qe} presents the key ideas underlying {\churchqe}
