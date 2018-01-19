@@ -9,6 +9,9 @@
 *.toc
 *.vrb
 *.swp
+*.bbl
+*.blg
+*.tdo
 
 # The files below are all generated. But we don't want to ignore .tex files!
 papers/formalizing-mk/DefiniteDescr.tex
