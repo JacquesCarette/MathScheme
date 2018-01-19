@@ -9,3 +9,23 @@
 *.toc
 *.vrb
 *.swp
+
+# The files below are all generated. But we don't want to ignore .tex files!
+papers/formalizing-mk/DefiniteDescr.tex
+papers/formalizing-mk/Equiv.tex
+papers/formalizing-mk/Language.tex
+papers/formalizing-mk/NatVar.tex
+papers/formalizing-mk/NumPlus.tex
+papers/formalizing-mk/NumPlusTimes.tex
+papers/formalizing-mk/Numerals.tex
+papers/formalizing-mk/T1.tex
+papers/formalizing-mk/T2.tex
+papers/formalizing-mk/T2a.tex
+papers/formalizing-mk/T3.tex
+papers/formalizing-mk/T4.tex
+papers/formalizing-mk/T5.tex
+papers/formalizing-mk/T6.tex
+papers/formalizing-mk/T7.tex
+papers/formalizing-mk/T8.tex
+papers/formalizing-mk/Variables.tex
+
