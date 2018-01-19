@@ -1,0 +1,431 @@
+\documentclass[fleqn]{llncs}
+\usepackage{latexsym}
+\usepackage{amssymb,amsmath}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+%\usepackage{color}
+\usepackage{hyperref}
+\usepackage{phonetic}
+\usepackage{xargs}
+\usepackage[pdftex,dvipsnames]{xcolor}
+
+\input{hol-light-qe-def}
+
+\usepackage[colorinlistoftodos,textsize=tiny]{todonotes}
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
+
+\title{\HLQE\thanks{This research was supported by NSERC.}}
+
+\author{Jacques Carette, William M. Farmer, and Patrick Laskowski}
+
+\institute{%
+Computing and Software, McMaster University, Canada\\
+\url{http://www.cas.mcmaster.ca/~carette}\\
+\url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
+5 January 2018
+}
+
+\pagestyle{headings}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We are interested in algorithms that manipulate mathematical
+expressions in mathematically meaningful ways. Expressions are
+syntactic, but most logics do not allow one to discuss syntax.
+{\churchqe} is a version of Church's type theory that includes
+quotation and evaluation operators that are similar to quote and eval
+in the Lisp programming language. Church's type theory is not so
+different from \HL, and to prove that {\churchqe} is
+implementable, we decided to add quotation and evaluation to
+\HL{} to demonstrate this. Here we document our design and the
+challenges that needed to be overcome.
+\end{abstract}
+
+\iffalse 
+
+\textbf{Keywords:} Church's type theory, proof assistants, quotation
+and evaluation, symbolic computation, reasoning about syntax, biform
+theories.
+
+\fi
+
+\section{Introduction}\label{sec:introduction}
+
+A \emph{syntax-based mathematical algorithm (SBMA)} manipulates
+mathematical expressions in a mathematically meaningful way.  SBMAs
+are commonplace in mathematics.  Examples include algorithms that
+compute arithmetic operations by manipulating numerals, linear
+transformations by manipulating matrices, and derivatives by
+manipulating functional expressions.  Reasoning about the mathematical
+meaning of an SBMA requires reasoning about the relationship between
+how the expressions are manipulated by the SBMA and what the
+manipulations mean mathematically.
+
+We argue in~\cite{Farmer13} that the combination of quotation and
+evaluation, along with some inference rules, provides the means to 
+reason about the interplay between syntax and semantics, which is
+what is needed for reasoning about SBMAs.
+\emph{Quotation} is an operation that maps an expression $e$ to a
+special value called a \emph{syntactic value} that represents the
+syntax tree of $e$.  Quotation enables expressions to be manipulated
+as syntactic entities.  \emph{Evaluation} is an operation that maps a
+syntactic value $s$ to the value of the expression that is represented
+by $s$.  Evaluation enables meta-level reasoning via syntactic values
+to be reflected into object-level reasoning.  Quotation and evaluation
+thus form an infrastructure for integrating meta-level and
+object-level reasoning. Quotation gives a form of
+\emph{reification} of object-level values which allows
+introspection.  Along with inference rules, this gives a certain 
+amount of \emph{logical reflection}. Evaluation adds to this
+some aspects of \emph{computational reflection}.
+
+Incorporating quotation and evaluation operators --- like quote and
+eval in the Lisp programming language --- into a traditional logic
+like first-order logic or simple type theory is not a straightforward
+task.  Several challenging design problems stand in the way.  The
+three design problems that most concern us are the following.  We will
+write the quotation and evaluation operators applied to an expression
+$e$ as $\synbrack{e}$ and $\sembrack{e}$, respectively.
+
+\be
+
+  \item \emph{Evaluation Problem.}  An evaluation operator is
+    applicable to syntactic values that represent formulas and thus is
+    effectively a truth predicate.  Hence, by the proof of Alfred
+    Tarski's theorem on the undefinability of truth~\cite{Tarski35a},
+    if the evaluation operator is total in the context of a
+    sufficiently strong theory like first-order Peano arithmetic, then
+    it is possible to express the liar paradox using the quotation and
+    evaluation operators.  Therefore, the evaluation operator must be
+    partial and the law of disquotation cannot hold universally (i.e.,
+    for some expressions $e$, $\sembrack{\synbrack{e}} \not= e$).  As
+    a result, reasoning with evaluation can be cumbersome and leads to
+    undefined expressions.
+
+  \item \emph{Variable Problem.}  The variable $x$ is not free in the
+    expression $\synbrack{x + 3}$ (or in any quotation).  However, $x$
+    is free in $\sembrack{\synbrack{x + 3}}$ because
+    $\sembrack{\synbrack{x + 3}} = x + 3$.  If the value of a constant
+    $c$ is $\synbrack{x + 3}$, then $x$ is free in $\sembrack{c}$
+    because $\sembrack{c} = \sembrack{\synbrack{x + 3}} = x + 3$.
+    Hence, in the presence of an evaluation operator, whether or not a
+    variable is free in an expression may depend on the values of the
+    expression's components.  As a consequence, the substitution of an
+    expression for the free occurrences of a variable in another
+    expression depends on the semantics (as well as the syntax) of the
+    expressions involved and must be integrated with the proof system
+    for the logic.  That is, a logic with quotation and evaluation
+    requires a semantics-dependent form of substitution in which side
+    conditions, like whether a variable is free in an expression, are
+    proved within the proof system.  This is a major departure from
+    traditional logic.
+
+  \item \emph{Double Substitution Problem.}  By the semantics of
+    evaluation, the value of $\sembrack{e}$ is the \emph{value} of the
+    expression whose syntax tree is represented by the \emph{value} of
+    $e$.  Hence the semantics of evaluation involves a double
+    valuation.  This is most apparent when the value of a variable
+    involves a syntax tree which refers to the name of that same
+    variable. For example, if
+    the value of a variable $x$ is $\synbrack{x}$, then
+    $\sembrack{x} = \sembrack{\synbrack{x}} = x = \synbrack{x}$.
+    Hence the substitution of $\synbrack{x}$ for $x$ in $\sembrack{x}$
+    requires one substitution inside the argument of the evaluation
+    operator and another substitution after the evaluation operator is
+    eliminated.  This double substitution is another major departure
+    from traditional logic.
+
+\ee
+
+{\churchqe}~\cite{FarmerArxiv16,Farmer16} is version of Church's type
+theory~\cite{Church40} with quotation and evaluation that solves these
+three design problems.  It is based on {\qzero}~\cite{Andrews02},
+Peter Andrews' version of Church's type theory.  We believe
+{\churchqe} is the first readily implementable version of simple type
+theory that includes \emph{global} quotation and evaluation operators.  We
+show in~\cite{FarmerArxiv16} that it is suitable for defining,
+applying, and reasoning about SBMAs.
+
+To demonstrate that {\churchqe} is indeed implementable, we have
+implemented {\churchqe} by modifying \HL~\cite{Harrison09}, a
+compact implementation of the HOL logic~\cite{GordonMelham93}.  The
+resulting version of \HL{} is called \HLQE.  Here we present its
+design, implementation and the challenges to doing so.
+
+The rest of the paper is organized as follows.
+Section~\ref{sec:ctt-qe} presents the key ideas underlying {\churchqe}
+and explains how {\churchqe} solves the three design problems given
+above.  Section~\ref{sec:hol-light} offers a brief overview of HOL
+Light.  The \HLQE{} implementation is described in
+section~\ref{sec:implementation}, and examples of how quotation and
+evaluation are used in it are discussed in section~\ref{sec:examples}.
+Section~\ref{sec:related-work} is devoted to related work.  And the
+paper ends with some final remarks in section~\ref{sec:conclusion}
+including a brief discussion on future work.
+
+\section{\churchqe}\label{sec:ctt-qe}
+
+The syntax and semantics of {\churchqe} as well as the proof system
+for {\churchqe} are defined in~\cite{FarmerArxiv16}.  In this section
+we will only introduce the definitions and results of {\churchqe} that
+are key to understanding how \HLQE{} implements {\churchqe}.  The
+reader is encouraged to consult~\cite{FarmerArxiv16} when additional
+details are required.
+
+\subsection{Syntax}
+
+The syntax of {\churchqe} has the same machinery as {\qzero} plus an
+inductive type $\epsilon$ of syntactic values, a partial quotation
+operator, and a typed evaluation operator.
+
+A \emph{type} of {\churchqe} is defined inductively by the following
+formation rules:
+%
+\be
+
+  \item \emph{Type of individuals}: $\iota$ is a type.
+
+  \item \emph{Type of truth values}: $\omicron$ is a type.
+
+  \item \emph{Type of constructions}: $\epsilon$ is a type.
+
+  \item \emph{Function type}: If $\alpha$ and $\beta$ are types, then
+    $(\alpha \tarrow \beta)$ is a type.
+
+\ee
+
+\noindent
+Let $\sT$ denote the set of types of {\churchqe}.  
+
+A \emph{typed symbol} is a symbol with a subscript from $\sT$.  Let
+$\sV$ be a set of typed symbols such that, for each $\alpha \in \sT$,
+$\sV$ contains denumerably many typed symbols with subscript~$\alpha$.
+A \emph{variable of type $\alpha$} of {\churchqe} is a member of $\sV$
+with subscript~$\alpha$.  $\textbf{x}_\alpha, \textbf{y}_\alpha,
+\textbf{z}_\alpha, \ldots$ are syntactic variables ranging over
+variables of type $\alpha$. Let $\sC$ be a set of typed symbols
+disjoint from $\sV$.  A \emph{constant of type $\alpha$} of
+{\churchqe} is a member of $\sC$ with subscript~$\alpha$.
+$\textbf{c}_\alpha, \textbf{d}_\alpha, \ldots$ are syntactic variables
+ranging over constants of type~$\alpha$.  $\sC$ contains a set of
+\emph{logical constants} that include $\mname{app}_{\epsilon \tarrow
+  \epsilon \tarrow \epsilon}$, $\mname{abs}_{\epsilon \tarrow \epsilon
+  \tarrow \epsilon}$, and $\mname{quo}_{\epsilon \tarrow \epsilon}$.
+
+An \emph{expression of type $\alpha$} of {\churchqe} is defined
+inductively by the formation rules below.  $\textbf{A}_\alpha,
+\textbf{B}_\alpha, \textbf{C}_\alpha, \ldots$ are syntactic variables
+ranging over expressions of type $\alpha$.  An expression is
+\emph{eval-free} if it is constructed using just the first five
+formation rules.
+%
+\be
+
+  \item \emph{Variable}: $\textbf{x}_\alpha$ is an expression of type
+    $\alpha$.
+
+  \item \emph{Constant}: $\textbf{c}_\alpha$ is an expression of type
+    $\alpha$.
+
+  \item \emph{Function application}: $(\textbf{F}_{\alpha \tarrow
+    \beta} \, \textbf{A}_\alpha)$ is an expression of type $\beta$.
+
+  \item \emph{Function abstraction}: $(\LambdaApp \textbf{x}_\alpha
+    \mdot \textbf{B}_\beta)$ is an expression of type $\alpha \tarrow
+    \beta$.
+
+  \item \emph{Quotation}: $\synbrack{\textbf{A}_\alpha}$ is an
+    expression of type $\epsilon$ if $\textbf{A}_\alpha$ is eval-free.
+
+  \item \emph{Evaluation}: $\sembrack{\textbf{A}_\epsilon}_{{\bf
+      B}_\beta}$ is an expression of type $\beta$.
+
+\ee 
+
+\noindent
+The sole purpose of the second component $\textbf{B}_\beta$ in an
+evaluation $\sembrack{\textbf{A}_\epsilon}_{{\bf B}_\beta}$ is to
+establish the type of the evaluation; we will thus write
+$\sembrack{\textbf{A}_\epsilon}_{{\bf B}_\beta}$ as
+$\sembrack{\textbf{A}_\epsilon}_\beta$.
+
+A \emph{construction} of {\churchqe} is an expression of type
+$\epsilon$ defined inductively as follows:
+
+\be
+
+  \item $\synbrack{\textbf{x}_\alpha}$ is a construction.
+
+  \item $\synbrack{\textbf{c}_\alpha}$ is a construction.
+
+  \item If $\textbf{A}_\epsilon$ and $\textbf{B}_\epsilon$ are
+    constructions, then $\mname{app}_{\epsilon \tarrow \epsilon
+      \tarrow \epsilon} \, \textbf{A}_\epsilon \,
+    \textbf{B}_\epsilon$, $\mname{abs}_{\epsilon \tarrow \epsilon
+      \tarrow \epsilon} \, \textbf{A}_\epsilon \,
+    \textbf{B}_\epsilon$, and $\mname{quo}_{\epsilon \tarrow \epsilon}
+    \, \textbf{A}_\epsilon$ are constructions.
+
+\ee
+
+\noindent
+The set of constructions is thus an inductive type whose base elements
+are quotations of variables and constants and whose constructors are
+$\mname{app}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$,
+$\mname{abs}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$, and
+$\mname{quo}_{\epsilon \tarrow \epsilon}$.  As we will see shortly,
+constructions serve as syntactic values.
+
+{Let $\sE$ be the function mapping eval-free expressions to
+constructions that is defined inductively as follows:}
+\unsure{The definition below seems trivial, it just maps from
+one syntax to another. On the flip-side, if a reader is expecting
+a $\lambda$-calculus, then $\sE$ in the \mname{app} case is ill-defined
+as you can't pattern match on an application.}
+
+\be
+
+  \item $\sE(\textbf{x}_\alpha) = \synbrack{\textbf{x}_\alpha}$.
+
+  \item $\sE(\textbf{c}_\alpha) = \synbrack{\textbf{c}_\alpha}$.
+
+  \item $\sE(\textbf{F}_{\alpha \tarrow \beta} \, \textbf{A}_\alpha) =
+    \mname{app}_{\epsilon \tarrow \epsilon \tarrow \epsilon} \,
+    \sE(\textbf{F}_{\alpha \tarrow \beta}) \, \sE(\textbf{A}_\alpha)$.
+
+  \item $\sE(\LambdaApp \textbf{x}_\alpha \mdot \textbf{B}_\beta) =
+    \mname{abs}_{\epsilon \tarrow \epsilon \tarrow \epsilon} \,
+    \sE(\textbf{x}_\alpha) \, \sE(\textbf{B}_\beta)$.
+
+  \item $\sE(\synbrack{\textbf{A}_\alpha}) = \mname{quo}_{\epsilon
+    \tarrow \epsilon} \, \sE(\textbf{A}_\alpha)$.
+
+\ee
+
+\noindent
+When $\textbf{A}_\alpha$ is eval-free, $\sE(\textbf{A}_\alpha)$ is the
+unique construction that represents the syntax tree of
+$\textbf{A}_\alpha$.  That is, $\sE(\textbf{A}_\alpha)$ is a syntactic
+value that represents how $\textbf{A}_\alpha$ is syntactically
+constructed.  For every eval-free expression, there is a construction
+that represents its syntax tree, but not every construction represents
+the syntax tree of an eval-free expression.  For example,
+$\mname{app}_{\epsilon \tarrow \epsilon \tarrow \epsilon} \,
+\synbrack{\textbf{x}_\alpha} \, \synbrack{\textbf{x}_\alpha}$
+represents the syntax tree of $(\textbf{x}_\alpha \,
+\textbf{x}_\alpha)$ which is not an expression of {\churchqe} since
+the types are mismatched.  A construction is \emph{proper} if it is in
+the range of $\sE$, i.e., it represents the syntax tree of an
+eval-free expression.
+
+\subsection{Semantics}
+
+The semantics of {\churchqe} is based on Henkin-style general
+models~\cite{Henkin50}.  An expression $\textbf{A}_\epsilon$ of type
+$\epsilon$ denotes a construction, and when $\textbf{A}_\epsilon$ is a
+construction, it denotes itself.  The semantics of the quotation and
+evaluation operators are defined so that the following theorems hold:
+
+\begin{thm}[Law of Quotation] \label{thm:sem-quotation}
+$\synbrack{\textbf{A}_\alpha} = \sE(\textbf{A}_\alpha)$ is valid in
+  {\churchqe}.
+\end{thm}
+
+\begin{thm}[Law of Disquotation] \label{thm:sem-disquotation}
+$\sembrack{\synbrack{\textbf{A}_\alpha}}_\alpha = \textbf{A}_\alpha$
+  is valid in {\churchqe}.
+\end{thm}
+
+\subsection{Proof System}
+
+The proof system for {\churchqe} consists of the axioms for {\qzero},
+the single rule of inference for {\qzero}, and additional axioms that
+extend the rules for beta-reduction, define the logical constants of
+{\churchqe}, specify $\epsilon$ as an inductive type, and state the
+properties of quotation and evaluation.  We prove
+in~\cite{FarmerArxiv16} that this proof system is sound for all
+formulas and complete for eval-free formulas.
+\unsure{I think that some, if not most, of these rules should be
+shown. They either need to be here or in the implementation section,
+with a forward pointer.}
+
+Substitution is performed in the proof system for {\churchqe} using
+the properties of beta-reduction as Andrews does in the proof system
+for {\qzero}~\cite[p.~213]{Andrews02}.  The syntactic notion of ``a
+variable is free in an expression'' is replaced in Andrews'
+beta-reduction axioms by the semantic notion of ``a variable is
+effective in an expression'' when the expression is not necessarily
+eval-free, and beta-reduction axioms for quotation and evaluation are
+added to Andrews' beta-reduction axioms.  ``$\textbf{x}_\alpha$ is
+effective in $\textbf{B}_\beta$'' means the value of
+$\textbf{B}_\beta$ depends on the value of $\textbf{x}_\alpha$.
+Clearly, if $\textbf{B}_\beta$ is eval-free, ``$\textbf{x}_\alpha$ is
+effective in $\textbf{B}_\beta$'' implies ``$\textbf{x}_\alpha$ is
+free in $\textbf{B}_\beta$''.  However, ``$\textbf{x}_\alpha$ is
+effective in ${B}_\beta$'' is a refinement of ``$\textbf{x}_\alpha$ is
+free in $\textbf{B}_\beta$'' on eval-free expressions since
+$\textbf{x}_\alpha$ is free in $\textbf{x}_\alpha =
+\textbf{x}_\alpha$, but $\textbf{x}_\alpha$ is not effective in
+$\textbf{x}_\alpha = \textbf{x}_\alpha$.
+\unsure{Because substitution is so important, I think more will be
+needed -- in the same vein as above.}
+
+\subsection{Design Problems} 
+
+{\churchqe} solves the three design problems given in
+section~\ref{sec:introduction}.  The Evaluation Problem is completely
+avoided by restricting the quotation operator to eval-free expressions
+and thus making it impossible to express the liar paradox.  The
+Variable Problem is overcome by modifying Andrews' beta-reduction
+axioms as described above.  The Double Substitution Problem is eluded
+by using a beta-reduction axiom for evaluations that excludes
+beta-reductions that embody a double substitution.
+
+\section{\HL}\label{sec:hol-light}
+
+\HL~\cite{Harrison09} is an open-source proof assistant
+developed by John Harrison.  It implements a logic (HOL)
+which is a version of Church's type
+theory.  It is a simple implementation of the HOL proof
+assistant~\cite{GordonMelham93} written in OCaml and hosted on GitHub
+at \url{https://github.com/jrh13/hol-light/}.  Although it is a
+relatively small system, it has been used to formalize many kinds of
+mathematics and to check many proofs including the lion's share
+of Tom Hale's proof of the Kepler conjecture~\cite{HalesEtAl17}.
+
+\HL{} is very well suited to serve as a foundation on which to
+build an implementation of {\churchqe}:  First, it is an open-source
+system that can be freely modified as long as certain very minimal
+conditions are satisfied.  Second, it is an implementation of a
+version of simple type theory that is essentially {\qzero}, the
+version of Church's type theory underlying {\churchqe}, plus
+polymorphic type variables.  The type variables in the implemented
+logic are not a hindrance; they actually facilitate the implementation
+of {\churchqe}.  And third, \HL{} supports the definition of
+inductive types so that $\epsilon$ can be straightforwardly defined.
+
+\section{Implementation}\label{sec:implementation}
+
+The implementation is available at
+\url{https://github.com/JacquesCarette/hol-light}.
+
+\section{Examples}\label{sec:examples}
+
+\section{Related Work}\label{sec:related-work}
+
+\section{Conclusion}\label{sec:conclusion}
+
+\setcounter{tocdepth}{1}
+\listoftodos
+\setcounter{tocdepth}{0}
+
+\bibliography{imps,hol-light-qe}
+\bibliographystyle{plain}
+
+\end{document}
