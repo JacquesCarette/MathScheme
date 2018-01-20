@@ -1,0 +1,40 @@
+Outline of the Implementation section 
+
+  1. Variables and Constants
+       a. Type variables
+       b. Implementation of variables
+       c. Implementation of constants
+       d. Families of constants as polymorphic constants
+
+  2. Type of Constructions
+       a. "type" inductive type
+       b. "epsilon" inductive type
+       c. No junk and no confusion implications
+
+  3. Quotation and Evaluation Operators (change to kernel)
+       a. Quotation
+       b. Quasiquotation and holes
+       c. Evaluation
+       d. Notation
+
+  4. Quotation and Evaluation Axioms (change to kernel)
+       a. Law of quotation
+       b. Five properties of evaluation
+
+  5. Substitution (change to kernel)
+       a. Beta-reduction rule for quotation
+       b. Beta-reduction rules for evaluation
+       c. Beta-reduction rules using is-effective-in
+       d. Modification of INST rule
+
+  6. Function Definitions
+       a. Logical constants of CTT_qe 
+       b. Other function definitions
+
+  7. Reasoning Machinery
+       a. Tactics
+       b. Theorems
+
+
+
+                                                                
