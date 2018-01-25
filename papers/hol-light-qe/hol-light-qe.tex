@@ -483,9 +483,16 @@ $\mname{=}_{\alpha \tarrow \alpha \tarrow o}$ representing equality
 for each $\alpha \in \sT$.  The members of this family of constants
 are all mapped to a single {\HOL} constant with the polymorphic type
 \texttt{a\_ty\_var->a\_ty\_var->bool} where \texttt{a\_ty\_var} is any
-chosen {\HOL} type variable.  The other logical constants of
-{\churchqe}~\cite[Table 1]{FarmerArxiv16} are mapped to {\HOL}
-functions.
+chosen {\HOL} type variable.  
+
+The other logical constants {\churchqe}~\cite[Table 1]{FarmerArxiv16}
+are not mapped to primitive {\HOL} constants.  $\mname{app}_{\epsilon
+  \tarrow \epsilon \tarrow \epsilon}$, $\mname{abs}_{\epsilon \tarrow
+  \epsilon \tarrow \epsilon}$, and $\mname{quo}_{\epsilon \tarrow
+  \epsilon}$ are implemented by \texttt{App}, \texttt{Abs}, and
+\texttt{Quo}, constructors for the inductive type \texttt{epsilon}
+given below.  The remaining logical constants are predicates on
+constructions that are implemented by {\HOL} functions.
 
 \begin{table}
 \bc
@@ -602,6 +609,18 @@ representation of an evaluation \texttt{Quote(t,ty)} is \[\texttt{eval
 
 \subsection{Creation of Support Machinery}\label{subsec:machinery}
 
+The {\HLQE} contains a number of {\HOL} functions, tactics, and
+theorems that are useful for reasoning about constructions,
+quotations, and evaluations.  An important example is the {\HOL}
+function \texttt{isExprType} that implements the family in {\churchqe}
+of logical constants $\mname{is-expr}_{\epsilon \tarrow o}^{\alpha}$
+where $\alpha$ ranges over members of $\sT$.  This function takes
+terms $s_1$ and $s_1$ of type \texttt{epsilon} and \texttt{type},
+respectively, as input and returns true as output iff $s_1$ represents
+the syntax tree of a term $t$, $s_2$ represents the syntax tree of a
+type $\alpha$, and $t$ is of type $\alpha$.
+
+
 \section{Examples}\label{sec:examples}
 
 \subsection{Law of Excluded Middle}
@@ -626,11 +645,11 @@ are well worth reading.
 
 \section{Conclusion}\label{sec:conclusion}
 
+\bibliography{imps,hol-light-qe}
+\bibliographystyle{plain}
+
 \setcounter{tocdepth}{1}
 \listoftodos
 \setcounter{tocdepth}{0}
-
-\bibliography{imps,hol-light-qe}
-\bibliographystyle{plain}
 
 \end{document}
