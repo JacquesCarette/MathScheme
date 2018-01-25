@@ -485,7 +485,7 @@ are all mapped to a single {\HOL} constant with the polymorphic type
 \texttt{a\_ty\_var->a\_ty\_var->bool} where \texttt{a\_ty\_var} is any
 chosen {\HOL} type variable.  
 
-The other logical constants {\churchqe}~\cite[Table 1]{FarmerArxiv16}
+The other logical constants of {\churchqe}~\cite[Table 1]{FarmerArxiv16}
 are not mapped to primitive {\HOL} constants.  $\mname{app}_{\epsilon
   \tarrow \epsilon \tarrow \epsilon}$, $\mname{abs}_{\epsilon \tarrow
   \epsilon \tarrow \epsilon}$, and $\mname{quo}_{\epsilon \tarrow
@@ -599,9 +599,9 @@ normal quotation.  The construction of terms in {\HLQE} has been
 modified to allow a hole (of type \texttt{epsilon}) to be used where a
 term of some other type is expected.
 
-The external representation of a quotation is \texttt{Quote(t,ty)} is
+The external representation of a quotation \texttt{Quote(t,ty)} is
 \texttt{Q\_ t \_Q}.  Similarly, the external representation of a hole
-is \texttt{Hole(t,ty)} is \texttt{H\_ t \_H}.  The external
+\texttt{Hole(t,ty)} is \texttt{H\_ t \_H}.  The external
 representation of an evaluation \texttt{Quote(t,ty)} is \[\texttt{eval
   t to ty}.\]
 
@@ -612,11 +612,11 @@ representation of an evaluation \texttt{Quote(t,ty)} is \[\texttt{eval
 The {\HLQE} contains a number of {\HOL} functions, tactics, and
 theorems that are useful for reasoning about constructions,
 quotations, and evaluations.  An important example is the {\HOL}
-function \texttt{isExprType} that implements the family in {\churchqe}
+function \texttt{isExprType} that implements the {\churchqe} family
 of logical constants $\mname{is-expr}_{\epsilon \tarrow o}^{\alpha}$
 where $\alpha$ ranges over members of $\sT$.  This function takes
 terms $s_1$ and $s_1$ of type \texttt{epsilon} and \texttt{type},
-respectively, as input and returns true as output iff $s_1$ represents
+respectively, and returns true iff $s_1$ represents
 the syntax tree of a term $t$, $s_2$ represents the syntax tree of a
 type $\alpha$, and $t$ is of type $\alpha$.
 
