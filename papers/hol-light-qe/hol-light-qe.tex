@@ -485,7 +485,7 @@ are all mapped to a single {\HOL} constant with the polymorphic type
 \texttt{a\_ty\_var->a\_ty\_var->bool} where \texttt{a\_ty\_var} is any
 chosen {\HOL} type variable.  
 
-The other logical constants {\churchqe}~\cite[Table 1]{FarmerArxiv16}
+The other logical constants of {\churchqe}~\cite[Table 1]{FarmerArxiv16}
 are not mapped to primitive {\HOL} constants.  $\mname{app}_{\epsilon
   \tarrow \epsilon \tarrow \epsilon}$, $\mname{abs}_{\epsilon \tarrow
   \epsilon \tarrow \epsilon}$, and $\mname{quo}_{\epsilon \tarrow
@@ -599,9 +599,9 @@ normal quotation.  The construction of terms in {\HLQE} has been
 modified to allow a hole (of type \texttt{epsilon}) to be used where a
 term of some other type is expected.
 
-The external representation of a quotation is \texttt{Quote(t,ty)} is
+The external representation of a quotation \texttt{Quote(t,ty)} is
 \texttt{Q\_ t \_Q}.  Similarly, the external representation of a hole
-is \texttt{Hole(t,ty)} is \texttt{H\_ t \_H}.  The external
+\texttt{Hole(t,ty)} is \texttt{H\_ t \_H}.  The external
 representation of an evaluation \texttt{Quote(t,ty)} is \[\texttt{eval
   t to ty}.\]
 
@@ -612,11 +612,11 @@ representation of an evaluation \texttt{Quote(t,ty)} is \[\texttt{eval
 The {\HLQE} contains a number of {\HOL} functions, tactics, and
 theorems that are useful for reasoning about constructions,
 quotations, and evaluations.  An important example is the {\HOL}
-function \texttt{isExprType} that implements the family in {\churchqe}
+function \texttt{isExprType} that implements the {\churchqe} family
 of logical constants $\mname{is-expr}_{\epsilon \tarrow o}^{\alpha}$
 where $\alpha$ ranges over members of $\sT$.  This function takes
 terms $s_1$ and $s_1$ of type \texttt{epsilon} and \texttt{type},
-respectively, as input and returns true as output iff $s_1$ represents
+respectively, and returns true iff $s_1$ represents
 the syntax tree of a term $t$, $s_2$ represents the syntax tree of a
 type $\alpha$, and $t$ is of type $\alpha$.
 
@@ -642,6 +642,48 @@ Harrison~\cite{Harrison95} are excellent. From a
 programming perspective, the discussion and extensive 
 bibliography of Kavvos' D.Phil. thesis~\cite{Kavvos2017}
 are well worth reading.
+
+Focusing just on interactive proof assistants, we find
+that Robert Boyer and J Moore developed a global
+infrastructure~\cite{BoyerMoore81}, for
+incorporating symbolic algorithms into the Nqthm~\cite{BoyerMoore88}
+theorem prover.  This approach is also used in
+ACL2~\cite{KaufmannMoore97}, the successor to Nqthm;
+see~\cite{HuntEtAl05}.  Over the last 30 years, the Nuprl group lead
+by Robert Constable has produced a large body of work on metareasoning
+and reflection for theorem
+proving~\cite{AllenEtAl90,Barzilay05,Constable95,Howe92,KnoblockConstable86,Nogin05,Yu07}
+that has been implemented in the Nuprl~\cite{Constable86} and
+MetaPRL~\cite{HickeyEtAl03} systems.  Proof by reflection has become a
+mainstream technique in the Coq~\cite{Coq8.5} proof assistant with the
+development of tactics based on symbolic computations like the Coq
+ring tactic~\cite{Boutin97,GregoireMahboubi05} and the formalizations
+of the \emph{four color theorem}~\cite{Gonthier08} and the
+\emph{Feit-Thompson odd-order theorem}~\cite{GonthierEtAl13} led by
+Georges Gonthier.
+See~\cite{Boutin97,BraibantPous11,Chlipala13,GonthierEtAl15,GregoireMahboubi05,JamesHinze09,OostdijkGeuvers02}
+for a selection of the work done on using reflection in Coq.
+Many other systems also support metareasoning and reflection:
+Agda~\cite{Norell09,VanDerWalt12,VanDerWaltSwierstra12},
+Idris~\cite{Christiansen:2014,Christiansen:2016,Christiansen:2016:Thesis}
+Isabelle/HOL~\cite{ChaiebNipkow08},
+Lean~\cite{ebner2017metaprogramming},
+Maude~\cite{ClavelMeseguer02}, 
+PVS~\cite{VonHenkeEtAl98}, 
+reFLect~\cite{MelhamEtAl13},
+and
+Theorema~\cite{GieseBuchberger07,BuchbergerEtAl06}.
+
+The semantics of the quotation operator $\synbrack{\cdot}$ is based on
+the \emph{disquotational theory of quotation}~\cite{Quotation12}.
+According to this theory, a quotation of an expression $e$ is an
+expression that denotes $e$ itself.  In {\churchqe},
+$\synbrack{\textbf{A}_\alpha}$ denotes a value that represents the
+syntactic structure of $\textbf{A}_\alpha$.  Polonsky~\cite{Polonsky11} 
+presents a set of axioms for quotation operators of this
+kind.  Other theories of quotation have been proposed -- see
+\cite{Quotation12} for an overview..  For instance, quotation can be viewed as
+an operation that constructs literals for syntactic values~\cite{Rabe15}.
 
 \section{Conclusion}\label{sec:conclusion}
 
