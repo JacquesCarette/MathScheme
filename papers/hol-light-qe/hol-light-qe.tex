@@ -8,6 +8,9 @@
 \usepackage{phonetic}
 \usepackage{xargs}
 \usepackage[pdftex,dvipsnames]{xcolor}
+\usepackage{listings}
+
+\lstset{language=ml,basicstyle=\ttfamily,breaklines=true,showspaces=false,showstringspaces=false,breakatwhitespace=true,texcl=true,escapeinside={(*}{*)}}
 
 \input{hol-light-qe-def}
 
@@ -69,22 +72,22 @@ how the expressions are manipulated by the SBMA and what the
 manipulations mean mathematically.
 
 We argue in~\cite{Farmer13} that the combination of quotation and
-evaluation, along with some inference rules, provides the means to 
-reason about the interplay between syntax and semantics, which is
-what is needed for reasoning about SBMAs.
-\emph{Quotation} is an operation that maps an expression $e$ to a
-special value called a \emph{syntactic value} that represents the
-syntax tree of $e$.  Quotation enables expressions to be manipulated
-as syntactic entities.  \emph{Evaluation} is an operation that maps a
-syntactic value $s$ to the value of the expression that is represented
-by $s$.  Evaluation enables meta-level reasoning via syntactic values
-to be reflected into object-level reasoning.  Quotation and evaluation
-thus form an infrastructure for integrating meta-level and
-object-level reasoning. Quotation gives a form of
-\emph{reification} of object-level values which allows
-introspection.  Along with inference rules, this gives a certain 
-amount of \emph{logical reflection}. Evaluation adds to this
-some aspects of \emph{computational reflection}.
+evaluation, along with some inference rules, provides the means to
+reason about the interplay between syntax and semantics, which is what
+is needed for reasoning about SBMAs.  \emph{Quotation} is an operation
+that maps an expression $e$ to a special value called a
+\emph{syntactic value} that represents the syntax tree of $e$.
+Quotation enables expressions to be manipulated as syntactic entities.
+\emph{Evaluation} is an operation that maps a syntactic value $s$ to
+the value of the expression that is represented by $s$.  Evaluation
+enables meta-level reasoning via syntactic values to be reflected into
+object-level reasoning.  Quotation and evaluation thus form an
+infrastructure for integrating meta-level and object-level
+reasoning. Quotation gives a form of \emph{reification} of
+object-level values which allows introspection.  Along with inference
+rules, this gives a certain amount of {\emph{logical
+  reflection}}\improvement{Reference?}. Evaluation adds to this some
+aspects of {\emph{computational reflection}}\improvement{Reference?}.
 
 Incorporating quotation and evaluation operators --- like quote and
 eval in the Lisp programming language --- into a traditional logic
@@ -434,13 +437,13 @@ $\epsilon$ can be straightforwardly defined.
   \item The set of {\HL} terms was extended so that {\churchqe}
     expressions could be mapped to {\HL} terms.  This required the
     introduction of $\epsilon$, the type of construction, and term
-    contructors for quotations and evaluations.  See
+    constructors for quotations and evaluations.  See
     subsection~\ref{subsec:mapping}.
 
   \item The {\HL} proof system was modified to include the machinery
     in {\churchqe} for reasoning about quotations and evaluations.
     This required adding new rules of inference to {\HL} and modifying
-    the {\HL} \texttt{INST} rule of inference that similtaneously
+    the {\HL} \texttt{INST} rule of inference that simultaneously
     substitutes terms $t_1,\ldots,t_n$ for the free variables
     $x_1,\ldots,x_n$ in a sequent.  See
     subsection~\ref{subsec:proof-system}.
@@ -528,6 +531,72 @@ $\sembrack{\textbf{A}_\epsilon}_{{\bf B}_\beta}$
 \ec
 \caption{Mapping of {\churchqe} Expressions to {\HOL} Terms}\label{tab:expressions} 
 \end{table}
+
+The {\churchqe} type $\epsilon$ is the type of constructions, the
+syntactic values constructions that represent the syntax trees of
+eval-free expressions.  $\epsilon$ is defined as an inductive type
+\texttt{epsilon} in {\HLQE}.  The following inductive types
+\texttt{type} and \texttt{epsilon} are defined in {\HLQE}:
+
+\begin{lstlisting}
+define_type "type = TyVar string
+                  | TyBase string
+                  | TyMonoCons string type
+                  | TyBiCons string type type";;
+
+define_type "epsilon = QuoVar string type 
+                     | QuoConst string type
+                     | App epsilon epsilon
+                     | Abs epsilon epsilon
+                     | Quo epsilon";;
+\end{lstlisting}
+
+Terms of type \texttt{type} denote the syntax trees of {\HLQE} types
+(which are the same as {\HOL} types).  The terms of type
+\texttt{epsilon} denote the syntax trees of {\HLQE} terms that are
+eval-free (i.e., do not contain evaluations).  
+
+The OCaml type of {\HOL} types in {\HLQE}
+
+\begin{lstlisting}
+type hol_type = Tyvar of string
+              | Tyapp of string *  hol_type list
+\end{lstlisting}
+
+\noindent
+is the same as in {\HL}, but the OCaml type of {\HOL} types in {\HLQE}
+
+\begin{lstlisting}
+type term = Var of string * hol_type
+          | Const of string * hol_type
+          | Comb of term * term
+          | Abs of term * term
+          | Quote of term * hol_type
+          | Hole of term * hol_type
+          | Eval of term * hol_type
+\end{lstlisting}
+
+\noindent
+has three new constructors --- \texttt{Quote}, \texttt{Hole}, and
+\texttt{Eval} --- that are not in {\HL}.
+
+\texttt{Quote} constructs a quotation of type \texttt{epsilon} with
+components $t$ and $\alpha$ from a term $t$ of type $\alpha$ that is
+is eval-free.  \texttt{Eval} constructs an evaluation of type $\alpha$
+with components $t$ and $\alpha$ from a term $t$ of type
+\texttt{epsilon} and a type $\alpha$.  \texttt{Hole} is used to
+construct ``holes'' of type \texttt{epsilon} in an quasiquotation as
+described in~\cite{FarmerArxiv16}.  A {\HLQE} quotation that contains
+holes is a quasiquotation, while a quotation without any holes is a
+normal quotation.  The construction of terms in {\HLQE} has been
+modified to allow a hole (of type \texttt{epsilon}) to be used where a
+term of some other type is expected.
+
+The external representation of a quotation is \texttt{Quote(t,ty)} is
+\texttt{Q\_ t \_Q}.  Similarly, the external representation of a hole
+is \texttt{Hole(t,ty)} is \texttt{H\_ t \_H}.  The external
+representation of an evaluation \texttt{Quote(t,ty)} is \[\texttt{eval
+  t to ty}.\]
 
 \subsection{Modification of the {\HL} Proof System}\label{subsec:proof-system}
 
