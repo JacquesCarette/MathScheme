@@ -17,7 +17,7 @@
 \newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
 \newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
 
-\title{\HLQE\thanks{This research was supported by NSERC.}}
+\title{{\HLQE}\info{Changed HOL Light from sc to rm as used by J. Harrison.}\thanks{This research was supported by NSERC.}}
 
 \author{Jacques Carette, William M. Farmer, and Patrick Laskowski}
 
@@ -25,7 +25,7 @@
 Computing and Software, McMaster University, Canada\\
 \url{http://www.cas.mcmaster.ca/~carette}\\
 \url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
-5 January 2018
+25 January 2018
 }
 
 \pagestyle{headings}
@@ -40,11 +40,12 @@ expressions in mathematically meaningful ways. Expressions are
 syntactic, but most logics do not allow one to discuss syntax.
 {\churchqe} is a version of Church's type theory that includes
 quotation and evaluation operators that are similar to quote and eval
-in the Lisp programming language. Church's type theory is not so
-different from \HL, and to prove that {\churchqe} is
-implementable, we decided to add quotation and evaluation to
-\HL{} to demonstrate this. Here we document our design and the
-challenges that needed to be overcome.
+in the Lisp programming language.  Since the {\HOL} logic is also a
+version of Church's type theory, we decided to add quotation and
+evaluation to {\HL} to demonstrate the implementability of {\churchqe}
+and the benefits of having quotation and evaluation in a proof
+assistant.  Here we document our design and the challenges that needed
+to be overcome.
 \end{abstract}
 
 \iffalse 
@@ -156,7 +157,7 @@ To demonstrate that {\churchqe} is indeed implementable, we have
 implemented {\churchqe} by modifying \HL~\cite{Harrison09}, a
 compact implementation of the HOL logic~\cite{GordonMelham93}.  The
 resulting version of \HL{} is called \HLQE.  Here we present its
-design, implementation and the challenges to doing so.
+design, implementation, and the challenges to doing so.
 
 The rest of the paper is organized as follows.
 Section~\ref{sec:ctt-qe} presents the key ideas underlying {\churchqe}
@@ -324,6 +325,9 @@ the types are mismatched.  A construction is \emph{proper} if it is in
 the range of $\sE$, i.e., it represents the syntax tree of an
 eval-free expression.
 
+The purpose of $\sE$ is to define the semantics of quotation: the
+meaning of $\synbrack{\textbf{A}_\alpha}$ is $\sE(\textbf{A}_\alpha)$.
+
 \subsection{Semantics}
 
 The semantics of {\churchqe} is based on Henkin-style general
@@ -393,33 +397,147 @@ beta-reductions that embody a double substitution.
 
 \section{\HL}\label{sec:hol-light}
 
-\HL~\cite{Harrison09} is an open-source proof assistant
-developed by John Harrison.  It implements a logic (HOL)
-which is a version of Church's type
-theory.  It is a simple implementation of the HOL proof
+\HL~\cite{Harrison09} is an open-source proof assistant developed by
+John Harrison.  It implements a logic (HOL) which is a version of
+Church's type theory.  It is a simple implementation of the HOL proof
 assistant~\cite{GordonMelham93} written in OCaml and hosted on GitHub
 at \url{https://github.com/jrh13/hol-light/}.  Although it is a
 relatively small system, it has been used to formalize many kinds of
-mathematics and to check many proofs including the lion's share
-of Tom Hale's proof of the Kepler conjecture~\cite{HalesEtAl17}.
+mathematics and to check many proofs including the lion's share of Tom
+Hale's proof of the Kepler conjecture~\cite{HalesEtAl17}.
 
-\HL{} is very well suited to serve as a foundation on which to
-build an implementation of {\churchqe}:  First, it is an open-source
-system that can be freely modified as long as certain very minimal
-conditions are satisfied.  Second, it is an implementation of a
-version of simple type theory that is essentially {\qzero}, the
-version of Church's type theory underlying {\churchqe}, plus
-polymorphic type variables.  The type variables in the implemented
-logic are not a hindrance; they actually facilitate the implementation
-of {\churchqe}.  And third, \HL{} supports the definition of
-inductive types so that $\epsilon$ can be straightforwardly defined.
+\HL{} is very well suited to serve as a foundation on which to build
+an implementation of {\churchqe}: First, it is an open-source system
+that can be freely modified as long as certain very minimal conditions
+are satisfied.  Second, it is an implementation of a version of simple
+type theory that is essentially {\qzero}, the version of Church's type
+theory underlying {\churchqe}, plus (1) polymorphic type variables,
+(2) an axiom of choice expressed by asserting that the Hilbert
+$\epsilon$ operator is a choice (indefinite description) operator, and
+(3) an axiom of infinity that asserts that \texttt{ind}, the type of
+individuals, is infinite~\cite{Harrison09}.  The type variables in the
+implemented logic are not a hindrance; they actually facilitate the
+implementation of {\churchqe}.  The presence of the axioms of choice
+and infinity in {\HL} alter the semantics of {\churchqe} without
+compromising in any way the semantics of quotation and evaluation.
+And third, \HL{} supports the definition of inductive types so that
+$\epsilon$ can be straightforwardly defined.
 
 \section{Implementation}\label{sec:implementation}
 
-The implementation is available at
-\url{https://github.com/JacquesCarette/hol-light}.
+\subsection{Overview}
+
+{\HLQE} was implemented in four stages:
+
+\be
+
+  \item The set of {\HL} terms was extended so that {\churchqe}
+    expressions could be mapped to {\HL} terms.  This required the
+    introduction of $\epsilon$, the type of construction, and term
+    contructors for quotations and evaluations.  See
+    subsection~\ref{subsec:mapping}.
+
+  \item The {\HL} proof system was modified to include the machinery
+    in {\churchqe} for reasoning about quotations and evaluations.
+    This required adding new rules of inference to {\HL} and modifying
+    the {\HL} \texttt{INST} rule of inference that similtaneously
+    substitutes terms $t_1,\ldots,t_n$ for the free variables
+    $x_1,\ldots,x_n$ in a sequent.  See
+    subsection~\ref{subsec:proof-system}.
+
+  \item Machinery, consisting of {\HOL} functions definitions,
+    tactics, and theorems, was created for supporting reasoning about
+    quotations and evaluations in the new system.  See
+    subsection~\ref{subsec:machinery}.
+
+  \item Examples were developed in the new system to test the
+    implementation and to demonstrate the benefits of having quotation
+    and evaluation in higher-order logic.  See section~\ref{sec:examples}.
+
+\ee
+
+\noindent
+The first and second stages have been essentially completed; both
+stages involved modifying the kernel of {\HL}.  The third and fourth
+stages are ongoing; they did not include any changes to the {\HL}
+kernel.
+
+The {\HLQE} system was developed by the third author under the
+supervision of the first two authors on an undergraduate NSERC USRA
+research project at McMaster University.  {\HLQE} is available at
+\[\mbox{\url{https://github.com/JacquesCarette/hol-light}},\]
+
+\subsection{Mapping of {\churchqe} Expressions to {\HOL} Terms}\label{subsec:mapping}
+
+Tables~\ref{tab:types} and~\ref{tab:expressions} illustrates how the
+{\churchqe} types and expressions are mapped to the {\HOL} types and
+terms, respectively.  The {\HOL} types and terms are written in the
+the internal representation form employed in {\HLQE}.  The type
+\texttt{epsilon} and the term constructors \texttt{Quote} and
+\texttt{Eval} are additions to {\HL} explained below.  Since
+{\churchqe} does not have type variables, there is a logical constant
+$\mname{=}_{\alpha \tarrow \alpha \tarrow o}$ representing equality
+for each $\alpha \in \sT$.  The members of this family of constants
+are all mapped to a single {\HOL} constant with the polymorphic type
+\texttt{a\_ty\_var->a\_ty\_var->bool} where \texttt{a\_ty\_var} is any
+chosen {\HOL} type variable.  The other logical constants of
+{\churchqe}~\cite[Table 1]{FarmerArxiv16} are mapped to {\HOL}
+functions.
+
+\begin{table}
+\bc
+\begin{tabular}{|lll|}
+\hline
+\textbf{${\bf CTT_{qe}}$ Type $\alpha$} \hspace*{2ex}
+  & \textbf{HOL Type $\mu(\alpha)$}
+  & \textbf{Abbreviation for $\mu(\alpha)$}\\
+$\omicron$ & \texttt{Tyapp("bool",[])} & \texttt{bool}\\
+$\iota$ & \texttt{Tyapp("ind",[])} & \texttt{ind}\\
+$\epsilon$ & \texttt{Tyapp("epsilon",[])} & \texttt{epsilon}\\
+$\beta \tarrow \gamma$ 
+  & \texttt{Tyapp("fun",[\mbox{$\mu(\beta),\mu(\gamma)$}])} \hspace*{2ex}
+  & \texttt{\mbox{$\mu(\beta)$}->\mbox{$\mu(\gamma)$}}\\  
+\hline
+\end{tabular}
+\ec
+\caption{Mapping of {\churchqe} Types to {\HOL} Types}\label{tab:types} 
+\end{table}
+
+\begin{table}
+\bc
+\begin{tabular}{|ll|}
+\hline
+\textbf{${\bf CTT_{qe}}$ Expression $e$} \hspace*{2ex}
+  & \textbf{HOL Term $\nu(e)$}\\
+$\textbf{x}_\alpha$
+  & \texttt{Var("x",\mbox{$\mu(\alpha)$})}\\
+$\textbf{c}_\alpha$
+  & \texttt{Const("c",\mbox{$\mu(\alpha)$})}\\
+$\mname{=}_{\alpha \tarrow \alpha \tarrow o}$
+  & \texttt{Const("=",\texttt{a\_ty\_var->a\_ty\_var->bool})}\\
+$(\textbf{F}_{\alpha \tarrow \beta} \, \textbf{A}_\alpha)$
+  & \texttt{Comb(\mbox{\rm $\nu(\textbf{F}_{\alpha \tarrow \beta}),\nu(\textbf{A}_\alpha)$})}\\
+$(\LambdaApp \textbf{x}_\alpha \mdot \textbf{B}_\beta)$
+  & \texttt{Abs(Var("x",\mbox{$\mu(\alpha)$}),\mbox{\rm $\nu(\textbf{B}_\beta)$})}\\
+$\synbrack{\textbf{A}_\alpha}$
+  & \texttt{Quote(\mbox{\rm $\nu(\textbf{A}_\alpha),\mu(\alpha)$})}\\
+$\sembrack{\textbf{A}_\epsilon}_{{\bf B}_\beta}$
+  & \texttt{Eval(\mbox{\rm $\nu(\textbf{A}_\epsilon),\mu(\beta)$})}\\
+\hline
+\end{tabular}
+\ec
+\caption{Mapping of {\churchqe} Expressions to {\HOL} Terms}\label{tab:expressions} 
+\end{table}
+
+\subsection{Modification of the {\HL} Proof System}\label{subsec:proof-system}
+
+\subsection{Creation of Support Machinery}\label{subsec:machinery}
 
 \section{Examples}\label{sec:examples}
+
+\subsection{Law of Excluded Middle}
+
+\subsection{Induction Schema}
 
 \section{Related Work}\label{sec:related-work}
 
