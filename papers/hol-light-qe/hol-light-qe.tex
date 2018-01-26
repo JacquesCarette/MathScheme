@@ -702,8 +702,14 @@ technique can be used without further justification.
 This remains true to this day. The systems in the LCF tradition (Isabelle/HOL,
 Coq, \HL) are in the ``first camp'',
 while Nqthm, ACL2, Nuprl, MetaPRL, Agda, Idris, Lean, Maude and Theorema, 
-as well as our approach fall in the ``second camp''.
-In particular, the Coq extension for reflection,
+as well as our approach broadly fall in the ``second camp''. However,
+all systems in the first camp have started to offer some reflection
+capabilities on top of their tactic facilities. Below we give some 
+additional details for each system, leveraging information from the papers 
+already cited above as well as the documentation of each system%
+\footnote{And some personal communication with some of system authors}.
+
+In more detail, the Coq extension for reflection,
 \textrm{SSReflect}~\cite{gonthier2010introduction}, which stands
 for \textsf{small scale reflection}, works by locally reflecting
 the syntax of particular kinds of objects -- such as decidable
@@ -711,6 +717,23 @@ predicates and finite structures.  It is the pervasive use of
 decidability and computability which gives small scale reflection
 its power, and at the same time, its limitation.  An extension to
 PVS allows reasoning much in the style of \textrm{SSReflect}.
+Isabelle/HOL offers a non-logical \texttt{reify} function (aka
+quotation), while its \texttt{interpret} function is in the logic;
+it uses global datatypes to represent \HL terms.
+
+The approach for the second list of systems also varies quite a bit.
+Nqthm, ACL2, Theorema (as well as now \HLQE) have global quotation
+and evaluation operators in the logic, as well as careful restrictions
+on their use to avoid paradoxes. Idris also have global quotation and
+evaluation, but it is unclear what features are in place to avoid
+paradoxes. MetaPRL have evaluation but no global quotation. Agda
+has global quotation and evaluation, but their use are mediated by
+a built-in \texttt{TC} (TypeChecking) monad which ensures soundness.
+Lean works similarly: all reflection must happen in the \texttt{tactic}
+monad, from which one cannot escape. Maude appears to offer a global
+quotation operator, but it is unclear if there is a global evaluation
+operator; quotations are offered by a built-in module, and those are
+extra-logical.
 
 \section{Conclusion}\label{sec:conclusion}
 
