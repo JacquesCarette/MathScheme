@@ -10,7 +10,9 @@
 \usepackage[pdftex,dvipsnames]{xcolor}
 \usepackage{listings}
 
-\lstset{language=ml,basicstyle=\ttfamily,breaklines=true,showspaces=false,showstringspaces=false,breakatwhitespace=true,texcl=true,escapeinside={(*}{*)}}
+\lstset{language=ml,basicstyle=\ttfamily\small,breaklines=true,showspaces=false,
+  showstringspaces=false,breakatwhitespace=true,texcl=true,
+  escapeinside={(*}{*)}}
 
 \input{hol-light-qe-def}
 
@@ -85,9 +87,15 @@ object-level reasoning.  Quotation and evaluation thus form an
 infrastructure for integrating meta-level and object-level
 reasoning. Quotation gives a form of \emph{reification} of
 object-level values which allows introspection.  Along with inference
+<<<<<<< HEAD
 rules, this gives a certain amount of \emph{logical
   reflection}. Evaluation adds to this some aspects of
 {\emph{computational reflection}.
+=======
+rules, this gives a certain amount of {\emph{logical reflection}};
+evaluation adds to this some aspects of {\emph{computational
+reflection}}~\cite{Costantini02,Harrison95}. 
+>>>>>>> 4e6b69c671c801229a1a0d7fc5fc46000baa3e87
 
 Incorporating quotation and evaluation operators --- like quote and
 eval in the Lisp programming language --- into a traditional logic
@@ -692,10 +700,12 @@ $\epsilon$ can be straightforwardly defined.
 \ee
 
 \noindent
-The first and second stages have been essentially completed; both
-stages involved modifying the kernel of {\HL}.  The third and fourth
-stages are ongoing; they did not include any changes to the {\HL}
-kernel.
+The first and second stages have been completed; both
+stages involved modifying the kernel of {\HL}.  The third stage is
+sufficiently complete that our examples in~\ref{sec:examples} work
+well, and did not involve any further changes to the {\HL} kernel.
+We do expect that adding further examples, which is ongoing, will
+require the addition of machinery but no changes to the kernel.
 
 The {\HLQE} system was developed by the third author under the
 supervision of the first two authors on an undergraduate NSERC USRA
@@ -727,7 +737,17 @@ named \texttt{hol\_light}:
 
 {}\unsure{Do we need to reference particular {\HLQE} files in this section?}
 
+<<<<<<< HEAD
 \subsection{Mapping of ${\rm CTT_{qe}}$ Expressions to HOL Terms}\label{subsec:mapping}
+=======
+\noindent
+It should be further remarked that our fork, from late April 2017, is not fully
+up-to-date with respect to {\HL}. In particular, this means that it is best to
+compile it with \textsc{OCaml 4.03.0} and \textsc{camlp5 6.16},
+both available from \textsc{opam}.
+
+\subsection{Mapping of {\churchqe} Expressions to {\HOL} Terms}\label{subsec:mapping}
+>>>>>>> 4e6b69c671c801229a1a0d7fc5fc46000baa3e87
 
 Tables~\ref{tab:types} and~\ref{tab:expressions} illustrates how the
 {\churchqe} types and expressions are mapped to the {\HOL} types and
@@ -797,6 +817,7 @@ $\sembrack{\textbf{A}_\epsilon}_{{\bf B}_\beta}$
 \end{table}
 
 The {\churchqe} type $\epsilon$ is the type of constructions, the
+<<<<<<< HEAD
 syntactic values that represent the syntax trees of eval-free
 expressions.  $\epsilon$ is formalized as an inductive type
 \texttt{epsilon} in {\HLQE}.  Since types are components of terms in
@@ -804,18 +825,24 @@ expressions.  $\epsilon$ is formalized as an inductive type
        {\HLQE} types (which are the same as {\HOL} types) is also
        needed.  The following are the definitions of \texttt{type} and
        \texttt{epsilon} in {\HLQE} as inductive types:
+=======
+syntactic values that represent the syntax trees of
+eval-free expressions.  $\epsilon$ is defined as an inductive type
+\texttt{epsilon}.  \texttt{type} and \texttt{epsilon} are defined
+as the following inductive types
+>>>>>>> 4e6b69c671c801229a1a0d7fc5fc46000baa3e87
 
 \begin{lstlisting}
 define_type "type = TyVar string
                   | TyBase string
                   | TyMonoCons string type
-                  | TyBiCons string type type";;
+                  | TyBiCons string type type"
 
 define_type "epsilon = QuoVar string type 
                      | QuoConst string type
                      | App epsilon epsilon
                      | Abs epsilon epsilon
-                     | Quo epsilon";;
+                     | Quo epsilon"
 \end{lstlisting}
 
 \noindent
@@ -845,7 +872,7 @@ type term = Var of string * hol_type
 
 \noindent
 has three new constructors --- \texttt{Quote}, \texttt{Hole}, and
-\texttt{Eval} --- that are not in {\HL}.
+\texttt{Eval} --- which are new.
 
 \texttt{Quote} constructs a quotation of type \texttt{epsilon} with
 components $t$ and $\alpha$ from a term $t$ of type $\alpha$ that is
@@ -855,7 +882,7 @@ with components $t$ and $\alpha$ from a term $t$ of type
 construct ``holes'' of type \texttt{epsilon} in an quasiquotation as
 described in~\cite{FarmerArxiv16}.  A {\HLQE} quotation that contains
 holes is a quasiquotation, while a quotation without any holes is a
-normal quotation.  The construction of terms in {\HLQE} has been
+normal quotation.  The construction of terms has been
 modified to allow a hole (of type \texttt{epsilon}) to be used where a
 term of some other type is expected.
 
@@ -1176,8 +1203,8 @@ terms.
 The approach for the second list of systems also varies quite a bit.
 Nqthm, ACL2, Theorema (as well as now \HLQE) have global quotation
 and evaluation operators in the logic, as well as careful restrictions
-on their use to avoid paradoxes. Idris also have global quotation and
-evaluation, but it is unclear what features are in place to avoid
+on their use to avoid paradoxes. Idris also has global quotation and
+evaluation, and the \emph{totality checker} is used to avoid
 paradoxes. MetaPRL have evaluation but no global quotation. Agda
 has global quotation and evaluation, but their use are mediated by
 a built-in \texttt{TC} (TypeChecking) monad which ensures soundness.
