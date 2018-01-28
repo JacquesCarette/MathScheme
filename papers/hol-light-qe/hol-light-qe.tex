@@ -30,7 +30,7 @@
 Computing and Software, McMaster University, Canada\\
 \url{http://www.cas.mcmaster.ca/~carette}\\
 \url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
-25 January 2018
+28 January 2018
 }
 
 \pagestyle{headings}
@@ -87,15 +87,9 @@ object-level reasoning.  Quotation and evaluation thus form an
 infrastructure for integrating meta-level and object-level
 reasoning. Quotation gives a form of \emph{reification} of
 object-level values which allows introspection.  Along with inference
-<<<<<<< HEAD
-rules, this gives a certain amount of \emph{logical
-  reflection}. Evaluation adds to this some aspects of
-{\emph{computational reflection}.
-=======
 rules, this gives a certain amount of {\emph{logical reflection}};
 evaluation adds to this some aspects of {\emph{computational
 reflection}}~\cite{Costantini02,Harrison95}. 
->>>>>>> 4e6b69c671c801229a1a0d7fc5fc46000baa3e87
 
 Incorporating quotation and evaluation operators --- like quote and
 eval in the Lisp programming language --- into a traditional logic
@@ -711,10 +705,13 @@ The {\HLQE} system was developed by the third author under the
 supervision of the first two authors on an undergraduate NSERC USRA
 research project at McMaster University.  {\HLQE} is available at
 \[\mbox{\url{https://github.com/JacquesCarette/hol-light}}.\]
-The system is based on a slightly out-of-date version of {\HL} and
-consequently does not work with recent versions of OCaml.  To run
-{\HLQE}, execute the following commands in {\HLQE} top-level directory
-named \texttt{hol\_light}:
+It should be further remarked that our fork, from late April 2017, is not fully
+up-to-date with respect to {\HL}. In particular, this means that it is best to
+compile it with \textsc{OCaml 4.03.0} and \textsc{camlp5 6.16},
+both available from \textsc{opam}.
+
+To run {\HLQE}, execute the following commands in {\HLQE} top-level
+directory named \texttt{hol\_light}:
 
 \begin{lstlisting}
 1) install opam                                                                 
@@ -737,17 +734,7 @@ named \texttt{hol\_light}:
 
 {}\unsure{Do we need to reference particular {\HLQE} files in this section?}
 
-<<<<<<< HEAD
 \subsection{Mapping of ${\rm CTT_{qe}}$ Expressions to HOL Terms}\label{subsec:mapping}
-=======
-\noindent
-It should be further remarked that our fork, from late April 2017, is not fully
-up-to-date with respect to {\HL}. In particular, this means that it is best to
-compile it with \textsc{OCaml 4.03.0} and \textsc{camlp5 6.16},
-both available from \textsc{opam}.
-
-\subsection{Mapping of {\churchqe} Expressions to {\HOL} Terms}\label{subsec:mapping}
->>>>>>> 4e6b69c671c801229a1a0d7fc5fc46000baa3e87
 
 Tables~\ref{tab:types} and~\ref{tab:expressions} illustrates how the
 {\churchqe} types and expressions are mapped to the {\HOL} types and
@@ -817,7 +804,6 @@ $\sembrack{\textbf{A}_\epsilon}_{{\bf B}_\beta}$
 \end{table}
 
 The {\churchqe} type $\epsilon$ is the type of constructions, the
-<<<<<<< HEAD
 syntactic values that represent the syntax trees of eval-free
 expressions.  $\epsilon$ is formalized as an inductive type
 \texttt{epsilon} in {\HLQE}.  Since types are components of terms in
@@ -825,12 +811,6 @@ expressions.  $\epsilon$ is formalized as an inductive type
        {\HLQE} types (which are the same as {\HOL} types) is also
        needed.  The following are the definitions of \texttt{type} and
        \texttt{epsilon} in {\HLQE} as inductive types:
-=======
-syntactic values that represent the syntax trees of
-eval-free expressions.  $\epsilon$ is defined as an inductive type
-\texttt{epsilon}.  \texttt{type} and \texttt{epsilon} are defined
-as the following inductive types
->>>>>>> 4e6b69c671c801229a1a0d7fc5fc46000baa3e87
 
 \begin{lstlisting}
 define_type "type = TyVar string
