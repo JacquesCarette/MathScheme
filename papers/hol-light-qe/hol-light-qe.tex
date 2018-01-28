@@ -10,7 +10,9 @@
 \usepackage[pdftex,dvipsnames]{xcolor}
 \usepackage{listings}
 
-\lstset{language=ml,basicstyle=\ttfamily,breaklines=true,showspaces=false,showstringspaces=false,breakatwhitespace=true,texcl=true,escapeinside={(*}{*)}}
+\lstset{language=ml,basicstyle=\ttfamily\small,breaklines=true,showspaces=false,
+  showstringspaces=false,breakatwhitespace=true,texcl=true,
+  escapeinside={(*}{*)}}
 
 \input{hol-light-qe-def}
 
@@ -460,15 +462,23 @@ $\epsilon$ can be straightforwardly defined.
 \ee
 
 \noindent
-The first and second stages have been essentially completed; both
-stages involved modifying the kernel of {\HL}.  The third and fourth
-stages are ongoing; they did not include any changes to the {\HL}
-kernel.
+The first and second stages have been completed; both
+stages involved modifying the kernel of {\HL}.  The third stage is
+sufficiently complete that our examples in~\ref{sec:examples} work
+well, and did not involve any further changes to the {\HL} kernel.
+We do expect that adding further examples, which is ongoing, will
+require the addition of machinery but no changes to the kernel.
 
 The {\HLQE} system was developed by the third author under the
 supervision of the first two authors on an undergraduate NSERC USRA
 research project at McMaster University.  {\HLQE} is available at
 \[\mbox{\url{https://github.com/JacquesCarette/hol-light}},\]
+
+\noindent
+It should be further remarked that our fork, from late April 2017, is not fully
+up-to-date with respect to {\HL}. In particular, this means that it is best to
+compile it with \textsc{OCaml 4.03.0} and \textsc{camlp5 6.16},
+both available from \textsc{opam}.
 
 \subsection{Mapping of {\churchqe} Expressions to {\HOL} Terms}\label{subsec:mapping}
 
@@ -540,22 +550,22 @@ $\sembrack{\textbf{A}_\epsilon}_{{\bf B}_\beta}$
 \end{table}
 
 The {\churchqe} type $\epsilon$ is the type of constructions, the
-syntactic values constructions that represent the syntax trees of
+syntactic values that represent the syntax trees of
 eval-free expressions.  $\epsilon$ is defined as an inductive type
-\texttt{epsilon} in {\HLQE}.  The following inductive types
-\texttt{type} and \texttt{epsilon} are defined in {\HLQE}:
+\texttt{epsilon}.  \texttt{type} and \texttt{epsilon} are defined
+as the following inductive types
 
 \begin{lstlisting}
 define_type "type = TyVar string
                   | TyBase string
                   | TyMonoCons string type
-                  | TyBiCons string type type";;
+                  | TyBiCons string type type"
 
 define_type "epsilon = QuoVar string type 
                      | QuoConst string type
                      | App epsilon epsilon
                      | Abs epsilon epsilon
-                     | Quo epsilon";;
+                     | Quo epsilon"
 \end{lstlisting}
 
 Terms of type \texttt{type} denote the syntax trees of {\HLQE} types
@@ -585,7 +595,7 @@ type term = Var of string * hol_type
 
 \noindent
 has three new constructors --- \texttt{Quote}, \texttt{Hole}, and
-\texttt{Eval} --- that are not in {\HL}.
+\texttt{Eval} --- which are new.
 
 \texttt{Quote} constructs a quotation of type \texttt{epsilon} with
 components $t$ and $\alpha$ from a term $t$ of type $\alpha$ that is
@@ -595,7 +605,7 @@ with components $t$ and $\alpha$ from a term $t$ of type
 construct ``holes'' of type \texttt{epsilon} in an quasiquotation as
 described in~\cite{FarmerArxiv16}.  A {\HLQE} quotation that contains
 holes is a quasiquotation, while a quotation without any holes is a
-normal quotation.  The construction of terms in {\HLQE} has been
+normal quotation.  The construction of terms has been
 modified to allow a hole (of type \texttt{epsilon}) to be used where a
 term of some other type is expected.
 
