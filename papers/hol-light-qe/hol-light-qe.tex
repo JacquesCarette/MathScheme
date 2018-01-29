@@ -44,13 +44,14 @@ We are interested in algorithms that manipulate mathematical
 expressions in mathematically meaningful ways. Expressions are
 syntactic, but most logics do not allow one to discuss syntax.
 {\churchqe} is a version of Church's type theory that includes
-quotation and evaluation operators that are similar to quote and eval
+quotation and evaluation operators, akin to quote and eval
 in the Lisp programming language.  Since the {\HOL} logic is also a
 version of Church's type theory, we decided to add quotation and
 evaluation to {\HL} to demonstrate the implementability of {\churchqe}
 and the benefits of having quotation and evaluation in a proof
 assistant.  The resulting system is called {\HLQE}.  Here we document
 the design of {\HLQE} and the challenges that needed to be overcome.
+The resulting implementation is freely available.
 \end{abstract}
 
 \iffalse 
@@ -103,12 +104,12 @@ $e$ as $\synbrack{e}$ and $\sembrack{e}$, respectively.
 
   \item \emph{Evaluation Problem.}  An evaluation operator is
     applicable to syntactic values that represent formulas and thus is
-    effectively a truth predicate.  Hence, by the proof of Alfred
+    effectively a truth predicate.  Hence, by the proof of
     Tarski's theorem on the undefinability of truth~\cite{Tarski35a},
     if the evaluation operator is total in the context of a
     sufficiently strong theory like first-order Peano arithmetic, then
-    it is possible to express the liar paradox using the quotation and
-    evaluation operators.  Therefore, the evaluation operator must be
+    it is possible to express the liar paradox.
+    Therefore, the evaluation operator must be
     partial and the law of disquotation cannot hold universally (i.e.,
     for some expressions $e$, $\sembrack{\synbrack{e}} \not= e$).  As
     a result, reasoning with evaluation can be cumbersome and leads to
