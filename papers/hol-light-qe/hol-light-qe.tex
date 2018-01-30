@@ -176,6 +176,24 @@ Section~\ref{sec:related-work} is devoted to related work.  And the
 paper ends with some final remarks in section~\ref{sec:conclusion}
 including a brief discussion on future work.
 
+The major contributions of the work presented here are:
+
+\be
+
+  \item We show that the logical machinery for quotation and
+    evaluation embodied in {\churchqe} can be straightforwardly
+    implemented in {\HL}.
+
+  \item We produce an {\HOL}-style proof assistant with a built-in
+    global reflection infrastructure for defining, applying, and
+    proving properties about SBMAs.
+
+  \item We demonstrate how this reflection infrastructure can be used
+    to express formula schemas, such as the induction schema for
+    first-order Peano arithmetic, as single formulas.
+
+\ee
+
 \section{${\rm CTT_{qe}}$}\label{sec:ctt-qe}
 
 The syntax and semantics of {\churchqe} as well as the proof system
@@ -731,10 +749,6 @@ directory named \texttt{hol\_light}:
    #use "Constructions/LEM Example.ml";;
 \end{lstlisting}
 
-{}\unsure{Jacques and Patrick, are these instructions accurate?}
-
-{}\unsure{Do we need to reference particular {\HLQE} files in this section?}
-
 \subsection{Mapping of ${\rm CTT_{qe}}$ Expressions to HOL Terms}\label{subsec:mapping}
 
 Tables~\ref{tab:types} and~\ref{tab:expressions} illustrates how the
@@ -759,7 +773,7 @@ are not mapped to primitive {\HOL} constants.  $\mname{app}_{\epsilon
 given below.  The remaining logical constants are predicates on
 constructions that are implemented by {\HOL} functions.
 
-\begin{table}
+\begin{table}[b]
 \bc
 \begin{tabular}{|lll|}
 \hline
@@ -778,7 +792,7 @@ $\beta \tarrow \gamma$
 \caption{Mapping of {\churchqe} Types to {\HOL} Types}\label{tab:types} 
 \end{table}
 
-\begin{table}
+\begin{table}[b]
 \bc
 \begin{tabular}{|ll|}
 \hline
@@ -991,12 +1005,13 @@ instance of this formalization of LEM is any instance of the universal
 statement.  
 
 The statement of LEM in {\churchqe} can directly written in {\HLQE} as
+the formula
 \begin{lstlisting}
 `!x:epsilon. isExprType (x:epsilon) (TyBase "bool")
    ==> ((eval x to bool) \/ ~(eval x to bool))`
 \end{lstlisting}
-and readily proved in {\HLQE}.  An instance of this theorem is obtain
-by applying the rule of inference \texttt{INST} followed by the
+that is readily proved in {\HLQE}.  An instance of this theorem is
+obtain by applying the rule of inference \texttt{INST} followed by the
 \texttt{BETA\_EVAL} and \texttt{BETA\_REVAL}, the beta-reduction rules
 for evaluations.
 
@@ -1032,13 +1047,37 @@ first-order Peano arithmetic.  The \emph{induction schema for
   Presburger arithmetic} is exactly the same as the induction schema
 for Peano arithmetic except that the predicate
 $\mname{is-peano}_{\epsilon \tarrow o}$ is replaced by an appropriate
-predicate $\mname{is-presburger}_{\epsilon \tarrow o}$.  Hence it is
-possible to directly express both first-order Peano arithmetic and
-Presburger arithmetic as theories in {\churchqe}.
+predicate $\mname{is-presburger}_{\epsilon \tarrow o}$.
+
+It should be noted that the induction schemas for Peano and Presburger
+arithmetic are weaker that the full induction principle for the
+natural numbers:
+\begin{align*}
+&
+\ForallApp p_{\iota \tarrow o} \mdot 
+((p_{\iota \tarrow o} \, 0 \And
+(\ForallApp x_\iota \mdot p_{\iota \tarrow o} \, x_\iota \Implies
+p_{\iota \tarrow o} \, (S_{\iota \tarrow \iota} \, x_\iota)))
+\Implies 
+\ForallApp x_\iota \mdot p_{\iota \tarrow o} \, x_\iota)
+\end{align*}
+
+\noindent
+The full induction principle states that induction holds for all
+properties of the natural numbers (which is an uncountable set), while
+the induction schemas for Peano and Presburger arithmetic hold only
+for properties that are definable in Peano and Presburger arithmetic
+(which are countable sets).
+
+The full induction principle is expressed in {\HL} as the
+theorem \[\texttt{`!P. P(\_0) /\ (!n. P(n) ==> P(SUC n)) ==> !n. P
+  n`}\] named \texttt{num\_INDUCTION}.  However, it is not possible to
+directly express the Peano and Presburger induction schemas in {\HL}
+without adding new rules of inference to its kernel.
 
 \bsp
-The induction schema for Peano arithmetic can be directly written in
-{\HLQE} as:
+The induction schema for Peano arithmetic can be written in
+{\HLQE} just as easily as in {\churchqe}:
 \begin{lstlisting}
 `!f:epsilon. 
    (isExprType 
@@ -1057,35 +1096,35 @@ The induction schema for Peano arithmetic can be directly written in
 \end{lstlisting}
 \esp
 
-This statement named \texttt{peanoInduction} is proved in {\HLQE} by:
+This statement named \texttt{peanoInduction} is proved from
+\texttt{num\_INDUCTION} in {\HLQE} by the following steps:
 
 \bsp
 \be
 
-  \item Instantiating the {\HL} theorem
-    \[\texttt{`!P. P(\_0) /\ (!n. P(n) ==> P(SUC n)) ==> !n. P n`}\]
-    that expresses the induction axiom with the predicate
+  \item Instantiate \texttt{num\_INDUCTION} with the predicate
     \texttt{`P:num->bool`} to obtain the formula \texttt{indinst}.
 
   \item Prove and install the theorem \texttt{nei\_peano} that says the
     variable \texttt{(n:num)} is not effective in \texttt{(eval
       (f:epsilon) to (num->bool))}.
 
-  \item Reduce \texttt{peanoInduction} and then prove the result by
-    instantiating \texttt{`P:num->bool`} in \texttt{indinst} with
-    \texttt{`eval (f:epsilon) to (num->bool)`} using the
-    \texttt{INST} which requires the theorem \texttt{nei\_peano}.
+  \item Logically reduce \texttt{peanoInduction} and then prove the
+    result by instantiating \texttt{`P:num->bool`} in \texttt{indinst}
+    with \texttt{`eval (f:epsilon) to (num->bool)`} using the
+    \texttt{INST} rule of inference.  This instantiation requires the
+    previously proved theorem \texttt{nei\_peano}.
 
-\ee
-\esp
+\ee 
+\esp 
 
-This example shows that the Induction Schema for Peano arithmetic ---
-as well as the Induction Schema for Presburger arithmetic --- can be
-expressed in {\HLQE}.  This enables us to define the first-order
-theories of Peano arithmetic and Presburger arithmetic in {\HLQE}.
-We do not know of any way to express these schemas or define these
-first-order theories in {\HL} without adding new rules of inference to
-it kernel.
+\noindent 
+The induction schema for Presburger arithmetic is stated and proved in
+the very same way.
+
+By virtue of being able to express the Peano and Presburger induction
+schemas, we can properly define the first-order theories of Peano
+arithmetic and Presburger arithmetic in {\HLQE}.
 
 \section{Related Work}\label{sec:related-work}
 
@@ -1210,30 +1249,38 @@ challenges that needed to be overcome.  And we have given some
 examples that test the implementation and show the benefits of having
 quotation and evaluation in higher-order logic.
 
-{\HLQE} enables the user to directly reasoning about the syntax of the
-terms of the logic.  We have shown that {\HLQE} can express a formula
-schema, such as the induction schema, as a single formula that can be
-instantiated and proved.  We also believe {\HLQE} can be used to
-define, apply, and prove properties about SBMAs.  These benefits are
-obtained at relatively low cost.  {\HLQE} works in exactly the same
-way as {\HL} except that, in the presence of evaluations, the
-instantiation of free variables may require proving side conditions
-that say (1) a variable is not effective in a term or (2) that a
-variable represented by a construction is not free in a term
-represented by a construction (see
-subsections~\ref{subsec:cttqe-proof-system}
-and~\ref{subsec:hlqe-proof-system}). .  This is the only significant
+The implementation of {\HLQE} was very straightforward since the
+logical issues were worked out in {\churchqe} and {\HL} provides good
+support for inductive types.  {\HLQE} works in exactly the same way as
+{\HL} except that, in the presence of evaluations, the instantiation
+of free variables may require proving side conditions that say (1) a
+variable is not effective in a term or (2) that a variable represented
+by a construction is not free in a term represented by a construction
+(see subsections~\ref{subsec:cttqe-proof-system}
+and~\ref{subsec:hlqe-proof-system}).  This is the only significant
 cost we see for using {\HLQE} in place of {\HL}.
 
+{\HLQE} provides a built-in global reflection
+infrastructure~\cite{FarmerArxiv16}.  This infrastructure can be used
+to reason about the syntactic structure of terms and, as we have
+shown, to express formula schemas as single formulas.  More
+importantly, the infrastructure provides the means to define, apply,
+and prove properties about SBMAs.  An SBMA can be defined as a
+function that manipulates constructions.  Its \emph{meaning formula}
+that specifies its mathematical meaning can be stated using the
+evaluation of constructions.  And the SBMA's meaning formula can be
+proved from the SBMA's definition.  In other words, the infrastructure
+provides a unified framework for formalizing SBMAs in a proof
+assistant.
+
 We plan to continue the development of {\HLQE} and to show that it can
-be effectively used to reason about SBMAs.  In particular, we intend
-to formalize in {\HLQE} the example on the symbolic differentiation of
-polynomials in {\churchqe} that is presented in~\cite{FarmerArxiv16}.
-This will require defining the algorithm for symbolic differentiation
-of polynomials, writing a \emph{meaning formula} that specifies the
-algorithms mathematical meaning, and finally proving the meaning
-formula from the algorithm's definition and standard facts about
-derivatives.
+be effectively used to develop SBMAs as we have just described.  In
+particular, we intend to formalize in {\HLQE} the example on the
+symbolic differentiation of polynomials in {\churchqe} that is
+presented in~\cite{FarmerArxiv16}.  This will require defining the
+algorithm for symbolic differentiation of polynomials, writing its
+meaning formula, and finally proving the meaning formula from the
+algorithm's definition and standard facts about derivatives.
 
 \bibliography{imps,hol-light-qe}
 \bibliographystyle{plain}
