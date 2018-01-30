@@ -735,11 +735,12 @@ directory named \texttt{hol\_light}:
 1) install opam
 2) opam init --comp 4.03.0                                                      
 3) opam install "camlp5=6.16" 
-4) cd hol_Light
-5) make
-6) run ocaml via                                                                
+5) opam `eval config env`
+5) cd hol_Light
+6) make
+7) run ocaml via                                                                
      ocaml -I `camlp5 -where` camlp5o.cma                                        
-7) #use "hol.ml";;
+8) #use "hol.ml";;
    #use "Constructions/epsilon.ml";;
    #use "Constructions/pseudoquotation.ml";;
    #use "Constructions/QuotationTactics.ml";;
