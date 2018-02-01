@@ -65,14 +65,14 @@ metareasoning, reflection, biform theories.
 \section{Introduction}\label{sec:introduction}
 
 A \emph{syntax-based mathematical algorithm (SBMA)} manipulates
-mathematical expressions in a mathematically meaningful way.  SBMAs
+mathematical expressions in a meaningful way.  SBMAs
 are commonplace in mathematics.  Examples include algorithms that
 compute arithmetic operations by manipulating numerals, linear
 transformations by manipulating matrices, and derivatives by
 manipulating functional expressions.  Reasoning about the mathematical
 meaning of an SBMA requires reasoning about the relationship between
 how the expressions are manipulated by the SBMA and what the
-manipulations mean mathematically.
+manipulations mean.
 
 We argue in~\cite{Farmer13} that the combination of quotation and
 evaluation, along with some inference rules, provides the means to
@@ -107,12 +107,12 @@ $e$ as $\synbrack{e}$ and $\sembrack{e}$, respectively.
     effectively a truth predicate.  Hence, by the proof of
     Tarski's theorem on the undefinability of truth~\cite{Tarski35a},
     if the evaluation operator is total in the context of a
-    sufficiently strong theory like first-order Peano arithmetic, then
+    sufficiently strong theory (like first-order Peano arithmetic), then
     it is possible to express the liar paradox.
     Therefore, the evaluation operator must be
     partial and the law of disquotation cannot hold universally (i.e.,
-    for some expressions $e$, $\sembrack{\synbrack{e}} \not= e$).  As
-    a result, reasoning with evaluation can be cumbersome and leads to
+    for some expressions $e$, $\sembrack{\synbrack{e}} \not= e$).  Thus
+    result, reasoning with evaluation can be cumbersome and leads to
     undefined expressions.
 
   \item \emph{Variable Problem.}  The variable $x$ is not free in the
@@ -160,24 +160,24 @@ show in~\cite{FarmerArxiv16} that it is suitable for defining,
 applying, and reasoning about SBMAs.
 
 To demonstrate that {\churchqe} is indeed implementable, we have
-implemented {\churchqe} by modifying \HL~\cite{Harrison09}, a
+done so by modifying \HL~\cite{Harrison09}, a
 compact implementation of the HOL proof assistant~\cite{GordonMelham93}.  The
 resulting version of \HL{} is called \HLQE.  Here we present its
-design, implementation, and the challenges to doing so.
+design, implementation, and the challenges encountered.
 
 The rest of the paper is organized as follows.
 Section~\ref{sec:ctt-qe} presents the key ideas underlying {\churchqe}
-and explains how {\churchqe} solves the three design problems given
-above.  Section~\ref{sec:hol-light} offers a brief overview of HOL
+and explains how {\churchqe} solves the three design problems.
+Section~\ref{sec:hol-light} offers a brief overview of HOL
 Light.  The \HLQE{} implementation is described in
 section~\ref{sec:implementation}, and examples of how quotation and
 evaluation are used in it are discussed in section~\ref{sec:examples}.
 Section~\ref{sec:related-work} is devoted to related work.  And the
-paper ends with some final remarks in section~\ref{sec:conclusion}
-including a brief discussion on future work.
+paper ends with some final remarks including a brief discussion on future work.
 
 The major contributions of the work presented here are:
 
+\vspace*{-2.5mm}
 \be
 
   \item We show that the logical machinery for quotation and
@@ -196,22 +196,23 @@ The major contributions of the work presented here are:
 
 \section{${\rm CTT_{qe}}$}\label{sec:ctt-qe}
 
-The syntax and semantics of {\churchqe} as well as the proof system
-for {\churchqe} are defined in~\cite{FarmerArxiv16}.  In this section
-we will only introduce the definitions and results of {\churchqe} that
+The syntax, semantics and proof system of {\churchqe}
+are defined in~\cite{FarmerArxiv16}.  Here
+we will only introduce the definitions and results of that
 are key to understanding how \HLQE{} implements {\churchqe}.  The
 reader is encouraged to consult~\cite{FarmerArxiv16} when additional
 details are required.
 
 \subsection{Syntax}
 
-The syntax of {\churchqe} has the same machinery as {\qzero} plus an
+{\churchqe} has the same machinery as {\qzero} plus an
 inductive type $\epsilon$ of syntactic values, a partial quotation
 operator, and a typed evaluation operator.
 
 A \emph{type} of {\churchqe} is defined inductively by the following
 formation rules:
 %
+\vspace*{-1.5mm}
 \be
 
   \item \emph{Type of individuals}: $\iota$ is a type.
@@ -227,7 +228,6 @@ formation rules:
 
 \noindent
 Let $\sT$ denote the set of types of {\churchqe}.  
-
 A \emph{typed symbol} is a symbol with a subscript from $\sT$.  Let
 $\sV$ be a set of typed symbols such that, for each $\alpha \in \sT$,
 $\sV$ contains denumerably many typed symbols with subscript~$\alpha$.
@@ -248,8 +248,9 @@ inductively by the formation rules below.  $\textbf{A}_\alpha,
 \textbf{B}_\alpha, \textbf{C}_\alpha, \ldots$ are syntactic variables
 ranging over expressions of type $\alpha$.  An expression is
 \emph{eval-free} if it is constructed using just the first five
-formation rules.
+rules.
 %
+\vspace*{-3mm}
 \be
 
   \item \emph{Variable}: $\textbf{x}_\alpha$ is an expression of type
@@ -281,7 +282,7 @@ $\sembrack{\textbf{A}_\epsilon}_{{\bf B}_\beta}$ as
 $\sembrack{\textbf{A}_\epsilon}_\beta$.
 
 A \emph{construction} of {\churchqe} is an expression of type
-$\epsilon$ defined inductively as follows:
+$\epsilon$ defined inductively by
 
 \be
 
@@ -301,7 +302,7 @@ $\epsilon$ defined inductively as follows:
 
 \noindent
 The set of constructions is thus an inductive type whose base elements
-are quotations of variables and constants and whose constructors are
+are quotations of variables and constants, and whose constructors are
 $\mname{app}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$,
 $\mname{abs}_{\epsilon \tarrow \epsilon \tarrow \epsilon}$, and
 $\mname{quo}_{\epsilon \tarrow \epsilon}$.  As we will see shortly,
@@ -371,7 +372,7 @@ $\sembrack{\synbrack{\textbf{A}_\alpha}}_\alpha = \textbf{A}_\alpha$
 \end{thm}
 
 \begin{rem}\em
-Notice that this is not the full Law of Disquotation since only
+Notice that this is not the full Law of Disquotation, since only
 eval-free expressions can be quoted.  As a result of this restriction,
 the liar paradox is not expressible in {\churchqe} and the Evaluation
 Problem mentioned above is effectively solved.
@@ -386,29 +387,29 @@ syntactic device for specifying expressions and defining macros.
 Quasiquotation was introduced by Willard Van Orman Quine in 1940 in
 the first version of his book \emph{Mathematical
   Logic}~\cite{Quine03}.  It has been extensively employed in the Lisp
-family of programming languages~\cite{Bawden99}.\footnote{In Lisp, the
+family of programming languages~\cite{Bawden99},\footnote{In Lisp, the
   standard symbol for quasiquotation is the backquote ({\tt `})
   symbol, and thus in Lisp, quasiquotation is usually called
-  \emph{backquote}.}
+  \emph{backquote}.} and from there to other families of
+programming languages, most notably the ML family.
 
 In {\churchqe}, constructing a large quotation from smaller quotations
 can be tedious because it requires many applications of the syntax
 constructors $\mname{app}_{\epsilon \tarrow \epsilon \tarrow
   \epsilon}$, $\mname{abs}_{\epsilon \tarrow \epsilon \tarrow
   \epsilon}$, and $\mname{quo}_{\epsilon \tarrow \epsilon}$.
-Quasiquotation provides a convenient way to construct big quotations
-from little quotations.  It can be defined straightforwardly in
+Quasiquotation alleviates this problem.
+It can be defined straightforwardly in
 {\churchqe}.  However, quasiquotation is not part of the official
 syntax of {\churchqe}; it is just a notational device used to write
 {\churchqe} expressions in a compact form.
 
-As an example, consider the {\churchqe} quasiquotation
-$\synbrack{\Neg(\textbf{A}_o \And
-  \commabrack{\textbf{B}_\epsilon})}$. $\commabrack{\textbf{B}_\epsilon}$
-is a \emph{hole} or \emph{antiquotation}. Let assume that
+As an example, consider $\synbrack{\Neg(\textbf{A}_o \And
+  \commabrack{\textbf{B}_\epsilon})}$. Here $\commabrack{\textbf{B}_\epsilon}$
+is a \emph{hole} or \emph{antiquotation}. Assume that
 $\textbf{A}_o$ contains no holes.  $\synbrack{\Neg(\textbf{A}_o \And
   \commabrack{\textbf{B}_\epsilon})}$ is then an abbreviation for the
-significantly more verbose expression
+verbose expression
 \[\mname{app}_{\epsilon \tarrow
   \epsilon \tarrow \epsilon} \, \synbrack{\Neg_{o \tarrow o}} \,
 (\mname{app}_{\epsilon \tarrow \epsilon \tarrow \epsilon} \,
@@ -421,7 +422,7 @@ to the second conjunct is replaced by the syntax tree represented by
 $\textbf{B}_\epsilon$.  If $\textbf{B}_\epsilon$ is a quotation
 $\synbrack{\textbf{C}_o}$, then the quasiquotation
 $\synbrack{\Neg(\textbf{A}_o \And
-  \commabrack{\synbrack{\textbf{C}_o}})}$ is equivalent to the
+  \commabrack{\synbrack{\textbf{C}_o}})}$ is \emph{equivalent} to the
 quotation $\synbrack{\Neg(\textbf{A}_o \And \textbf{C}_o)}$.
 
 \subsection{Proof System}\label{subsec:cttqe-proof-system}
@@ -431,16 +432,15 @@ the single rule of inference for {\qzero}, and additional
 axioms~\cite[B1--B13]{FarmerArxiv16} that define the logical constants
 of {\churchqe} (B1--B4,B5,B7), specify $\epsilon$ as an inductive type
 (B4,B6), state the properties of quotation and evaluation (B8,B10),
-and extend the rules for beta-reduction (B9,B11--13).  We prove
+and extend the rules for $\beta$-reduction (B9,B11--13).  We prove
 in~\cite{FarmerArxiv16} that this proof system is sound for all
 formulas and complete for eval-free formulas.
 
 The axioms that express the properties of quotation and evaluation are:
 
-\bi
-
-  \item[] \textbf{B8 (Properties of Quotation)}
-
+\noindent
+\begin{minipage}{\textwidth}
+  \noindent\textbf{B8 (Properties of Quotation)}
   \be
 
     \item $\synbrack{\textbf{F}_{\alpha \tarrow \beta} \,
@@ -458,8 +458,9 @@ The axioms that express the properties of quotation and evaluation are:
       \synbrack{\textbf{A}_\alpha}$.
 
   \ee
+\end{minipage}
 
-  \item[] \textbf{B10 (Properties of Evaluation)}
+  \noindent\textbf{B10 (Properties of Evaluation)}
 
   \be
 
@@ -469,8 +470,8 @@ The axioms that express the properties of quotation and evaluation are:
 
     \item $(\mname{is-expr}_{\epsilon \tarrow o}^{\alpha \tarrow \beta}
       \, \textbf{A}_\epsilon \And \mname{is-expr}_{\epsilon \tarrow o}^{\alpha}
-      \, \textbf{B}_\epsilon) \Implies\\[.5ex]
-      \hspace*{2ex} \sembrack{\mname{app}_{\epsilon \tarrow \epsilon
+      \, \textbf{B}_\epsilon) \Implies
+          \sembrack{\mname{app}_{\epsilon \tarrow \epsilon
           \tarrow \epsilon} \, \textbf{A}_\epsilon \,
         \textbf{B}_\epsilon}_{\beta} =
       \sembrack{\textbf{A}_\epsilon}_{\alpha \tarrow \beta} \,
@@ -492,14 +493,12 @@ The axioms that express the properties of quotation and evaluation are:
 
   \ee
 
-\ei
+\noindent
+The axioms for extending the rules  for $\beta$-reduction are:
 
 \noindent
-The axioms for extending the rules  for beta-reduction are:
-
-\bi
-
-  \item[] \textbf{B9 (Beta-Reduction for Quotations)}
+\begin{minipage}{\textwidth}
+  \noindent\textbf{B9 (Beta-Reduction for Quotations)}
 
   \be
 
@@ -509,8 +508,7 @@ The axioms for extending the rules  for beta-reduction are:
 
   \ee
 
-  \item[] \textbf{B11 (Beta-Reduction for Evaluations)}
-
+  \noindent\textbf{B11 (Beta-Reduction for Evaluations)}
   \be
 
     \item $(\LambdaApp \textbf{x}_\alpha \mdot
@@ -519,7 +517,7 @@ The axioms for extending the rules  for beta-reduction are:
  
     \item $(\mname{is-expr}_{\epsilon \tarrow o}^{\beta} \,
       ((\LambdaApp \textbf{x}_\alpha \mdot \textbf{B}_\epsilon) \,
-      \textbf{A}_\alpha) \And \\[.5ex] \hspace*{0.5ex}
+      \textbf{A}_\alpha) \And %\\[.5ex] \hspace*{0.5ex}
       \Neg(\mname{is-free-in}_{\epsilon \tarrow \epsilon \tarrow o}
       \, \synbrack{\textbf{x}_\alpha} \, ((\LambdaApp
       \textbf{x}_\alpha \mdot \textbf{B}_\epsilon) \,
@@ -531,7 +529,7 @@ The axioms for extending the rules  for beta-reduction are:
 
   \ee
 
-  \item[] \textbf{B12 (``Not Free In'' means ``Not Effective In'')}
+  \noindent\textbf{B12 (``Not Free In'' means ``Not Effective In'')}
 
   \bi
 
@@ -541,7 +539,7 @@ The axioms for extending the rules  for beta-reduction are:
 
   \ei
 
-  \item[] \textbf{B13 (Beta-Reduction for Function Abstractions)}
+  \noindent\textbf{B13 (Beta-Reduction for Function Abstractions)}
 
   \bi
 
@@ -555,13 +553,14 @@ The axioms for extending the rules  for beta-reduction are:
 
    \ei
 
-\ei
+\end{minipage}
 
-Substitution is performed in the proof system for {\churchqe} using
-the properties of beta-reduction as Andrews does in the proof system
+Substitution is performed using
+the properties of $\beta$-reduction as Andrews does in the proof system
 for {\qzero}~\cite[p.~213]{Andrews02}.  The following three
-beta-reduction cases require discussion:
+$\beta$-reduction cases require discussion:
 
+\vspace*{-2.5mm}
 \be
 
   \item $(\LambdaApp \textbf{x}_\alpha \mdot \LambdaApp
@@ -569,7 +568,7 @@ beta-reduction cases require discussion:
     where $\textbf{x}_\alpha$ and $\textbf{y}_\beta$ are distinct.
 
   \item $(\LambdaApp \textbf{x}_\alpha \mdot
-      \synbrack{\textbf{B}_\beta}) \, \textbf{A}_\alpha)$.
+      \synbrack{\textbf{B}_\beta}) \, \textbf{A}_\alpha$.
 
   \item $(\LambdaApp \textbf{x}_\alpha \mdot
     \sembrack{\textbf{B}_\epsilon}_\beta) \, \textbf{A}_\alpha$.
@@ -579,13 +578,13 @@ beta-reduction cases require discussion:
 The first case can normally be reduced when either (1)
 $\textbf{y}_\beta$ is not free in $\textbf{A}_\alpha$ or (2)
 $\textbf{x}_\alpha$ is not free in $\textbf{B}_\gamma$.  However, due
-to the Variable Problem mentioned above, it is only possible to
+to the Variable Problem mentioned before, it is only possible to
 syntactically check whether a ``variable is not free in an
-expression'' when the expression is eval-free.  Our solution to this
-problem is to replace the syntactic notion of ``a variable is free in
+expression'' when the expression is eval-free.  Our solution
+is to replace the syntactic notion of ``a variable is free in
 an expression'' by the semantic notion of ``a variable is effective in
 an expression'' when the expression is not necessarily eval-free, and
-use Axiom B13 to perform the beta-reduction.  
+use Axiom B13 to perform the $\beta$-reduction.  
 
 ``$\textbf{x}_\alpha$ is effective in $\textbf{B}_\beta$'' means the
 value of $\textbf{B}_\beta$ depends on the value of
@@ -605,8 +604,8 @@ abbreviation for \[\ForsomeApp \textbf{y}_\alpha \mdot ((\LambdaApp
 $\alpha$ that differs from $\textbf{x}_\alpha$.
 
 The second case is simple since a quotation cannot be modified by
-substitution.  It is effectively the same as a constant. Thus
-beta-reduction is performed without changing
+substitution --- it is effectively the same as a constant. Thus
+$\beta$-reduction is performed without changing
 $\synbrack{\textbf{B}_\beta}$ as shown in Axiom B9 above.
 
 The third case is handled by Axioms B11.1 and B11.2.  B11.1 deals with
@@ -616,9 +615,8 @@ complicated situation.  The condition
 \[\Neg(\mname{is-free-in}_{\epsilon \tarrow \epsilon \tarrow o}
       \, \synbrack{\textbf{x}_\alpha} \, ((\LambdaApp
       \textbf{x}_\alpha \mdot \textbf{B}_\epsilon) \,
-      \textbf{A}_\alpha))\] in B11.2 guarantees that there is not a
-      double substitution as mentioned above in the Double
-      Substitution Problem. $\mname{is-free-in}_{\epsilon \tarrow
+      \textbf{A}_\alpha))\] guarantees that there is no
+      \emph{double substitution}.  $\mname{is-free-in}_{\epsilon \tarrow
         \epsilon \tarrow o}$ is a logical constant of {\churchqe} such
       that $\mname{is-free-in}_{\epsilon \tarrow \epsilon \tarrow o}
       \, \synbrack{\textbf{x}_\alpha} \,
@@ -640,16 +638,17 @@ following two forms:
 
 \ee
 
-\subsection{Design Problems} 
+\subsection{The 3 Design Problems} 
 
+To recap,
 {\churchqe} solves the three design problems given in
-section~\ref{sec:introduction}.  The Evaluation Problem is completely
+section~\ref{sec:introduction}.  The Evaluation Problem is
 avoided by restricting the quotation operator to eval-free expressions
 and thus making it impossible to express the liar paradox.  The
-Variable Problem is overcome by modifying Andrews' beta-reduction
-axioms as described above.  The Double Substitution Problem is eluded
-by using a beta-reduction axiom for evaluations that excludes
-beta-reductions that embody a double substitution.
+Variable Problem is overcome by modifying Andrews' $\beta$-reduction
+axioms.  The Double Substitution Problem is eluded
+by using a $\beta$-reduction axiom for evaluations that excludes
+$\beta$-reductions that embody a double substitution.
 
 \section{HOL Light}\label{sec:hol-light}
 
@@ -687,16 +686,16 @@ $\epsilon$ can be straightforwardly defined.
 
 \be
 
-  \item The set of {\HL} terms was extended so that {\churchqe}
+  \item The set of terms was extended so that {\churchqe}
     expressions could be mapped to {\HL} terms.  This required the
     introduction of \texttt{epsilon}, the type of constructions, and
     term constructors for quotations and evaluations.  See
     subsection~\ref{subsec:mapping}.
 
-  \item The {\HL} proof system was modified to include the machinery
+  \item The proof system was modified to include the machinery
     in {\churchqe} for reasoning about quotations and evaluations.
-    This required adding new rules of inference to {\HL} and modifying
-    the {\HL} \texttt{INST} rule of inference that simultaneously
+    This required adding new rules of inference and modifying
+    the \texttt{INST} rule of inference that simultaneously
     substitutes terms $t_1,\ldots,t_n$ for the free variables
     $x_1,\ldots,x_n$ in a sequent.  See
     subsection~\ref{subsec:hlqe-proof-system}.
@@ -722,7 +721,7 @@ require the addition of machinery but no changes to the kernel.
 
 The {\HLQE} system was developed by the third author under the
 supervision of the first two authors on an undergraduate NSERC USRA
-research project at McMaster University.  {\HLQE} is available at
+research project at McMaster University, and is available at
 \[\mbox{\url{https://github.com/JacquesCarette/hol-light}}.\]
 It should be further remarked that our fork, from late April 2017, is not fully
 up-to-date with respect to {\HL}. In particular, this means that it is best to
@@ -733,45 +732,23 @@ To run {\HLQE}, execute the following commands in {\HLQE} top-level
 directory named \texttt{hol\_light}:
 
 \begin{lstlisting}
-1) install opam                                                                 
+1) install opam
 2) opam init --comp 4.03.0                                                      
 3) opam install "camlp5=6.16" 
-4) cd hol_Light
-5) make                                                  
-6) run ocaml via                                                                
+5) opam `eval config env`
+5) cd hol_Light
+6) make
+7) run ocaml via                                                                
      ocaml -I `camlp5 -where` camlp5o.cma                                        
-7) #use "hol.ml";;
+8) #use "hol.ml";;
    #use "Constructions/epsilon.ml";;
    #use "Constructions/pseudoquotation.ml";;
    #use "Constructions/QuotationTactics.ml";;
-   #use "Constructions/QuotationOperatorTests.ml";;
-   #use "Constructions/Induction Schema Example.ml";;
-   #use "Constructions/LEM Example.ml";;
 \end{lstlisting}
+\noindent Each test can be run by an appropriate further
+\lstinline|#use| statement.
 
 \subsection{Mapping of ${\rm CTT_{qe}}$ Expressions to HOL Terms}\label{subsec:mapping}
-
-Tables~\ref{tab:types} and~\ref{tab:expressions} illustrates how the
-{\churchqe} types and expressions are mapped to the {\HOL} types and
-terms, respectively.  The {\HOL} types and terms are written in the
-the internal representation form employed in {\HLQE}.  The type
-\texttt{epsilon} and the term constructors \texttt{Quote} and
-\texttt{Eval} are additions to {\HL} explained below.  Since
-{\churchqe} does not have type variables, there is a logical constant
-$\mname{=}_{\alpha \tarrow \alpha \tarrow o}$ representing equality
-for each $\alpha \in \sT$.  The members of this family of constants
-are all mapped to a single {\HOL} constant with the polymorphic type
-\texttt{a\_ty\_var->a\_ty\_var->bool} where \texttt{a\_ty\_var} is any
-chosen {\HOL} type variable.  
-
-The other logical constants of {\churchqe}~\cite[Table 1]{FarmerArxiv16}
-are not mapped to primitive {\HOL} constants.  $\mname{app}_{\epsilon
-  \tarrow \epsilon \tarrow \epsilon}$, $\mname{abs}_{\epsilon \tarrow
-  \epsilon \tarrow \epsilon}$, and $\mname{quo}_{\epsilon \tarrow
-  \epsilon}$ are implemented by \texttt{App}, \texttt{Abs}, and
-\texttt{Quo}, constructors for the inductive type \texttt{epsilon}
-given below.  The remaining logical constants are predicates on
-constructions that are implemented by {\HOL} functions.
 
 \begin{table}[b]
 \bc
@@ -792,7 +769,7 @@ $\beta \tarrow \gamma$
 \caption{Mapping of {\churchqe} Types to {\HOL} Types}\label{tab:types} 
 \end{table}
 
-\begin{table}[b]
+\begin{table}[t]
 \bc
 \begin{tabular}{|ll|}
 \hline
@@ -818,14 +795,34 @@ $\sembrack{\textbf{A}_\epsilon}_{{\bf B}_\beta}$
 \caption{Mapping of {\churchqe} Expressions to {\HOL} Terms}\label{tab:expressions} 
 \end{table}
 
+Tables~\ref{tab:types} and~\ref{tab:expressions} illustrate how the
+{\churchqe} types and expressions are mapped to the {\HOL} types and
+terms, respectively.  The {\HOL} types and terms are written in the
+the internal representation employed in {\HLQE}.  The type
+\texttt{epsilon} and the term constructors \texttt{Quote} and
+\texttt{Eval} are additions to {\HL} explained below.  Since
+{\churchqe} does not have type variables, it has a logical constant
+$\mname{=}_{\alpha \tarrow \alpha \tarrow o}$ representing equality
+for each $\alpha \in \sT$.  The members of this family of constants
+are all mapped to a single {\HOL} constant with the polymorphic type
+\texttt{a\_ty\_var->a\_ty\_var->bool} where \texttt{a\_ty\_var} is any
+chosen {\HOL} type variable.  
+
+The other logical constants of {\churchqe}~\cite[Table 1]{FarmerArxiv16}
+are not mapped to primitive {\HOL} constants.  $\mname{app}_{\epsilon
+  \tarrow \epsilon \tarrow \epsilon}$, $\mname{abs}_{\epsilon \tarrow
+  \epsilon \tarrow \epsilon}$, and $\mname{quo}_{\epsilon \tarrow
+  \epsilon}$ are implemented by \texttt{App}, \texttt{Abs}, and
+\texttt{Quo}, constructors for the inductive type \texttt{epsilon}
+given below.  The remaining logical constants are predicates on
+constructions that are implemented by {\HOL} functions.
 The {\churchqe} type $\epsilon$ is the type of constructions, the
 syntactic values that represent the syntax trees of eval-free
 expressions.  $\epsilon$ is formalized as an inductive type
-\texttt{epsilon} in {\HLQE}.  Since types are components of terms in
-       {\HL}, an inductive type \texttt{type} of syntax values for
-       {\HLQE} types (which are the same as {\HOL} types) is also
-       needed.  The following are the definitions of \texttt{type} and
-       \texttt{epsilon} in {\HLQE} as inductive types:
+\texttt{epsilon}.  Since types are components of terms in
+{\HL}, an inductive type \texttt{type} of syntax values for
+{\HLQE} types (which are the same as {\HOL} types) is also
+needed.  Specifically:
 
 \begin{lstlisting}
 define_type "type = TyVar string
@@ -843,7 +840,7 @@ define_type "epsilon = QuoVar string type
 \noindent
 Terms of type \texttt{type} denote the syntax trees of {\HLQE} types,
 while the terms of type \texttt{epsilon} denote the syntax trees of
-{\HLQE} terms that are eval-free (i.e., do not contain evaluations).
+{\HLQE} terms that are eval-free.
 
 The OCaml type of {\HOL} types in {\HLQE}
 
@@ -874,7 +871,7 @@ components $t$ and $\alpha$ from a term $t$ of type $\alpha$ that is
 is eval-free.  \texttt{Eval} constructs an evaluation of type $\alpha$
 with components $t$ and $\alpha$ from a term $t$ of type
 \texttt{epsilon} and a type $\alpha$.  \texttt{Hole} is used to
-construct ``holes'' of type \texttt{epsilon} in an quasiquotation as
+construct ``holes'' of type \texttt{epsilon} in a quasiquotation as
 described in~\cite{FarmerArxiv16}.  A {\HLQE} quotation that contains
 holes is a quasiquotation, while a quotation without any holes is a
 normal quotation.  The construction of terms has been
@@ -884,14 +881,14 @@ term of some other type is expected.
 The external representation of a quotation \texttt{Quote(t,ty)} is
 \texttt{Q\_ t \_Q}.  Similarly, the external representation of a hole
 \texttt{Hole(t,ty)} is \texttt{H\_ t \_H}.  The external
-representation of an evaluation \texttt{Quote(t,ty)} is \[\texttt{eval
-  t to ty}.\]
+representation of an evaluation \texttt{Quote(t,ty)} is $\texttt{eval
+  t to ty}.$
 
 \subsection{Modification of the HOL Light Proof System}\label{subsec:hlqe-proof-system}
 
-We said in subsection~\ref{subsec:cttqe-proof-system} that the proof system
-for {\churchqe} is obtained by extending the Andrews' proof system for
-{\qzero} with additional axioms named B1--B13.  Since {\qzero} and
+We said in~\ref{subsec:cttqe-proof-system} that the proof system
+for {\churchqe} is obtained by extending the proof system for
+{\qzero} with additional axioms B1--B13.  Since {\qzero} and
 {\HL} are both complete (with respect to the semantics of Henkin-style
 general models), {\HL} includes the reasoning capabilities of the proof
 system for {\qzero} but obviously not the reasoning capabilities
@@ -902,11 +899,12 @@ This is done in several ways.  First, the logical constants defined by
 Axioms B1--B4, B5, and B7 are defined in {\HLQE} as {\HOL} functions.
 Second, the no junk (B6) and no confusion (B4) requirements for
 $\epsilon$ are automatic consequences of defining \texttt{epsilon} as
-an inductive type in {\HL}.  Third, Axiom B9 is implemented directly
+an inductive type.  Third, Axiom B9 is implemented directly
 in the {\HL} code for substitution.  Fourth, the remaining axioms, B8
 and B10--B13 are implemented by new rules of inference in {\HLQE} as
 shown in Table~\ref{tab:axioms}.
 
+\vspace{-2mm}
 \begin{table}
 \bc
 \begin{tabular}{|ll|}
@@ -919,22 +917,23 @@ B10.2                                            & \texttt{CONST\_DISQUO}\\
 B10.3                                            & \texttt{APP\_SPLIT}\\
 B10.4                                            & \texttt{ABS\_SPLIT}\\
 B10.5                                            & \texttt{QUOTABLE}\\
-B11 (Beta-Reduction for Evaluations)             & \texttt{}\\
+B11 ($\beta$-Reduction for Evaluations)             & \texttt{}\\
 B11.1                                            & \texttt{BETA\_EVAL}\\
 B11.2                                            & \texttt{BETA\_REVAL}\\
 B12 (``Not Free In'' means ``Not Effective In'') & \texttt{NOT\_FREE\_OR\_EFFECTIVE\_IN}\\
-B13 (Beta-Reduction for Function Abstractions)  & \texttt{NEITHER\_EFFECTIVE}\\
+B13 ($\beta$-Reduction for Function Abstractions)  & \texttt{NEITHER\_EFFECTIVE}\\
 \hline
 \end{tabular}
 \ec
 \caption{New Inference Rules in {\HLQE}}\label{tab:axioms} 
 \end{table}
 
+\vspace*{-7mm}
 The {\HL} \texttt{INST} rule of inference is also modified.  This rule
 simultaneously substitutes a list of terms for a list of variables in
 a sequent.  The substitution function \texttt{vsubst} defined in the
 {\HL} kernel is modified so that it works like substitution (via
-beta-reduction reduction rules) does in {\churchqe}.  These are the
+$\beta$-reduction reduction rules) does in {\churchqe}.  These are the
 main changes to the function:
 
 \be
@@ -965,7 +964,7 @@ main changes to the function:
     (2) happens, this part of substitution is finished and the user
     can possibly continue it by applying \texttt{BETA\_EVAL} or
     \texttt{BETA\_REVAL}, the rules of inference corresponding to
-    Axioms B11.1 and B11.2 for beta-reduction of evaluations.
+    Axioms B11.1 and B11.2 for $\beta$-reduction of evaluations.
 
 \ee
 
@@ -986,7 +985,7 @@ type $\alpha$, and $t$ is of type $\alpha$.
 \section{Examples}\label{sec:examples}
 
 \bsp
-We present in this section two examples that test the implementation
+We present two examples that test the implementation
 of {\HLQE} and illustrate its capabilities by expressing,
 instantiating, and proving formula schemas.
 \esp
@@ -1001,18 +1000,15 @@ be formalized in {\churchqe} as the universal statement
 \[\ForallApp x_\epsilon \mdot 
 \mname{is-expr}_{\epsilon \tarrow o}^{o} \, x_\epsilon \Implies
 \sembrack{x_\epsilon}_o \Or \Neg \sembrack{x_\epsilon}_o.\] An
-instance of this formalization of LEM is any instance of the universal
-statement.  
-
-The statement of LEM in {\churchqe} can directly written in {\HLQE} as
-the formula
+instance of this statement of LEM is any instance of the universal
+formula. It can be directly written in {\HLQE} as the formula
 \begin{lstlisting}
 `!x:epsilon. isExprType (x:epsilon) (TyBase "bool")
    ==> ((eval x to bool) \/ ~(eval x to bool))`
 \end{lstlisting}
-that is readily proved in {\HLQE}.  An instance of this theorem is
-obtain by applying the rule of inference \texttt{INST} followed by the
-\texttt{BETA\_EVAL} and \texttt{BETA\_REVAL}, the beta-reduction rules
+that is readily proved.  An instance of this theorem is
+obtained by applying the rule of inference \texttt{INST} followed by the
+\texttt{BETA\_EVAL} and \texttt{BETA\_REVAL}, the $\beta$-reduction rules
 for evaluations.
 
 \subsection{Induction Schema}
@@ -1080,16 +1076,13 @@ The induction schema for Peano arithmetic can be written in
 {\HLQE} just as easily as in {\churchqe}:
 \begin{lstlisting}
 `!f:epsilon. 
-   (isExprType 
-      (f:epsilon) 
+   (isExprType (f:epsilon) 
       (TyBiCons "fun" (TyVar "num") (TyBase "bool"))) 
-   /\ 
-   (isPeano f) 
+   /\ (isPeano f) 
    ==> 
    (eval (f:epsilon) to (num->bool)) 0 
     /\ 
-   (!n:num. 
-      (eval (f:epsilon) to (num->bool)) n 
+   (!n:num. (eval (f:epsilon) to (num->bool)) n 
       ==> 
       (eval (f:epsilon) to (num->bool)) (SUC n)) 
    ==> (!n:num. (eval (f:epsilon) to (num->bool)) n)`
@@ -1251,12 +1244,13 @@ quotation and evaluation in higher-order logic.
 
 The implementation of {\HLQE} was very straightforward since the
 logical issues were worked out in {\churchqe} and {\HL} provides good
-support for inductive types.  {\HLQE} works in exactly the same way as
-{\HL} except that, in the presence of evaluations, the instantiation
-of free variables may require proving side conditions that say (1) a
-variable is not effective in a term or (2) that a variable represented
-by a construction is not free in a term represented by a construction
-(see subsections~\ref{subsec:cttqe-proof-system}
+support for inductive types.  Pleasingly, and surprisingly, no new
+issues arose during the implementation. {\HLQE} works in exactly the
+same way as {\HL} except that, in the presence of evaluations, the 
+instantiation of free variables may require proving side conditions 
+that say (1) a variable is not effective in a term or (2) that a variable
+represented by a construction is not free in a term represented by a
+construction (see subsections~\ref{subsec:cttqe-proof-system}
 and~\ref{subsec:hlqe-proof-system}).  This is the only significant
 cost we see for using {\HLQE} in place of {\HL}.
 
@@ -1269,16 +1263,16 @@ and prove properties about SBMAs.  An SBMA can be defined as a
 function that manipulates constructions.  Its \emph{meaning formula}
 that specifies its mathematical meaning can be stated using the
 evaluation of constructions.  And the SBMA's meaning formula can be
-proved from the SBMA's definition.  In other words, the infrastructure
+proved from the SBMA's definition. In other words, the infrastructure
 provides a unified framework for formalizing SBMAs in a proof
 assistant.
 
 We plan to continue the development of {\HLQE} and to show that it can
 be effectively used to develop SBMAs as we have just described.  In
 particular, we intend to formalize in {\HLQE} the example on the
-symbolic differentiation of polynomials in {\churchqe} that is
+symbolic differentiation in {\churchqe} that is
 presented in~\cite{FarmerArxiv16}.  This will require defining the
-algorithm for symbolic differentiation of polynomials, writing its
+algorithm for symbolic differentiation, writing its
 meaning formula, and finally proving the meaning formula from the
 algorithm's definition and standard facts about derivatives.
 
