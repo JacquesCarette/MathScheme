@@ -75,10 +75,10 @@ how the expressions are manipulated by the SBMA and what the
 manipulations mean.
 
 We argue in~\cite{Farmer13} that the combination of quotation and
-evaluation, along with some inference rules, provides the means to
-reason about the interplay between syntax and semantics, which is what
-is needed for reasoning about SBMAs.  \emph{Quotation} is an operation
-that maps an expression $e$ to a special value called a
+evaluation, along with appropriate inference rules, provides the means
+to reason about the interplay between syntax and semantics, which is
+what is needed for reasoning about SBMAs.  \emph{Quotation} is an
+operation that maps an expression $e$ to a special value called a
 \emph{syntactic value} that represents the syntax tree of $e$.
 Quotation enables expressions to be manipulated as syntactic entities.
 \emph{Evaluation} is an operation that maps a syntactic value $s$ to
@@ -90,7 +90,7 @@ reasoning. Quotation gives a form of \emph{reification} of
 object-level values which allows introspection.  Along with inference
 rules, this gives a certain amount of {\emph{logical reflection}};
 evaluation adds to this some aspects of {\emph{computational
-reflection}}~\cite{Costantini02,Harrison95}. 
+    reflection}}~\cite{Costantini02,Harrison95}.
 
 Incorporating quotation and evaluation operators --- like quote and
 eval in the Lisp programming language --- into a traditional logic
@@ -104,16 +104,15 @@ $e$ as $\synbrack{e}$ and $\sembrack{e}$, respectively.
 
   \item \emph{Evaluation Problem.}  An evaluation operator is
     applicable to syntactic values that represent formulas and thus is
-    effectively a truth predicate.  Hence, by the proof of
-    Tarski's theorem on the undefinability of truth~\cite{Tarski35a},
-    if the evaluation operator is total in the context of a
-    sufficiently strong theory (like first-order Peano arithmetic), then
-    it is possible to express the liar paradox.
-    Therefore, the evaluation operator must be
-    partial and the law of disquotation cannot hold universally (i.e.,
-    for some expressions $e$, $\sembrack{\synbrack{e}} \not= e$).  Thus
-    result, reasoning with evaluation can be cumbersome and leads to
-    undefined expressions.
+    effectively a truth predicate.  Hence, by the proof of Tarski's
+    theorem on the undefinability of truth~\cite{Tarski35a}, if the
+    evaluation operator is total in the context of a sufficiently
+    strong theory (like first-order Peano arithmetic), then it is
+    possible to express the liar paradox.  Therefore, the evaluation
+    operator must be partial and the law of disquotation cannot hold
+    universally (i.e., for some expressions $e$,
+    $\sembrack{\synbrack{e}} \not= e$).  As a result, reasoning with
+    evaluation can be cumbersome and leads to undefined expressions.
 
   \item \emph{Variable Problem.}  The variable $x$ is not free in the
     expression $\synbrack{x + 3}$ (or in any quotation).  However, $x$
@@ -138,15 +137,14 @@ $e$ as $\synbrack{e}$ and $\sembrack{e}$, respectively.
     expression whose syntax tree is represented by the \emph{value} of
     $e$.  Hence the semantics of evaluation involves a double
     valuation.  This is most apparent when the value of a variable
-    involves a syntax tree which refers to the name of that same
-    variable. For example, if
-    the value of a variable $x$ is $\synbrack{x}$, then
-    $\sembrack{x} = \sembrack{\synbrack{x}} = x = \synbrack{x}$.
-    Hence the substitution of $\synbrack{x}$ for $x$ in $\sembrack{x}$
-    requires one substitution inside the argument of the evaluation
-    operator and another substitution after the evaluation operator is
-    eliminated.  This double substitution is another major departure
-    from traditional logic.
+    involves a syntax tree that refers to the name of that same
+    variable. For example, if the value of a variable $x$ is
+    $\synbrack{x}$, then $\sembrack{x} = \sembrack{\synbrack{x}} = x =
+    \synbrack{x}$.  Hence the substitution of $\synbrack{x}$ for $x$
+    in $\sembrack{x}$ requires one substitution inside the argument of
+    the evaluation operator and another substitution after the
+    evaluation operator is eliminated.  This double substitution is
+    another major departure from traditional logic.
 
 \ee
 
@@ -182,7 +180,7 @@ The major contributions of the work presented here are:
 
   \item We show that the logical machinery for quotation and
     evaluation embodied in {\churchqe} can be straightforwardly
-    implemented in {\HL}.
+    implemented by modifying {\HL}.
 
   \item We produce an {\HOL}-style proof assistant with a built-in
     global reflection infrastructure for defining, applying, and
@@ -282,7 +280,7 @@ $\sembrack{\textbf{A}_\epsilon}_{{\bf B}_\beta}$ as
 $\sembrack{\textbf{A}_\epsilon}_\beta$.
 
 A \emph{construction} of {\churchqe} is an expression of type
-$\epsilon$ defined inductively by
+$\epsilon$ defined inductively by:
 
 \be
 
@@ -432,11 +430,13 @@ the single rule of inference for {\qzero}, and additional
 axioms~\cite[B1--B13]{FarmerArxiv16} that define the logical constants
 of {\churchqe} (B1--B4,B5,B7), specify $\epsilon$ as an inductive type
 (B4,B6), state the properties of quotation and evaluation (B8,B10),
-and extend the rules for $\beta$-reduction (B9,B11--13).  We prove
+and extend the rules for beta-reduction (B9,B11--13).  We prove
 in~\cite{FarmerArxiv16} that this proof system is sound for all
 formulas and complete for eval-free formulas.
 
 The axioms that express the properties of quotation and evaluation are:
+
+\medskip
 
 \noindent
 \begin{minipage}{\textwidth}
@@ -458,7 +458,6 @@ The axioms that express the properties of quotation and evaluation are:
       \synbrack{\textbf{A}_\alpha}$.
 
   \ee
-\end{minipage}
 
   \noindent\textbf{B10 (Properties of Evaluation)}
 
@@ -493,8 +492,14 @@ The axioms that express the properties of quotation and evaluation are:
 
   \ee
 
+\end{minipage}
+
+\medskip
+
 \noindent
-The axioms for extending the rules  for $\beta$-reduction are:
+The axioms for extending the rules  for beta-reduction are:
+
+\medskip
 
 \noindent
 \begin{minipage}{\textwidth}
@@ -555,10 +560,12 @@ The axioms for extending the rules  for $\beta$-reduction are:
 
 \end{minipage}
 
+\medskip
+
 Substitution is performed using
-the properties of $\beta$-reduction as Andrews does in the proof system
+the properties of beta-reduction as Andrews does in the proof system
 for {\qzero}~\cite[p.~213]{Andrews02}.  The following three
-$\beta$-reduction cases require discussion:
+beta-reduction cases require discussion:
 
 \vspace*{-2.5mm}
 \be
@@ -584,7 +591,7 @@ expression'' when the expression is eval-free.  Our solution
 is to replace the syntactic notion of ``a variable is free in
 an expression'' by the semantic notion of ``a variable is effective in
 an expression'' when the expression is not necessarily eval-free, and
-use Axiom B13 to perform the $\beta$-reduction.  
+use Axiom B13 to perform the beta-reduction.  
 
 ``$\textbf{x}_\alpha$ is effective in $\textbf{B}_\beta$'' means the
 value of $\textbf{B}_\beta$ depends on the value of
@@ -605,7 +612,7 @@ $\alpha$ that differs from $\textbf{x}_\alpha$.
 
 The second case is simple since a quotation cannot be modified by
 substitution --- it is effectively the same as a constant. Thus
-$\beta$-reduction is performed without changing
+beta-reduction is performed without changing
 $\synbrack{\textbf{B}_\beta}$ as shown in Axiom B9 above.
 
 The third case is handled by Axioms B11.1 and B11.2.  B11.1 deals with
@@ -638,17 +645,17 @@ following two forms:
 
 \ee
 
-\subsection{The 3 Design Problems} 
+\subsection{The Three Design Problems} 
 
 To recap,
 {\churchqe} solves the three design problems given in
 section~\ref{sec:introduction}.  The Evaluation Problem is
 avoided by restricting the quotation operator to eval-free expressions
 and thus making it impossible to express the liar paradox.  The
-Variable Problem is overcome by modifying Andrews' $\beta$-reduction
+Variable Problem is overcome by modifying Andrews' beta-reduction
 axioms.  The Double Substitution Problem is eluded
-by using a $\beta$-reduction axiom for evaluations that excludes
-$\beta$-reductions that embody a double substitution.
+by using a beta-reduction axiom for evaluations that excludes
+beta-reductions that embody a double substitution.
 
 \section{HOL Light}\label{sec:hol-light}
 
@@ -700,7 +707,7 @@ $\epsilon$ can be straightforwardly defined.
     $x_1,\ldots,x_n$ in a sequent.  See
     subsection~\ref{subsec:hlqe-proof-system}.
 
-  \item Machinery --- consisting of {\HOL} functions definitions,
+  \item Machinery --- consisting of {\HOL} function definitions,
     tactics, and theorems --- was created for supporting reasoning
     about quotations and evaluations in the new system.  See
     subsection~\ref{subsec:machinery}.
@@ -712,16 +719,16 @@ $\epsilon$ can be straightforwardly defined.
 \ee
 
 \noindent
-The first and second stages have been completed; both
-stages involved modifying the kernel of {\HL}.  The third stage is
-sufficiently complete that our examples in~\ref{sec:examples} work
-well, and did not involve any further changes to the {\HL} kernel.
-We do expect that adding further examples, which is ongoing, will
-require the addition of machinery but no changes to the kernel.
+The first and second stages have been completed; both stages involved
+modifying the kernel of {\HL}.  The third stage is sufficiently
+complete that our examples in~\ref{sec:examples} work well, and did
+not involve any further changes to the {\HL} kernel.  We do expect
+that adding further examples, which is ongoing, will require
+additional machinery but no changes to the kernel.
 
 The {\HLQE} system was developed by the third author under the
 supervision of the first two authors on an undergraduate NSERC USRA
-research project at McMaster University, and is available at
+research project at McMaster University and is available at
 \[\mbox{\url{https://github.com/JacquesCarette/hol-light}}.\]
 It should be further remarked that our fork, from late April 2017, is not fully
 up-to-date with respect to {\HL}. In particular, this means that it is best to
@@ -736,7 +743,7 @@ directory named \texttt{hol\_light}:
 2) opam init --comp 4.03.0                                                      
 3) opam install "camlp5=6.16" 
 5) opam `eval config env`
-5) cd hol_Light
+5) cd hol_light
 6) make
 7) run ocaml via                                                                
      ocaml -I `camlp5 -where` camlp5o.cma                                        
@@ -846,7 +853,7 @@ The OCaml type of {\HOL} types in {\HLQE}
 
 \begin{lstlisting}
 type hol_type = Tyvar of string
-              | Tyapp of string *  hol_type list
+              | Tyapp of string * hol_type list
 \end{lstlisting}
 
 \noindent
@@ -863,8 +870,8 @@ type term = Var of string * hol_type
 \end{lstlisting}
 
 \noindent
-has three new constructors --- \texttt{Quote}, \texttt{Hole}, and
-\texttt{Eval} --- which are new.
+has three new constructors: \texttt{Quote}, \texttt{Hole}, and
+\texttt{Eval}.
 
 \texttt{Quote} constructs a quotation of type \texttt{epsilon} with
 components $t$ and $\alpha$ from a term $t$ of type $\alpha$ that is
@@ -917,11 +924,11 @@ B10.2                                            & \texttt{CONST\_DISQUO}\\
 B10.3                                            & \texttt{APP\_SPLIT}\\
 B10.4                                            & \texttt{ABS\_SPLIT}\\
 B10.5                                            & \texttt{QUOTABLE}\\
-B11 ($\beta$-Reduction for Evaluations)             & \texttt{}\\
+B11 (Beta-Reduction for Evaluations)             & \texttt{}\\
 B11.1                                            & \texttt{BETA\_EVAL}\\
 B11.2                                            & \texttt{BETA\_REVAL}\\
 B12 (``Not Free In'' means ``Not Effective In'') & \texttt{NOT\_FREE\_OR\_EFFECTIVE\_IN}\\
-B13 ($\beta$-Reduction for Function Abstractions)  & \texttt{NEITHER\_EFFECTIVE}\\
+B13 (Beta-Reduction for Function Abstractions)  & \texttt{NEITHER\_EFFECTIVE}\\
 \hline
 \end{tabular}
 \ec
@@ -933,20 +940,20 @@ The {\HL} \texttt{INST} rule of inference is also modified.  This rule
 simultaneously substitutes a list of terms for a list of variables in
 a sequent.  The substitution function \texttt{vsubst} defined in the
 {\HL} kernel is modified so that it works like substitution (via
-$\beta$-reduction reduction rules) does in {\churchqe}.  These are the
+beta-reduction  rules) does in {\churchqe}.  These are the
 main changes to the function:
 
 \be
 
   \item A substitution of a term \texttt{t} for a variable \texttt{x}
     in a function abstraction \texttt{Abs(y,s)} is performed as usual
-    if (1) \texttt{t} is eval-free and \texttt{x} is not free
+    if (1) \texttt{t} is eval-free and \texttt{x} is not free in
     \texttt{t}, (2) there is a theorem that says \texttt{x} is not
     effective in \texttt{t}, (3) \texttt{s} is eval-free and
-    \texttt{x} is not free \texttt{s}, or (4) there is a theorem that
-    says \texttt{x} is not effective in \texttt{s}.  Otherwise, if
-    \texttt{s} or \texttt{t} is not eval-free, the substitution fails
-    and if \texttt{s} and \texttt{t} are eval-free, the variable
+    \texttt{x} is not free in \texttt{s}, or (4) there is a theorem
+    that says \texttt{x} is not effective in \texttt{s}.  Otherwise,
+    if \texttt{s} or \texttt{t} is not eval-free, the substitution
+    fails and if \texttt{s} and \texttt{t} are eval-free, the variable
     \texttt{x} is renamed and the substitution is continued.
 
   \item A substitution of a term \texttt{t} for a variable \texttt{x}
@@ -961,10 +968,10 @@ main changes to the function:
     \texttt{Eval(e,ty)} when \texttt{t} is \texttt{x} or \texttt{x}
     does not occur \texttt{e} and (2) the function abstraction
     application \texttt{Comb(Abs(x,Eval(e,ty)),t)} otherwise.  When
-    (2) happens, this part of substitution is finished and the user
-    can possibly continue it by applying \texttt{BETA\_EVAL} or
+    (2) happens, this part of the substitution is finished and the
+    user can possibly continue it by applying \texttt{BETA\_EVAL} or
     \texttt{BETA\_REVAL}, the rules of inference corresponding to
-    Axioms B11.1 and B11.2 for $\beta$-reduction of evaluations.
+    Axioms B11.1 and B11.2 for beta-reduction of evaluations.
 
 \ee
 
@@ -1006,9 +1013,9 @@ formula. It can be directly written in {\HLQE} as the formula
 `!x:epsilon. isExprType (x:epsilon) (TyBase "bool")
    ==> ((eval x to bool) \/ ~(eval x to bool))`
 \end{lstlisting}
-that is readily proved.  An instance of this theorem is
-obtained by applying the rule of inference \texttt{INST} followed by the
-\texttt{BETA\_EVAL} and \texttt{BETA\_REVAL}, the $\beta$-reduction rules
+that is readily proved.  An instance of this theorem is obtained by
+applying the rule of inference \texttt{INST} followed by
+\texttt{BETA\_EVAL} or \texttt{BETA\_REVAL}, the beta-reduction rules
 for evaluations.
 
 \subsection{Induction Schema}
@@ -1123,12 +1130,12 @@ arithmetic and Presburger arithmetic in {\HLQE}.
 
 Quotation, evaluation, reflection, reification, issues of
 intensionality versus extensionality, metaprogramming and
-metareasoning each have extensive literature -- sometimes
+metareasoning each have extensive literature --- sometimes
 in more than one field.  For example, one can find a
-vast literature on reflection in logic, programming languages
+vast literature on reflection in logic, programming languages,
 and theorem proving. Due to space restrictions, we cannot
 do justice to the full breadth of issues. For a full discussion,
-please see the related work section in~\cite{FarmerArxiv17}.
+please see the related work section in~\cite{FarmerArxiv16}.
 The surveys of Costantini~\cite{Costantini02},
 Harrison~\cite{Harrison95} are excellent. From a
 programming perspective, the discussion and extensive 
@@ -1137,7 +1144,7 @@ are well worth reading.
 
 Focusing just on interactive proof assistants, we find
 that Robert Boyer and J Moore developed a global
-infrastructure~\cite{BoyerMoore81}, for
+infrastructure~\cite{BoyerMoore81} for
 incorporating symbolic algorithms into the Nqthm~\cite{BoyerMoore88}
 theorem prover.  This approach is also used in
 ACL2~\cite{KaufmannMoore97}, the successor to Nqthm;
@@ -1172,8 +1179,8 @@ expression that denotes $e$ itself.  In {\churchqe},
 $\synbrack{\textbf{A}_\alpha}$ denotes a value that represents the
 syntactic structure of $\textbf{A}_\alpha$.  Polonsky~\cite{Polonsky11} 
 presents a set of axioms for quotation operators of this
-kind.  Other theories of quotation have been proposed -- see
-\cite{Quotation12} for an overview..  For instance, quotation can be viewed as
+kind.  Other theories of quotation have been proposed --- see
+\cite{Quotation12} for an overview.  For instance, quotation can be viewed as
 an operation that constructs literals for syntactic values~\cite{Rabe15}.
 
 It is worth quoting Boyer and Moore~\cite{BoyerMoore81} here:
@@ -1203,14 +1210,14 @@ already cited above as well as the documentation of each system%
 
 In more detail, the Coq extension for reflection,
 \textrm{SSReflect}~\cite{gonthier2010introduction}, which stands for
-\textsf{small scale reflection}, works by locally reflecting the
-syntax of particular kinds of objects -- such as decidable predicates
+\emph{small scale reflection}, works by locally reflecting the
+syntax of particular kinds of objects --- such as decidable predicates
 and finite structures.  It is the pervasive use of decidability and
 computability which gives small scale reflection its power, and at the
 same time, its limitation.  An extension to PVS allows reasoning much
-in the style of \textrm{SSReflect}.  Isabelle/HOL offers a non-logical
+in the style of \textrm{SSReflect}.  Isabelle/HOL offers a nonlogical
 \texttt{reify} function (aka quotation), while its \texttt{interpret}
-function is in the logic; it uses global datatypes to represent \HL
+function is in the logic; it uses global datatypes to represent {\HL}
 terms.
 
 The approach for the second list of systems also varies quite a bit.
@@ -1260,7 +1267,7 @@ to reason about the syntactic structure of terms and, as we have
 shown, to express formula schemas as single formulas.  More
 importantly, the infrastructure provides the means to define, apply,
 and prove properties about SBMAs.  An SBMA can be defined as a
-function that manipulates constructions.  Its \emph{meaning formula}
+function that manipulates constructions.  The \emph{meaning formula}
 that specifies its mathematical meaning can be stated using the
 evaluation of constructions.  And the SBMA's meaning formula can be
 proved from the SBMA's definition. In other words, the infrastructure
@@ -1270,11 +1277,11 @@ assistant.
 We plan to continue the development of {\HLQE} and to show that it can
 be effectively used to develop SBMAs as we have just described.  In
 particular, we intend to formalize in {\HLQE} the example on the
-symbolic differentiation in {\churchqe} that is
+symbolic differentiation of polynomials in {\churchqe} that is
 presented in~\cite{FarmerArxiv16}.  This will require defining the
-algorithm for symbolic differentiation, writing its
-meaning formula, and finally proving the meaning formula from the
-algorithm's definition and standard facts about derivatives.
+algorithm for symbolic differentiation, writing its meaning formula,
+and finally proving the meaning formula from the algorithm's
+definition and standard facts about derivatives.
 
 \bibliography{imps,hol-light-qe}
 \bibliographystyle{plain}
