@@ -1,0 +1,11 @@
+This adding new rules of inference to {\HL} and modifying the {\HL}
+    \texttt{INST} rule of inference that similtaneously substitutes
+    terms $t_1,\ldots,t_n$ for the free variables $x_1,\ldots,x_n$ in
+    a sequent.  This required altering substitution so that it works
+    correctly in the presence of quotations and evaluations.
+
+  The first stage is described in
+subsections~\ref{subsec:var-and-con}--\ref{subsec:terms}; the second
+in subsections~\ref{subsec:axioms} and \ref{subsec:substitution}; the
+third in subsection~{subsec:machinery}; and the fourth in
+section~\label{sec:examples}.

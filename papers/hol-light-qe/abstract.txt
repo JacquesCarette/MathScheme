@@ -1,0 +1,19 @@
+Abstract
+
+We are interested in algorithms that manipulate mathematical
+expressions in mathematically meaningful ways. Expressions are
+syntactic, but most logics do not allow one to discuss syntax.  CTTqe
+is a version of Church's type theory that includes quotation and
+evaluation operators that are similar to quote and eval in the Lisp
+programming language.  Since the HOL logic is also a version of
+Church's type theory, we decided to add quotation and evaluation to
+HOL Light to demonstrate the implementability of CTTqe and the
+benefits of having quotation and evaluation in a proof assistant.  The
+resulting system is called HOL Light QE.  Here we document the design
+of HOL Light QE and the challenges that needed to be overcome.
+
+Keywords
+
+Church's type theory, quotation and evaluation, HOL Light, proof
+assistants, symbolic computation, reasoning about syntax,
+metareasoning, reflection, biform theories.

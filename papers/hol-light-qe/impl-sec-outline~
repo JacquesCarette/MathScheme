@@ -1,0 +1,40 @@
+Outline of the Implementation and Example sections                                                                                               
+  1. The definition of the inductive types "type" and "epsilon".                                    
+                                                                                                    
+       Note: "type" is not in CTT_qe but is needed since the HOL logic has                              
+         type variables                                                                             
+                                                                                                    
+       Note: "epsilon" is essentially the same as in CTT_qe                                             
+                                                                                                    
+  2. The modification the HOL Light kernel  
+
+       a. Expands the class of terms to include quotations,
+          quasiquotations, and evaluations.
+
+            Note: quasiquotation is not an official part of CTT_qe
+
+       b. Introduces new rules of inference to:
+
+            i. Implement the B axioms for CTT_qe 
+
+           ii. Implement properties of quasiquotation
+
+  3. Modifications to parser
+
+  4. Supporting machinery
+
+       a. Function definitions
+
+       b. Tactics
+
+       c. Theorems
+
+  5. Example: Induction schema
+
+       a. Expression of the induction schema presented in CTT_qe paper
+
+       b. Proof in HOL Light of the induction schema using the
+          induction axiom
+
+
+                                                                
