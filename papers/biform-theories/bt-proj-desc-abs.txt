@@ -13,10 +13,11 @@ algorithms that manipulate mathematical expressions.  However,
 formalizing biform theories is challenging since it requires the means
 to express statements about the interplay of what these algorithms do
 and what their actions mean mathematically.  This paper describes a
-project to develop a methodology for managing mathematical knowledge
-as a network of biform theories.  It is a subproject of MathScheme, a
-long-term project at McMaster University to produce a framework for
-integrating formal deduction and symbolic computation.
+project to develop a methodology for expressing and managing
+mathematical knowledge as a network of biform theories.  It is a
+subproject of MathScheme, a long-term project at McMaster University
+to produce a framework for integrating formal deduction and symbolic
+computation.
 
 
 Keywords: Axiomatic mathematics, algorithmic mathematics, biform
