@@ -121,20 +121,20 @@ represent rational numbers encodes the addition function $+ :
 numbers.
 
 A complex body of mathematical knowledge comprises many different
-theories; these can be captured by the
-\emph{little theories method}~\cite{FarmerEtAl92b} as a \emph{theory
+theories; these can be captured by the \emph{little theories
+  method}~\cite{FarmerEtAl92b} as a \emph{theory
   graph}~\cite{Kohlhase14} consisting of theories as nodes and theory
-morphisms as directed edges.  A theory morphism is a
+morphisms as directed edges.  A \emph{theory morphism} is a
 meaning-preserving mapping from the formulas of one theory to the
-formulas of another.  The theories serve as abstract
-mathematical models and the morphisms serve as information
-conduits that enable definitions and theorems to be transported
-from one theory to another~\cite{BarwiseSeligman97}.  A theory graph enables
-mathematical knowledge to be formalized at the most convenient level
-of abstraction using the most convenient vocabulary.  Moreover, the
-structure of a theory graph provides the means to access relevant
-concepts and facts (c\&f), reduce the duplication of c\&f, and
-enable c\&f to be interpreted in multiple ways.
+formulas of another.  The theories serve as abstract mathematical
+models and the morphisms serve as information conduits that enable
+definitions and theorems to be transported from one theory to
+another~\cite{BarwiseSeligman97}.  A theory graph enables mathematical
+knowledge to be formalized at the most convenient level of abstraction
+using the most convenient vocabulary.  Moreover, the structure of a
+theory graph provides the means to access relevant concepts and facts
+(c\&f), reduce the duplication of c\&f, and enable c\&f to be
+interpreted in multiple ways.
 
 The axiomatic method is the basis for formalizing mathematical
 knowledge in proof assistants and logical frameworks.  Although many
@@ -157,7 +157,7 @@ semantics.
 
 Axiomatic and algorithmic knowledge complement each other, and both
 are needed.  A \emph{biform
-  theory}~\cite{CaretteFarmer08,FarmerMohrenschildt03,Farmer07b}
+  theory}~\cite{CaretteFarmer08,Farmer07b,FarmerMohrenschildt03}
 combines both, and furthermore supports the integration of reasoning
 and computation.  We argue in~\cite{CaretteFarmer08} that biform
 theories are needed to build \emph{high-level theories} analogous to
@@ -168,19 +168,18 @@ challenging to formalize.
 We are interested in the problem of whether the little theories method
 can be applied to biform theories.  That is, can a body of
 mathematical knowledge be effectively formalized as a theory graph of
-biform theories?  We use a graph (of biform theories) encoding
-natural number arithmetic as a test case. We describe
-two different formalizations, and compare the
-results.  The first formalization is
+biform theories?  We use a graph (of biform theories) encoding natural
+number arithmetic as a test case. We describe two different
+formalizations, and compare the results.  The first formalization is
 realized using the global approach in
 {\churchuqe}~\cite{FarmerArxiv17}, a variant of
 {\churchqe}~\cite{FarmerArxiv16,Farmer16}, a version of Church's type
 theory with quotation and evaluation, while the second is realized
-using the local approach in Agda~\cite{Norell07,Norell09} , a dependently typed
-programming language.  This dual formalization, contrasting the two 
-approaches, forms the core of our contribution; each formalization has 
-some smaller contributions, some of which may be of independent 
-interest.
+using the local approach in Agda~\cite{Norell07,Norell09}, a
+dependently typed programming language.  This dual formalization,
+contrasting the two approaches, forms the core of our contribution;
+each formalization has some smaller contributions, some of which may
+be of independent interest.
 
 The rest of the paper is organized as follows.  The notion of a biform
 theory is defined and discussed in section~\ref{sec:biform}.  The
@@ -199,18 +198,19 @@ suggestions.
 
 Let $\sE$ be a set of expressions and $f : \sE^n \tarrow \sE$ be an
 $n$-ary function where $n \ge 1$.  A \emph{transformer for $f$} is an
-algorithm that implements $f$.  Transformers manipulate expressions
-$e$ in various ways: simple ones build bigger expressions from pieces,
-select components of $e$, or check whether $e$ satisfies some
-syntactic property.  More sophisticated transformers manipulate
-expressions in a mathematically meaningful way.  We call these kinds
-of transformers \emph{syntax-based mathematical algorithms
-  (SBMAs)}~\cite{Farmer13}.  Examples include algorithms that apply
-arithmetic operations to numerals, factor polynomials, transpose
-matrices, and symbolically differentiate expressions with variables.
-The \emph{computational behavior} of a transformer is the relationship
-between its input and output expressions.  When the transformer is an
-SBMA, its \emph{mathematical meaning} is the relationship between the
+algorithm that implements $f$.  Transformers manipulate expressions in
+various ways.  Simple transformers, for example, build bigger
+expressions from pieces, select components of expressions, or check
+whether a given expression satisfies some syntactic property.  More
+sophisticated transformers manipulate expressions in mathematically
+meaningful ways.  We call these kinds of transformers
+\emph{syntax-based mathematical algorithms (SBMAs)}~\cite{Farmer13}.
+Examples include algorithms that apply arithmetic operations to
+numerals, factor polynomials, transpose matrices, and symbolically
+differentiate expressions with variables.  The \emph{computational
+  behavior} of a transformer is the relationship between its input and
+output expressions.  When the transformer is an SBMA, its
+\emph{mathematical meaning} is the relationship between the
 mathematical meanings of its input and output expressions.
 
 A \emph{biform theory} $T$ is a triple $(L,\Pi,\Gamma)$ where $L$ is a
