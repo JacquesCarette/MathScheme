@@ -75,6 +75,48 @@ project are described in the sections below.
 \todo{Jacques should complete this section with help from Yasmine with
   examples.}
 
+Computer algebra and theorem proving systems manipulate syntactic representation of mathematical knowledge. However, their way of manipulating them is very different from each other. 
+Computer algebra systems manipulate expressions via algorithms. Knowledge is represented in the form of algorithmic theories that computes new expressions according to algorithms operating on the input. CAS suffer from lack of formalization of many of the algorithms used. 
+On the other hand, theorem provers make use of axiomatic theories and proof systems to represent and proof properties of mathematical knowledge. Despite their usefulness, theorem provers are hard to use and are not being widely utilized. Biform theories aim to combine the benefits of both. This is better explained by an example. 
+Consider the problem of representing and factoring polynomials. An axiomatic representation of a polynomial would extend the representation of the theory of rings by adding an axiom \verb|is-poly| to represent the acceptable forms of polynomials 
+\begin{verbatim}
+Axiomatic representation of theories (Two possible representations)
+- flattened theory as in the paper 
+   (http://imps.mcmaster.ca/doc/qe-in-church.pdf) P.18 
+- using the extend relation 
+Maybe we can present the flattened version then argue about
+how to enhance it using theory graphs 
+\end{verbatim}
+An algorithmic theory would have the same constants as in the axiomatic one presented above. Instead of the axioms, algorithms for manipulating polynomials and performing factoring are defined. These algorithms are well defined in the literatures \todo{Add references}
+
+A biform theory of polynomials would be described as a tuple $(L,\Pi, \Gamma)$ where 
+\begin{itemize}
+	\item $L$ defines constants describing the language of polynomials
+	\item $\Pi$ defines the algorithms (transformers) that manipulate the syntax of the polynomial to perform different operations - as in the algorithmic theory. 
+	\item $\Gamma$ is a set of axioms. We differentiate between two types of axioms. Some axioms describe the behavior of the constants of the language - as in axiomatic theory. Other axioms, called the meaning formula, which describes the behavior of the transformer by describing how the mathematical meaning of the output expression relates to that of the input expression. 
+\end{itemize}
+The meaning formula that would be added to $\Gamma$ are 
+\todo{meaning formula for factor}
+
+We have described how biform theories are useful in representing mathematical knowledge. Now we discuss why a biform theory graph is useful. We build up on the example of factoring polynomials. Instead of describing all the components of a polynomial manipulation in one theory as we did above, the biform theory graph provides a more modular representation where 
+\begin{itemize}
+	\item Represent the basic theory of polynomial as an extension of the theory of ring by adding is-poly axiom. 
+	\item Represent the theory of factoring polynomial as an extension of the theory of polynomials 
+\end{itemize}
+\todo{Describe the theory graph}
+
+\subsection{Domain Specific Language (DSL)}
+A domain specific language is a programming language that focuses on solving problems related to a specific field. The target is to provide solutions that favor the aspects important to that specific domain. It also makes it easier for domain experts to use the system, as it uses terminology from the domain. One way of implementing a DSL is by extending a base language. In this case, the DSL uses the compiler or interpreter of the base language. Also, the semantics of the DSL is defined in terms of the semantics of the base language. 
+Therefore, defining an internal DSL is more of building connections between two languages. In this case, it is essential that the axioms of the theory of DSL reason about how the syntax and semantics of the two languages are connected. This is where biform theories strength appear. 
+To ensure the correctness of the 
+Also, the semantics of expressions of the DSL are determined in terms of the semantics of the base language. Therefore, a theory of DSLs cannot be formulated 
+that are able to talk about the semantics of expression. On a very abstract level, we need an axiom like 
+\begin{equation*}
+\forall e \in L_{DS} \cdot \exists e^{\prime} \in L_{B} ~.~  \llbracket e \rrbracket = \llbracket e^{\prime} \rrbracket 
+\end{equation*}
+that ensures all valid expressions in DSL has a meaning-preserving mapping to expressions in the base language. 
+
+
 \section{Background Ideas}
 
 A \emph{transformer} is an algorithm that implements a function $\sE^n
