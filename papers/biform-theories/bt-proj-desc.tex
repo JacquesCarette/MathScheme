@@ -75,12 +75,22 @@ project are described in the sections below.
 \todo{Jacques should complete this section with help from Yasmine with
   examples.}
 
-Computer algebra and theorem proving systems manipulate syntactic representation of mathematical knowledge. However, their way of manipulating them is very different from each other. To illustrate the difference, let's consider the example of formalizing polynomials. 
-Using a theorem proving system (TPS), polynomials are formalized as an axiomatic theory that defines constants representing the language of polynomials and axioms describing their properties. It gives the tools to describe how a well-formed polynomial should look like, but is not capable of describing procedures to manipulate polynomials, \todo{Is this accurate?} such as factoring, differentiation, or finding the roots. 
-On the other hand, a computer algebra system (CAS) would use an algebraic theory to represent polynomials. It describes procedures to manipulate polynomials and produce results.  Yet, there is no guarantee the results produced are correct. The algorithmic approach is not concerned with specifying the procedures described. 
+Computer algebra and theorem proving systems manipulate syntactic representation of mathematical knowledge. However, their way of manipulating them is very different from each other. To illustrate the difference, let's consider the example of factoring polynomials, Given a polynomial $p$ in extended canonical form, $\Sigma_{i=0}^{n}a_i x^i$, factorize it into the product of irreducible polynomials (polynomials that cannot be further factorized) \cite{von2003modern}.
+ 
+A theorem proving system (TPS) will use an axiomatic theory to describe this problem. It defines constants representing the language of polynomials and axioms describing their properties. 
+Since polynomials are rings, the axiomatic theory would be similar to the theory of rings with additional axioms representing the different forms that a polynomial can take. The additional axioms include: 
+\begin{itemize}
+	\item An axiom describing a polynomial in extended canonical form 
+	\item An axiom describing what an irreducible polynomial is 
+	\item An axioms describing the result of the factorization. 
+\end{itemize}
+The axiomatic theory gives the tools to describe how a what factoring of a polynomial is, but is not capable of describing procedures to compute it. 
+\todo{Is this accurate?}
+. 
+On the other hand, a computer algebra system (CAS) would use an algebraic theory to represent factorization of polynomials. It describes procedures to calculate the factorization and produce results.  Yet, there is no guarantee the results produced are correct. The algorithmic approach is not concerned with specifying the procedures described. 
 Neither representations is capable of producing results that are formally specified. 
 
-We used polynomials as an example, but all syntax-based mathematical algorithms (SBMAs) suffer from the same problem. SBMAs are algorithms that produces results by manipulating the syntax of the input. Examples of SBMAs include factoring polynomials, manipulating matrices, computing derivatives and others. They are frequently used in mathematics, that it makes sense to consider reasoning about the behavior of their implementations are crucial task. 
+We used factoring polynomials as an example, but all syntax-based mathematical algorithms (SBMAs) suffer from the same problem. SBMAs are algorithms that produces results by manipulating the syntax of the input. Examples of SBMAs include factoring polynomials, manipulating matrices, computing derivatives and others. They are frequently used in mathematics, that it makes sense to consider reasoning about the behavior of their implementations are crucial task. 
 To be able to perform this reasoning, we need a way to connect a piece of code to its value. In other words, we need to be able to connect syntax and semantics. Biform theories make this possible. 
 
 A biform theory is defined as a tuple $(L,\Pi, \Gamma)$ where 
