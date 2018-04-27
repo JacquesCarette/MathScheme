@@ -202,7 +202,9 @@ arithmetic operations to numerals, factor polynomials, transpose
 matrices, and symbolically differentiate expressions with variables.
 The \emph{computational behavior} of a transformer is the relationship
 between its input and output expressions.  When the transformer is an
-SBMA, its \emph{mathematical meaning} is the relationship between the
+SBMA, its \emph{mathematical meaning}%
+\footnote{computer scientists would call this \emph{denotational semantics}
+rather than mathematical meaning} is the relationship between the
 mathematical meanings of its input and output expressions.
 
 A \emph{biform theory} $T$ is a triple $(L,\Pi,\Gamma)$ where $L$ is a
@@ -219,27 +221,31 @@ the transformers in $\Pi$ and of the mathematical meaning of the SBMAs
 in $\Pi$.  We say $T$ is an \emph{axiomatic theory} if $\Pi$ is empty
 and an \emph{algorithmic theory} if $\Gamma$ is empty.
 
-Formalizing a biform theory in the underlying logic requires an
+Formalizing a biform theory in the underlying logic requires
 infrastructure for reasoning about the expressions manipulated by the
-transformers as syntactic entities.  The infrastructure provides a
+transformers as syntactic entities.  This infrastructure provides a
 basis for \emph{metareasoning with reflection}~\cite{FarmerArxiv16}.
-There are two main approaches for obtaining this
+There are two main approaches to building such
 infrastructure~\cite{Farmer13}.  The \emph{local approach} is to
-produce a deep embedding of a sublanguage $L'$ of $L$ that include all
+produce a deep embedding of a sublanguage $L'$ of $L$ that includes all
 the expressions manipulated by the transformers of $\Pi$.  The
 \emph{global approach} is to replace the underlying logic of $L$ with
-a logic such as~\cite{FarmerArxiv16} that has an inductive
+a logic such as \churchqe~\cite{FarmerArxiv16} that has an inductive
 type of \emph{syntactic values} that represent the expressions in $L$
-and global quotation and evaluation operators.
+and global quotation and evaluation operators.  A third approach,
+based on ``final tagless'' embeddings~\cite{CaretteKS09} has not yet
+been attempted as most logics do not have the necessary infrastructure
+to abstract over type constructors.
 
 A complex body of mathematical knowledge can be represented in
 accordance with the \emph{little theories method}~\cite{FarmerEtAl92b}
+(or even the \emph{tiny theories method}~\cite{CaretteOConnorTPC})
 as a \emph{theory graph}~\cite{Kohlhase14} consisting of axiomatic
 theories as nodes and theory morphisms as directed edges.  A
 \emph{theory morphism} is a meaning-preserving mapping from the
 formulas of one axiomatic theory to the formulas of another.  The
-theories --- may have different underlying logics --- serve as
-abstract mathematical models and the morphisms serve as information
+theories --- which may have different underlying logics --- serve as
+abstract mathematical models, and the morphisms serve as information
 conduits that enable theory components such as definitions and
 theorems to be transported from one theory to
 another~\cite{BarwiseSeligman97}.  A theory graph enables mathematical
