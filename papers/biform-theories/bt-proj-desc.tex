@@ -10,9 +10,8 @@
 \usepackage[pdftex,dvipsnames]{xcolor}
 \usepackage{listings}
 
-\lstset{language=ml,basicstyle=\ttfamily\small,breaklines=true,showspaces=false,
-  showstringspaces=false,breakatwhitespace=true,texcl=true,
-  escapeinside={(*}{*)}}
+\lstset{language=haskell,basicstyle=\ttfamily\small,breaklines=true,showspaces=false,
+  showstringspaces=false,breakatwhitespace=true,texcl=true}
 
 \input{bt-proj-desc-def}
 
@@ -101,8 +100,43 @@ the idea is the same: representing a computation without actually
 performing it. Such features are very old: even in the earliest days
 of Maple, one could do \texttt{5 \&\textasciicircum 256 mod 379} to
 very compute the answer without ever computing $5^{256}$ over the 
-integers.\unsure{At this point, do I go for more examples, or do I
-go into biform theories?}
+integers.
+
+A legitimate question would be: is this an isolated occurence, or a
+more pervasive pattern? It is pervasive. It arises from the dichotomy
+of being able to \emph{perform} computations and being able to
+\emph{talk about} (usually to prove the correctness of) computations.
+For example, we could represent (in Haskell) a tiny language of
+arithmetic as
+\begin{lstlisting}
+data Arith = Int Integer | Plus Arith Arith 
+  | Times Arith Arith
+\end{lstlisting}
+\noindent and an evaluator as
+\begin{lstlisting}
+eval :: Arith -> Integer
+eval (Int x) = x
+eval (Plus a b) = eval a + eval b
+eval (Times a b) = eval a * eval b
+\end{lstlisting}
+\noindent whose ``correctness'' seems self-evident.  But what if we had
+instead written
+\begin{lstlisting}
+data AA = TTT Integer | XXX AA AA | YYY AA AA
+
+eval' :: AA -> Integer
+eval' (TTT x) = x
+eval' (XXX a b) = eval' a * eval' b
+eval' (YYY a b) = eval' a + eval' b
+\end{lstlisting}
+how would we know if this implementation of \lstinline|eval'| is correct
+or not?  The two languages are readily seen to be isomorphic.  In fact,
+there are clearly \emph{two} different isomorphisms. As the symbols used are
+no longer mnemonic, we have no means to (informally!) decide whether
+\lstinline|eval'| is correct.  Neverthess, \lstinline|Arith| and
+\lstinline|AA| both represent (trivial) embedded Domain Specific Languages
+(DSL), which are pervasively used in computing. Being able to know that
+functions defined over a DSL is correct is an important problem.
 
 In general, both computer algebra (CAS) and theorem proving systems (TPS)
 manipulate \emph{syntactic representations} of mathematical knowledge.  But
@@ -129,35 +163,29 @@ different? Basically because a CAS is based around
 algorithms whose correctness has been established using pen-and-paper
 mathematics, while a TPS is based around \emph{axiomatic theories},
 comprised of signatures and axioms, but nevertheless representing the
-``same'' mathematics.\todo{continue from here}
+``same'' mathematics. In a TPS, one typically proves theorems, formally.
+There is some cross-over: some TPS (notably Agda and Idris) are closer
+to programming languages, and thus offer the real possibility of mixing
+computation and deduction. Nevertheless, the problem still exists: how
+does one verify that a particular function implemented over a representation
+language, carries out the desired computation?
 
-On the other hand, a computer algebra system (CAS) would use an algebraic
-theory to represent factorization of polynomials. It describes procedures to
-calculate the factorization and produce results.  Yet, there is no guarantee
-the results produced are correct. The algorithmic approach is not concerned
-with specifying the procedures described.  Neither representations is capable
-of producing results that are formally specified. 
+What is needed is for a means to \emph{link} together axiomatic theories
+and algorithmic theories such that one can state that some ``symbol
+manipulation'' corresponds to a (semantic) function defined axiomatically?
+In other words, we want to know that a \emph{symbolic computation}
+perfomed on representations performs the same computation as an abstract
+function defined on the \emph{denotation} of those representations.
+For example, if we ask to integrate a particular expression $e$, we would like
+to know that the system's response will in fact be an expression representing
+an integral of $e$ --- even if the formal definition of integration uses an
+infinitary process.
 
-We used factoring polynomials as an example, but all syntax-based mathematical
-algorithms (SBMAs) suffer from the same problem. SBMAs are algorithms that
-produces results by manipulating the syntax of the input. Examples of SBMAs
-include factoring polynomials, manipulating matrices, computing derivatives and
-others. They are frequently used in mathematics, that it makes sense to
-consider reasoning about the behavior of their implementations are crucial
-task.  To be able to perform this reasoning, we need a way to connect a piece
-of code to its value. In other words, we need to be able to connect syntax and
-semantics. Biform theories make this possible. 
-
-After presenting a piece of mathematical knowledge, there is a need to connect
-it to other existing pieces. We believe the best way to do that is by
-presenting mathematical knowledge as a biform theory graph. For example, we
-know that polynomials are rings. Therefore, the biform theory of polynomials
-should be an extension of the biform theory of rings. Adding a new operation to
-manipulate polynomials boils down to extending the theory of polynomials with
-the new operation. This way, modularity is forced as well as leveraging the
-information presented by adding the theory morphisms that enable transportation
-of results among the graph nodes (the biform theories).  \todo{More about
-theory graph, eg: talk about the little theories approach.}
+These kinds of problems are pervasive: not just closed-form symbolic
+manipulations, but also SAT solving, SMT solving, model checking,
+type-checking of programs, most manipulations of DSL terms, are all
+of this sort.  They all involve a mixture of computation and deduction
+that entwine syntactic representations with semantic conditions.
 
 \section{Background Ideas}
 
