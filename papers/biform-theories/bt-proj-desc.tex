@@ -63,22 +63,63 @@ formulas, theory graphs.
 \fi
 
 \noindent
-This paper presents a project named \emph{Biform Theories} that is a
-subproject of MathScheme~\cite{CaretteEtAl11}, a long-term project at
-McMaster University to produce a framework for integrating formal
-deduction and symbolic computation.  The motivation, background
-ideas, objectives, work plan status, and related work for the
-project are described in the sections below.
+We present the \emph{Biform Theories} project, a
+subproject of MathScheme~\cite{CaretteEtAl11} (a long-term project
+to produce a framework integrating formal
+deduction and symbolic computation).
 
 \section{Motivation}\label{sec:problem}
+
+Type $2 * 3$ into your favourite CAS, press enter, and you'll receive
+(unsurprisingly) $6$. But what if you want to go in the opposite direction?
+Easy: you ask $\texttt{ifactors}(6)$ (or $\texttt{FactorInteger[6]}$)%
+\footnote{depending on whether you prefer Maple or Mathematica, other
+CASes have similar commands.} The Maple command \texttt{ifactors}
+returns a 2-element list, with the first element the unit ($1$ or $-1$),
+and the second element a list of pairs (encoded as two-element lists),
+with (distinct) primes in the first component, and multiplicity in the
+second. Mathematica's \texttt{FactorInteger} is similar, except that it
+omits the unit (and does not document what happens for negative
+integers). On top of that, Maple also offers \texttt{ifactor} (without
+the 's') that returns an abomination that displays nicely: a product
+of a unit and the function with name \emph{the empty string} applied
+to a prime, raised to its multiplicity. This horrendous hack has the
+advantage of displaying the result in a way similar to what appears 
+in elementary textbooks.
+
+This simple example illustrates the difference between a simple
+computation ($2 * 3$) and a more complex \emph{symbolic} query, factoring.
+The reason for using lists-of-lists in both systems is that multiplication
+and powering are both functions that evaluate immediately.  So that
+factoring 6 cannot just return $2^1 * 3^1$, as that is simply equal to $6$.
+Thus it is inevitable that both systems must \emph{represent} multiplication
+and powering in some other manner.  Because \texttt{ifactors} and
+\texttt{FactorInteger} are so old, they are unable to take advantage of
+newer developments in both systems.  Maple calls this feature an
+\emph{inert form}, while in Mathematica it is a \emph{hold form}, but
+the idea is the same: representing a computation without actually
+performing it. Such features are very old: even in the earliest days
+of Maple, one could do \texttt{5 \&\textasciicircum 256 mod 379} to
+very compute the answer without ever computing $5^{256}$ over the 
+integers.
 
 \todo{Jacques should complete this section with help from Yasmine with
   examples.}
 
-Computer algebra and theorem proving systems manipulate syntactic representation of mathematical knowledge. However, their way of manipulating them is very different from each other. To illustrate the difference, let's consider the example of factoring polynomials, Given a polynomial $p$ in extended canonical form, $\Sigma_{i=0}^{n}a_i x^i$, factorize it into the product of irreducible polynomials (polynomials that cannot be further factorized) \cite{von2003modern}.
+Computer algebra and theorem proving systems manipulate syntactic
+representation of mathematical knowledge. However, their way of manipulating
+them is very different from each other. To illustrate the difference, let's
+consider the example of factoring polynomials, Given a polynomial $p$ in
+extended canonical form, $\Sigma_{i=0}^{n}a_i x^i$, factorize it into the
+product of irreducible polynomials (polynomials that cannot be further
+factorized) \cite{von2003modern}.
  
-A theorem proving system (TPS) will use an axiomatic theory to describe this problem. It defines constants representing the language of polynomials and axioms describing their properties. 
-Since polynomials are rings, the axiomatic theory would be similar to the theory of rings with additional axioms representing the different forms that a polynomial can take. The additional axioms include: 
+A theorem proving system (TPS) will use an axiomatic theory to describe this
+problem. It defines constants representing the language of polynomials and
+axioms describing their properties.  Since polynomials are rings, the axiomatic
+theory would be similar to the theory of rings with additional axioms
+representing the different forms that a polynomial can take. The additional
+axioms include: 
 \begin{itemize}
 	\item An axiom describing a polynomial in extended canonical form 
 	\item An axiom describing what an irreducible polynomial is 
@@ -87,11 +128,22 @@ Since polynomials are rings, the axiomatic theory would be similar to the theory
 The axiomatic theory gives the tools to describe how a what factoring of a polynomial is, but is not capable of describing procedures to compute it. 
 \todo{Is this accurate?}
 . 
-On the other hand, a computer algebra system (CAS) would use an algebraic theory to represent factorization of polynomials. It describes procedures to calculate the factorization and produce results.  Yet, there is no guarantee the results produced are correct. The algorithmic approach is not concerned with specifying the procedures described. 
-Neither representations is capable of producing results that are formally specified. 
+On the other hand, a computer algebra system (CAS) would use an algebraic
+theory to represent factorization of polynomials. It describes procedures to
+calculate the factorization and produce results.  Yet, there is no guarantee
+the results produced are correct. The algorithmic approach is not concerned
+with specifying the procedures described.  Neither representations is capable
+of producing results that are formally specified. 
 
-We used factoring polynomials as an example, but all syntax-based mathematical algorithms (SBMAs) suffer from the same problem. SBMAs are algorithms that produces results by manipulating the syntax of the input. Examples of SBMAs include factoring polynomials, manipulating matrices, computing derivatives and others. They are frequently used in mathematics, that it makes sense to consider reasoning about the behavior of their implementations are crucial task. 
-To be able to perform this reasoning, we need a way to connect a piece of code to its value. In other words, we need to be able to connect syntax and semantics. Biform theories make this possible. 
+We used factoring polynomials as an example, but all syntax-based mathematical
+algorithms (SBMAs) suffer from the same problem. SBMAs are algorithms that
+produces results by manipulating the syntax of the input. Examples of SBMAs
+include factoring polynomials, manipulating matrices, computing derivatives and
+others. They are frequently used in mathematics, that it makes sense to
+consider reasoning about the behavior of their implementations are crucial
+task.  To be able to perform this reasoning, we need a way to connect a piece
+of code to its value. In other words, we need to be able to connect syntax and
+semantics. Biform theories make this possible. 
 
 A biform theory is defined as a tuple $(L,\Pi, \Gamma)$ where 
 \begin{itemize}
