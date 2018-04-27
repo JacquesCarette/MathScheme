@@ -219,7 +219,9 @@ including the names of the transformers of $T$.  In particular,
 $\Gamma$ may contain specifications of the computational behavior of
 the transformers in $\Pi$ and of the mathematical meaning of the SBMAs
 in $\Pi$.  We say $T$ is an \emph{axiomatic theory} if $\Pi$ is empty
-and an \emph{algorithmic theory} if $\Gamma$ is empty.
+and an \emph{algorithmic theory} if $\Gamma$ is empty.  The
+logical formulas of $\Gamma$ which refer to the names of transformers $\pi \in
+\Pi$ as \emph{meaning formulas}.
 
 Formalizing a biform theory in the underlying logic requires
 infrastructure for reasoning about the expressions manipulated by the
@@ -263,47 +265,49 @@ algorithmically.
   
 \section{Project Objectives}
 
-The general objective of the Biform Theories project is:
+The primary objective of the Biform Theories project is:
 
 \bi
 
-  \item[] \textbf{GenObj.} Develop a methodology for expressing and
+  \item[] \textbf{Primary.} Develop a methodology for expressing and
     managing mathematical knowledge as a biform theory graph.
 
 \ei
 
 \noindent
-Our strategy for achieving this general objective is to pursue the
-following specific objectives:
+Our strategy for achieving this is to break down the problem
+into the following sub-projects:
 
 \bi
 
-  \item[]\textbf{SpecOBj 1.} Design a logic \mname{Log} that is
+  \item[]\textbf{Logic} Design a logic \mname{Log} which is a
     version of simple type theory~\cite{Farmer08} with an inductive
     type of syntactic values, a global quotation operator, and a
     global evaluation operator.  In addition to a syntax and
     semantics, define a proof system for \mname{Log} and a notion of a
     theory morphism from one axiomatic theory of \mname{Log} to
     another.  Demonstrate that SBMAs can be defined in \mname{Log} and
-    that their mathematical meanings can be stated and proved in using
+    that their mathematical meanings can be stated and proved using
     \mname{Log}'s proof system.
 
 \medskip
 
-  \item[]\textbf{SpecOBj 2.} Produce an implementation \mname{Impl} of
+  \item[]\textbf{Implement} Produce an implementation \mname{Impl} of
     \mname{Log}.  Demonstrate that SBMAs can be defined in
     \mname{Impl} and that their mathematical meanings can be stated
     and proved in \mname{Impl}.
 
 \medskip
 
-  \item[]\textbf{SpecOBj 3.} Enable biform theories to be defined in
+  \item[]\textbf{Transformers} Enable biform theories to be defined in
     \mname{Impl}.  Introduce a mechanism for applying transformers
     defined outside of \mname{Impl} to expressions of \mname{Log}.
+    Ensure that we know how to write meaning formulas for such
+    transformers.
 
 \medskip
 
-  \item[]\textbf{SpecOBj 4.} Enable theory graphs of biform theories
+  \item[]\textbf{Theory Graphs} Enable theory graphs of biform theories
     to be defined in \mname{Impl}.  Introduce mechanisms for
     transporting definitions, theorems, and transformers from a biform
     theory $T$ to an instance $T'$ of $T$ via a theory morphism from
@@ -311,7 +315,7 @@ following specific objectives:
 
 \medskip
 
-  \item[]\textbf{SpecOBj 5.} Design and implement in \mname{Impl} a
+  \item[]\textbf{Generic Transformers} Design and implement in \mname{Impl} a
     scheme for defining generic transformers in a theory graph $T$
     that can be specialized, when transported to an instance $T'$ of
     $T$, using the properties exhibited in $T'$.
@@ -321,14 +325,13 @@ following specific objectives:
 
 \section{Work Plan Status}
 
-The work plan for the project is to achieve the five specific
-objectives described above more or less in the order of their
-presentation.  This section describes the parts of the work plan that
-have been completed as well as the parts that remain to be done.
+The work plan is to pursue the five objectives described above more or less in
+the order of their presentation.  Here we describe the parts of the work
+plan that have been completed as well as the parts that remain to be done.
 
-\subsection*{SpecObj 1: Logic with Quotation and Evaluation}
+\subsection*{Logic with Quotation and Evaluation}
 
-This objective has been largely been achieved.  We have developed
+This sub-project is largely complete.  We have developed
 {\churchqe}~\cite{Farmer18}, a version of Church's type
 theory~\cite{Church40} with global quotation and evaluation operators.
 (Church's type theory is a popular form of simple type theory with
@@ -353,39 +356,43 @@ undefinedness~\cite{Farmer04}.  Better suited than {\churchqe} as a
 logic for interconnecting axiomatic theories, we have defined in
 {\churchuqe} a notion of a theory morphism~\cite{Farmer17}.
 
-\subsection*{SpecObj 2: Implementation of the Logic}
+\subsection*{Implementation of the Logic}
 
 We have produced an implementation of {\churchqe} called
 {\HLQE}~\cite{CaretteFarmerLaskowski18} by modifying
-{\HL}~\cite{Harrison09}, a simple implementation of the {\HOL} proof
+{\HL}~\cite{Harrison09}, an implementation of the {\HOL} proof
 assistant~\cite{GordonMelham93}.  {\HLQE} provides a built-in global
 infrastructure for metareasoning with reflection.  Over the next
 couple years we plan to test this infrastructure by formalizing a
 variety of SBMAs in {\HLQE}.
 
-\subsection*{SpecObj 3: Biform Theories}
+\subsection*{Biform Theories, including external Transformers}
 
-No work on this objective has been done, but we expect it will be a
+No work on this has yet been done, but we expect it will be a
 straightforward task to implement biform theories and the application
-of external transformer in {\HLQE}.
+of external transformer in {\HLQE}.  External transformers
+implemented in {\OCAML} (or in languages reachable via {\OCAML}'s foreign
+function interface) can be linked in as well.
 
-\subsection*{SpecObj 4: Biform Theory Graphs}
+The most difficult part of this sub-project will be adequate
+renderings of \emph{meaning functions} that express the mathematical
+meaning of transformers.
 
-We proposed in~\cite{CaretteFarmer17} a biform theory graph test case
-consisting of eight biform theories encoding natural number
+\subsection*{Biform Theory Graphs}
+
+In~\cite{CaretteFaerm17}, we developed a case study of a biform
+theory graph consisting of eight biform theories encoding natural number
 arithmetic.  We produced partial formalizations of this test
 case~\cite{CaretteFarmer17} in {\churchuqe}~\cite{Farmer17} using the
-global approach for metareasoning with reflection and in
+global approach for metareasoning with reflection, and in
 Agda~\cite{Norell07,Norell09} using the local approach.  After we have
-finished with SpecObj 2 and SpecObj 3, we intend to formalize this
-test case in {\HLQE}.
+finished with the previous two sub-projects, we intend to formalize this
+in {\HLQE} as well.
 
-\subsection*{SpecObj 5: Specializable Transformers}
+\subsection*{Generic, Specializable Transformers}
 
 \todo{Jacques should complete this subsection.  Please reference
   Pouya's thesis~\cite{Larjani13}.}
-
-
 
 \section{Related Work}
 
