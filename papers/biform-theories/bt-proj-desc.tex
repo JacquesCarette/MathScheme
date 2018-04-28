@@ -69,47 +69,57 @@ deduction and symbolic computation).
 
 \section{Motivation}\label{sec:problem}
 
-Type $2 * 3$ into your favourite CAS, press enter, and you'll receive
-(unsurprisingly) $6$. But what if you want to go in the opposite direction?
-Easy: you ask $\texttt{ifactors}(6)$ (or $\texttt{FactorInteger[6]}$)%
-\footnote{depending on whether you prefer Maple or Mathematica, other
-CASes have similar commands.} The Maple command \texttt{ifactors}
-returns a 2-element list, with the first element the unit ($1$ or $-1$),
-and the second element a list of pairs (encoded as two-element lists),
-with (distinct) primes in the first component, and multiplicity in the
-second. Mathematica's \texttt{FactorInteger} is similar, except that it
-omits the unit (and does not document what happens for negative
-integers). On top of that, Maple also offers \texttt{ifactor} (without
-the 's') that returns an abomination that displays nicely: a product
-of a unit and the function with name \emph{the empty string} applied
-to a prime, raised to its multiplicity. This horrendous hack has the
-advantage of displaying the result in a way similar to what appears 
-in elementary textbooks.
+Type \texttt{2 * 3} into your favourite computer algebra system, press
+enter, and you'll receive (unsurprisingly) \texttt{6}. But what if you
+want to go in the opposite direction?  Easy: you ask
+$\texttt{ifactors(6)}$ in Maple or $\texttt{FactorInteger[6]}$ in
+Mathematica.\footnote{Other computer algebra systems have similar
+  commands.}  The Maple command \texttt{ifactors} returns a 2-element
+list, with the first element the unit (\texttt{1} or \texttt{-1}), and
+the second element a list of pairs (encoded as two-element lists),
+with (distinct) primes in the first component and the prime's
+multiplicity in the second. Mathematica's \texttt{FactorInteger} is
+similar, except that it omits the unit (and thus does not document
+what happens for negative integers).  \unsure{I don't understand the
+  meaning or purpose of these last two sentences. It is too esoteric
+  for a project description.}{On top of that}, Maple also offers
+\texttt{ifactor} (without the 's') that returns an abomination that
+displays nicely: a product of a unit and the function with name
+\emph{the empty string} applied to a prime, raised to its
+multiplicity. This horrendous hack has the advantage of displaying the
+result in a way similar to what appears in elementary textbooks.
 
 This simple example illustrates the difference between a simple
-computation ($2 * 3$) and a more complex \emph{symbolic} query, factoring.
-The reason for using lists-of-lists in both systems is that multiplication
-and powering are both functions that evaluate immediately.  So that
-factoring 6 cannot just return $2^1 * 3^1$, as that is simply equal to $6$.
-Thus it is inevitable that both systems must \emph{represent} multiplication
-and powering in some other manner.  Because \texttt{ifactors} and
-\texttt{FactorInteger} are so old, they are unable to take advantage of
-newer developments in both systems.  Maple calls this feature an
-\emph{inert form}, while in Mathematica it is a \emph{hold form}, but
-the idea is the same: representing a computation without actually
-performing it. Such features are very old: even in the earliest days
-of Maple, one could do \texttt{5 \&\textasciicircum 256 mod 379} to
-very compute the answer without ever computing $5^{256}$ over the 
-integers.
+computation (\texttt{2 * 3}) and a more complex \emph{symbolic} query,
+factoring.  The reason for using lists-of-lists in both systems is
+that multiplication and powering are both functions that evaluate
+immediately in these systems.  So that factoring \texttt{6} cannot
+just return \verb+2^1 * 3^1+, as that simply evaluates to \texttt{6}.
+Thus it is inevitable that both systems must \emph{represent}
+multiplication and powering in some other manner.  Because
+\texttt{ifactors} and \texttt{FactorInteger} are so old, they are
+unable to take advantage of newer developments in both systems.
+\unsure{What feature is being referred to.}{Maple calls this feature}
+an \emph{inert form}, while in Mathematica it is a \emph{hold form},
+but the idea is the same: representing a computation without actually
+performing it. Such features are \unsure{Are these ``very old''
+  features included in the ``new developments''?}{very old}: even in
+the earliest days of Maple, one could do \texttt{5 \&\textasciicircum
+  256 mod 379} to very compute the answer without ever computing
+$5^{256}$ over the integers.  In summary, this example shows that in
+some cases we are interested in \texttt{2 * 3} for its value and in
+other cases we are interested in it for it syntactic structure.
 
-A legitimate question would be: is this an isolated occurence, or a
+A legitimate question would be: Is this an isolated occurrence, or a
 more pervasive pattern? It is pervasive. It arises from the dichotomy
 of being able to \emph{perform} computations and being able to
 \emph{talk about} (usually to prove the correctness of) computations.
 For example, we could represent (in Haskell) a tiny language of
 arithmetic as
 \begin{lstlisting}
-data Arith = Int Integer | Plus Arith Arith 
+data Arith = 
+    Int Integer 
+  | Plus Arith Arith 
   | Times Arith Arith
 \end{lstlisting}
 \noindent and an evaluator as
@@ -133,48 +143,52 @@ how would we know if this implementation of \lstinline|eval'| is correct
 or not?  The two languages are readily seen to be isomorphic.  In fact,
 there are clearly \emph{two} different isomorphisms. As the symbols used are
 no longer mnemonic, we have no means to (informally!) decide whether
-\lstinline|eval'| is correct.  Neverthess, \lstinline|Arith| and
+\lstinline|eval'| is correct.  Nevertheless, \lstinline|Arith| and
 \lstinline|AA| both represent (trivial) embedded Domain Specific Languages
-(DSL), which are pervasively used in computing. Being able to know that
+(DSLs), which are pervasively used in computing. Being able to know that
 functions defined over a DSL is correct is an important problem.
 
-In general, both computer algebra (CAS) and theorem proving systems (TPS)
-manipulate \emph{syntactic representations} of mathematical knowledge.  But
-they tackle the same problems in different ways. In a CAS, it is a natural
-question to take a polynomial $p$ (in some representation that the system
-recognizes as being a polynomial) and ask to factorize it into a product of
-irreducible polynomials~\cite{von2003modern}.  The algorithms to do this
-have gotten extremely sophisticated over the years~\cite{vanhoeij2002}.
-In a TPS, it is more natural to prove that such a polynomial $p$ is
-equal to a particular factorization, and perhaps also proving that each
-such factor is irreducible. Verifying that a given factorization is 
-correct is, of course, easy. Proving that factors are irreducible can be
-quite hard. And even though CASes obtain information that would be helpful
-to a TPS towards such a proof, that information is usually not part of
-the output. Thus while some algorithms for factoring do produce irreducibility
-\emph{certificates}, which makes proofs straightforward, these are usually
-not available. And the complexity of the algorithms (from an engineering
-point of view) is sufficiently daunting that, as far as we know, no TPS
-has re-implemented them.
+In general, both computer algebra systems (CASs) and theorem proving
+systems (TPSs) manipulate \emph{syntactic representations} of
+mathematical knowledge.  But they tackle the same problems in
+different ways. In a CAS, it is a natural question to take a
+polynomial $p$ (in some representation that the system recognizes as
+being a polynomial) and ask to factor it into a product of
+irreducible polynomials~\cite{von2003modern}.  The algorithms to do
+this have gotten extremely sophisticated over the
+years~\cite{vanhoeij2002}.  In a TPS, it is more natural to prove that
+such a polynomial $p$ is equal to a particular factorization, and
+perhaps also prove that each such factor is irreducible. Verifying
+that a given factorization is correct is, of course, easy. Proving
+that factors are irreducible can be quite hard. And even though
+\change{Jacques, I understand why you want to write CASes, but it is
+  not standard and, for that reason, confusing.}{CASs} obtain
+information that would be helpful to a TPS towards such a proof, that
+information is usually not part of the output. Thus while some
+algorithms for factoring do produce irreducibility
+\emph{certificates}, which makes proofs straightforward, these are
+usually not available. And the complexity of the algorithms (from an
+engineering point of view) is sufficiently daunting that, as far as we
+know, no TPS has re-implemented them.
 
-Given that both CASes and TPSes ``do mathematics'', why are they so 
+Given that both CASs and TPSs ``do mathematics'', why are they so 
 different? Basically because a CAS is based around
 \emph{algorithmic theories}, which are collections of symbolic computation
 algorithms whose correctness has been established using pen-and-paper
 mathematics, while a TPS is based around \emph{axiomatic theories},
 comprised of signatures and axioms, but nevertheless representing the
 ``same'' mathematics. In a TPS, one typically proves theorems, formally.
-There is some cross-over: some TPS (notably Agda and Idris) are closer
+There is some cross-over: some TPSs (notably Agda and Idris) are closer
 to programming languages, and thus offer the real possibility of mixing
 computation and deduction. Nevertheless, the problem still exists: how
 does one verify that a particular function implemented over a representation
-language, carries out the desired computation?
+language carries out the desired computation?
 
 What is needed is a means to \emph{link} together axiomatic theories
 and algorithmic theories such that one can state that some ``symbol
 manipulation'' corresponds to a (semantic) function defined axiomatically?
 In other words, we want to know that a \emph{symbolic computation}
-perfomed on representations performs the same computation as an abstract
+performed on representations performs the same computation as an abstract
 function defined on the \emph{denotation} of those representations.
 For example, if we ask to integrate a particular expression $e$, we would like
 to know that the system's response will in fact be an expression representing
@@ -183,7 +197,7 @@ infinitary process.
 
 These kinds of problems are pervasive: not just closed-form symbolic
 manipulations, but also SAT solving, SMT solving, model checking,
-type-checking of programs, most manipulations of DSL terms, are all
+type-checking of programs, most manipulations of DSL terms are all
 of this sort.  They all involve a mixture of computation and deduction
 that entwine syntactic representations with semantic conditions.
 
@@ -380,7 +394,7 @@ meaning of transformers.
 
 \subsection*{Biform Theory Graphs}
 
-In~\cite{CaretteFaerm17}, we developed a case study of a biform
+In~\cite{CaretteFarmer17}, we developed a case study of a biform
 theory graph consisting of eight biform theories encoding natural number
 arithmetic.  We produced partial formalizations of this test
 case~\cite{CaretteFarmer17} in {\churchuqe}~\cite{Farmer17} using the
