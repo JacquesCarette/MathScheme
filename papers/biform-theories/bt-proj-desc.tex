@@ -387,22 +387,27 @@ infrastructure for metareasoning with reflection.  Over the next
 couple years we plan to test this infrastructure by formalizing a
 variety of SBMAs in {\HLQE}.
 
-\subsection*{Biform Theories, Transformers and Generation}
+Building on the experience we gain in the development of {\HLQE}, we
+would like to create an implementation of {\churchqe} in {\MMT} that
+is well suited for general use.  We will transfer to this
+{\MMT}~\cite{RabeKohlhase13} implementation the most successful of the
+ideas and mechanisms we develop on the three subprojects that follow
+using {\HLQE}.
 
-Implementation of biform theories has not yet started, but we expect
-that it will be straightforward, as will the application of external
-transformers in {\HLQE}.  External transformers implemented in
-{\OCAML} (or in languages reachable via {\OCAML}'s foreign function
-interface) can be linked in as well.
+\subsection*{Biform Theories, Transformers, and Generation}
 
-The most difficult part of this subproject will be adequate
-renderings of \emph{meaning functions} that express the mathematical
-meaning of transformers. We do have some 
-experience~\cite{CaretteFarmer17,CaretteFarmerSorge07} creating
-biform theories.
+Implementation of biform theories in {\HLQE} has not yet started, but
+we expect that it will be straightforward, as will the application of
+external transformers.  External transformers implemented in {\OCAML}
+(or in languages reachable via {\OCAML}'s foreign function interface)
+can be linked in as well.
 
-The exploration and implementation of automatic generation of
-transformers has started.
+The most difficult part of this subproject will be adequate renderings
+of \emph{meaning functions} that express the mathematical meaning of
+transformers. We do have some
+experience~\cite{CaretteFarmer17,CaretteFarmerSorge07} creating biform
+theories.  The exploration and implementation of automatic generation
+of transformers has started.
 
 \subsection*{Biform Theory Graphs}
 
@@ -440,7 +445,7 @@ without having to hand-write such code.
 
 \section{Related Work}
 
-Directly related is~\cite{KohManRab13} who also work with biform theory
+Directly related is~\cite{KohlhaseManceRabe13} who also work with biform theory
 graphs. Kohlhase and Rabe and their students are actively working on
 related topics. As a natural progression, we (the authors of this paper)
 have started actively collaborating with them, under the name of the
@@ -455,14 +460,14 @@ There are substantial developments happening in some systems, most
 notably Agda~\cite{Norell07,Norell09}, Idris~\cite{Brady13} and
 Lean~\cite{Lean} that we are paying particularly close attention to.  This includes
 quite a lot of work on making reflection practical~%
-\cite{ebner2017metaprogramming,Christiansen:2014,Christiansen:2016,VanDerWalt12}.
+\cite{Christiansen:2016,Christiansen:2014,ebner2017metaprogramming,VanDerWalt12}.
 
-On the more theoretical side, Homotopy Type Theory~\cite{hottbook}
+On the more theoretical side, \emph{homotopy type theory}~\cite{hottbook}
 is rather promising.  However quite a bit of research still needs to be
 done to make these results practical. Of particular note is the issue
 that theories that deal directly with syntax seem to clash with the
-notion of a \emph{univalent universe}, which is central to Homotopy
-Type Theory.
+notion of a \emph{univalent universe}, which is central to homotopy
+type theory.
 
 \section{Conclusion}
 
