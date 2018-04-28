@@ -43,14 +43,14 @@ A \emph{biform theory} is a combination of an axiomatic theory and an
 algorithmic theory that supports the integration of reasoning and
 computation.  These are ideal for specifying and reasoning about
 algorithms that manipulate mathematical expressions.  However,
-formalizing biform theories is challenging as it requires the means
-to express statements about the interplay of what these algorithms do
-and what their actions mean mathematically.  This paper describes a
-project to develop a methodology for expressing and managing
-mathematical knowledge as a network of biform theories.  It is a
-subproject of MathScheme, a long-term project at McMaster University
-to produce a framework for integrating formal deduction and symbolic
-computation.
+formalizing biform theories is challenging as it requires the means to
+express statements about the interplay of what these algorithms do and
+what their actions mean mathematically.  This paper describes a
+project to develop a methodology for expressing, manipulating,
+managing, and generating mathematical knowledge as a network of biform
+theories.  It is a subproject of MathScheme, a long-term project at
+McMaster University to produce a framework for integrating formal
+deduction and symbolic computation.
 \end{abstract}
 
 \iffalse 
@@ -210,8 +210,8 @@ matrices, and symbolically differentiate expressions with variables.
 The \emph{computational behavior} of a transformer is the relationship
 between its input and output expressions.  When the transformer is an
 SBMA, its \emph{mathematical meaning}%
-\footnote{computer scientists would call this \emph{denotational semantics}
-rather than mathematical meaning} is the relationship between the
+\footnote{Computer scientists would call this \emph{denotational semantics}
+rather than \emph{mathematical meaning}.} is the relationship between the
 mathematical meanings of its input and output expressions.
 
 A \emph{biform theory} $T$ is a triple $(L,\Pi,\Gamma)$ where $L$ is a
@@ -225,24 +225,24 @@ of $T$.  They specify the meaning of the nonlogical symbols in $L$
 including the names of the transformers of $T$.  In particular,
 $\Gamma$ may contain specifications of the computational behavior of
 the transformers in $\Pi$ and of the mathematical meaning of the SBMAs
-in $\Pi$.  We say $T$ is an \emph{axiomatic theory} if $\Pi$ is empty
-and an \emph{algorithmic theory} if $\Gamma$ is empty.  The
-logical formulas of $\Gamma$ which refer to the names of transformers $\pi \in
-\Pi$ as \emph{meaning formulas}.
+in $\Pi$.  A formula in $\Gamma$ that refers to the name of a
+transformer $\pi \in \Pi$ is called a \emph{meaning formula} for
+$\pi$.  We say $T$ is an \emph{axiomatic theory} if $\Pi$ is empty and
+an \emph{algorithmic theory} if $\Gamma$ is empty.
 
 Formalizing a biform theory in the underlying logic requires
 infrastructure for reasoning about the expressions manipulated by the
 transformers as syntactic entities.  This infrastructure provides a
 basis for \emph{metareasoning with reflection}~\cite{FarmerArxiv16}.
-There are two main approaches to building such
+There are two main approaches to building such an
 infrastructure~\cite{Farmer13}.  The \emph{local approach} is to
-produce a deep embedding of a sublanguage $L'$ of $L$ that includes all
-the expressions manipulated by the transformers of $\Pi$.  The
+produce a deep embedding of a sublanguage $L'$ of $L$ that includes
+all the expressions manipulated by the transformers of $\Pi$.  The
 \emph{global approach} is to replace the underlying logic of $L$ with
 a logic such as \churchqe~\cite{FarmerArxiv16} that has an inductive
 type of \emph{syntactic values} that represent the expressions in $L$
 and global quotation and evaluation operators.  A third approach,
-based on ``final tagless'' embeddings~\cite{CaretteKS09} has not yet
+based on ``final tagless'' embeddings~\cite{CaretteKS09}, has not yet
 been attempted as most logics do not have the necessary infrastructure
 to abstract over type constructors.
 
@@ -292,7 +292,7 @@ The primary objective of the Biform Theories project is:
 
 \noindent
 Our strategy for achieving this is to break down the problem
-into the following sub-projects:
+into the following subprojects:
 
 \bi
 
@@ -308,7 +308,7 @@ into the following sub-projects:
 
 \medskip
 
-  \item[]\textbf{Implement} Produce an implementation \mname{Impl} of
+  \item[]\textbf{Implementation} Produce an implementation \mname{Impl} of
     \mname{Log}.  Demonstrate that SBMAs can be defined in
     \mname{Impl} and that their mathematical meanings can be stated
     and proved in \mname{Impl}.
@@ -325,14 +325,14 @@ into the following sub-projects:
 
 \medskip
 
-  \item[]\textbf{Theory Graphs} Enable theory graphs of biform theories
-    to be defined in \mname{Impl}.  Use combinators to ease the
-    construction of large, structured biform theory graphs.  Introduce
-    mechanisms for
-    transporting definitions, theorems, and transformers from a biform
-    theory $T$ to an instance $T'$ of $T$ via a theory morphism from
-    $T$ to $T'$. Some theories (such as 'homomorphism' and term
-    languages) can be and thus should be automatically generated.
+  \item[]\textbf{Theory Graphs} Enable theory graphs of biform
+    theories to be defined in \mname{Impl}.  Use combinators to ease
+    the construction of large, structured biform theory graphs.
+    Introduce mechanisms for transporting definitions, theorems, and
+    transformers from a biform theory $T$ to an instance $T'$ of $T$
+    via a theory morphism from $T$ to $T'$. Some theories (such as
+    theories of homomorphisms and term languages) can be and thus
+    should be automatically generated.
 
 \medskip
 
@@ -346,7 +346,7 @@ into the following sub-projects:
 
 \section{Work Plan Status}
 
-The work plan is to pursue the five objectives described above more or less in
+The work plan is to pursue the five subproducts described above more or less in
 the order of their presentation.  Here we describe the parts of the work
 plan that have been completed as well as the parts that remain to be done.
 
