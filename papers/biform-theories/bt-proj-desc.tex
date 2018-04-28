@@ -80,14 +80,7 @@ the second element a list of pairs (encoded as two-element lists),
 with (distinct) primes in the first component and the prime's
 multiplicity in the second. Mathematica's \texttt{FactorInteger} is
 similar, except that it omits the unit (and thus does not document
-what happens for negative integers).  \unsure{I don't understand the
-  meaning or purpose of these last two sentences. It is too esoteric
-  for a project description.}{On top of that}, Maple also offers
-\texttt{ifactor} (without the 's') that returns an abomination that
-displays nicely: a product of a unit and the function with name
-\emph{the empty string} applied to a prime, raised to its
-multiplicity. This horrendous hack has the advantage of displaying the
-result in a way similar to what appears in elementary textbooks.
+what happens for negative integers).  
 
 This simple example illustrates the difference between a simple
 computation (\texttt{2 * 3}) and a more complex \emph{symbolic} query,
@@ -98,14 +91,15 @@ just return \verb+2^1 * 3^1+, as that simply evaluates to \texttt{6}.
 Thus it is inevitable that both systems must \emph{represent}
 multiplication and powering in some other manner.  Because
 \texttt{ifactors} and \texttt{FactorInteger} are so old, they are
-unable to take advantage of newer developments in both systems.
-\unsure{What feature is being referred to.}{Maple calls this feature}
-an \emph{inert form}, while in Mathematica it is a \emph{hold form},
-but the idea is the same: representing a computation without actually
-performing it. Such features are \unsure{Are these ``very old''
-  features included in the ``new developments''?}{very old}: even in
+unable to take advantage of newer developments in both systems,
+in this case a feature to not immediately evaluate an expression
+but leave it as a representation of a future computation.
+Maple calls this feature
+an \emph{inert form}, while in Mathematica it is a \emph{hold form}.
+Nevertheless, the need for representing future computations was
+recognized early on: even in
 the earliest days of Maple, one could do \texttt{5 \&\textasciicircum
-  256 mod 379} to very compute the answer without ever computing
+256 mod 379} to very compute the answer without ever computing
 $5^{256}$ over the integers.  In summary, this example shows that in
 some cases we are interested in \texttt{2 * 3} for its value and in
 other cases we are interested in it for it syntactic structure.
@@ -161,8 +155,7 @@ such a polynomial $p$ is equal to a particular factorization, and
 perhaps also prove that each such factor is irreducible. Verifying
 that a given factorization is correct is, of course, easy. Proving
 that factors are irreducible can be quite hard. And even though
-\change{Jacques, I understand why you want to write CASes, but it is
-  not standard and, for that reason, confusing.}{CASs} obtain
+CASs obtain
 information that would be helpful to a TPS towards such a proof, that
 information is usually not part of the output. Thus while some
 algorithms for factoring do produce irreducibility
