@@ -397,7 +397,9 @@ function interface) can be linked in as well.
 
 The most difficult part of this sub-project will be adequate
 renderings of \emph{meaning functions} that express the mathematical
-meaning of transformers.
+meaning of transformers. We do have some 
+experience~\cite{CaretteFarmerSorge07,CaretteFarmer17} creating
+biform theories.
 
 The exploration and implementation of automatic generation of
 transformers has started.
@@ -425,8 +427,16 @@ inroads on \emph{High Level Theories}~\cite{HighLevelTheories}.
 
 \subsection*{Generic, Specializable Transformers}
 
-\todo{Jacques should complete this subsection.  Please reference
-  Pouya's thesis~\cite{Larjani13}.}
+Through substantial previous work%
+\cite{CaretteKS09,Carette06,CaElSm11,MathSchemeExper,CaretteKiselyov2005,CaretteKiselyov11,CaretteKucera07,CaretteKucera11,carette2016simplifying,KuceraCarette06,Larjani13,narayanan2016probabilistic}
+on code generation and code manipulation, it has become quite clear that
+quite a lot of mathematical code can be automatically generated.
+One of the most successful techniques is \emph{instantiation},
+whereby a single, generic algorithm exposes a series of
+\emph{design choices} that must be explicitly instantiated to produce
+specialized code. By clever choices of design parameters, and through the
+use of partial evaluation, one can thus produce highly optimized code
+without having to hand-write such code.
 
 \section{Related Work}
 
