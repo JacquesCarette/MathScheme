@@ -440,16 +440,37 @@ without having to hand-write such code.
 
 \section{Related Work}
 
-\todo{Jacques should complete this section, referring as necessary to
-  the related work section in~\cite{Farmer18}.}
+Directly related is~\cite{KohManRab13} who also work with biform theory
+graphs. Kohlhase and Rabe and their students are actively working on
+related topics. As a natural progression, we (the authors of this paper)
+have started actively collaborating with them, under the name of the
+\emph{Tetrapod Project}.
+
+One of the crucial features for supporting the interplay between
+syntax and semantics is \emph{reflection}, which has a long history
+and a deep literature. The interested reader should read the 
+thorough related work section in~\cite{Farmer18} for more details.
+
+There are substantial developments happening in some systems, most
+notably Agda~\cite{Norell07,Norell09}, Idris~\cite{Brady13} and
+Lean~\cite{Lean} that we are paying particularly close attention to.  This includes
+quite a lot of work on making reflection practical~%
+\cite{ebner2017metaprogramming,Christiansen:2014,Christiansen:2016,VanDerWalt12}.
+
+On the more theoretical side, Homotopy Type Theory~\cite{hottbook}
+is rather promising.  However quite a bit of research still needs to be
+done to make these results practical. Of particular note is the issue
+that theories that deal directly with syntax seem to clash with the
+notion of a \emph{univalent universe}, which is central to Homotopy
+Type Theory.
 
 \section{Conclusion}
 
 \bibliography{imps}
 \bibliographystyle{plain}
 
-\setcounter{tocdepth}{1}
-\listoftodos
-\setcounter{tocdepth}{0}
+%\setcounter{tocdepth}{1}
+%\listoftodos
+%\setcounter{tocdepth}{0}
 
 \end{document}
