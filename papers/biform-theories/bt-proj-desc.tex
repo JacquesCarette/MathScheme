@@ -70,17 +70,17 @@ deduction and symbolic computation).
 \section{Motivation}\label{sec:problem}
 
 Type \texttt{2 * 3} into your favourite computer algebra system, press
-enter, and you'll receive (unsurprisingly) \texttt{6}. But what if you
-want to go in the opposite direction?  Easy: you ask
+enter, and you will receive (unsurprisingly) \texttt{6}. But what if
+you want to go in the opposite direction?  Easy: you ask
 $\texttt{ifactors(6)}$ in Maple or $\texttt{FactorInteger[6]}$ in
 Mathematica.\footnote{Other computer algebra systems have similar
   commands.}  The Maple command \texttt{ifactors} returns a 2-element
-list, with the first element the unit (\texttt{1} or \texttt{-1}), and
-the second element a list of pairs (encoded as two-element lists),
-with (distinct) primes in the first component and the prime's
-multiplicity in the second. Mathematica's \texttt{FactorInteger} is
-similar, except that it omits the unit (and thus does not document
-what happens for negative integers).  
+list, with the first element the unit (\texttt{1} or \texttt{-1}) and
+the second element a list of pairs (encoded as two-element lists) with
+(distinct) primes in the first component and the prime's multiplicity
+in the second. Mathematica's \texttt{FactorInteger} is similar, except
+that it omits the unit (and thus does not document what happens for
+negative integers).
 
 This simple example illustrates the difference between a simple
 computation (\texttt{2 * 3}) and a more complex \emph{symbolic} query,
@@ -99,7 +99,7 @@ an \emph{inert form}, while in Mathematica it is a \emph{hold form}.
 Nevertheless, the need for representing future computations was
 recognized early on: even in
 the earliest days of Maple, one could do \texttt{5 \&\textasciicircum
-256 mod 379} to very compute the answer without ever computing
+256 mod 379} to compute the answer without ever computing
 $5^{256}$ over the integers.  In summary, this example shows that in
 some cases we are interested in \texttt{2 * 3} for its value and in
 other cases we are interested in it for its syntactic structure.
@@ -133,14 +133,15 @@ eval' (TTT x) = x
 eval' (XXX a b) = eval' a * eval' b
 eval' (YYY a b) = eval' a + eval' b
 \end{lstlisting}
-how would we know if this implementation of \lstinline|eval'| is correct
-or not?  The two languages are readily seen to be isomorphic.  In fact,
-there are clearly \emph{two} different isomorphisms. As the symbols used are
-no longer mnemonic, we have no means to (informally!) decide whether
-\lstinline|eval'| is correct.  Nevertheless, \lstinline|Arith| and
-\lstinline|AA| both represent (trivial) embedded Domain Specific Languages
-(DSLs), which are pervasively used in computing. Being able to know that
-functions defined over a DSL is correct is an important problem.
+how would we know if this implementation of \lstinline|eval'| is
+correct or not?  The two languages are readily seen to be isomorphic.
+In fact, there are clearly \emph{two} different isomorphisms. As the
+symbols used are no longer mnemonic, we have no means to (informally!)
+decide whether \lstinline|eval'| is correct.  Nevertheless,
+\lstinline|Arith| and \lstinline|AA| both represent (trivial) embedded
+\emph{domain specific languages} (DSLs), which are pervasively used in
+computing. Being able to know that a function defined over a DSL is
+correct is an important problem.
 
 In general, both computer algebra systems (CASs) and theorem proving
 systems (TPSs) manipulate \emph{syntactic representations} of
@@ -190,9 +191,10 @@ infinitary process.
 
 These kinds of problems are pervasive: not just closed-form symbolic
 manipulations, but also SAT solving, SMT solving, model checking,
-type-checking of programs, most manipulations of DSL terms are all
-of this sort.  They all involve a mixture of computation and deduction
-that entwine syntactic representations with semantic conditions.
+type-checking of programs, and most manipulations of DSL terms, are
+all of this sort.  They all involve a mixture of computation and
+deduction that entwine syntactic representations with semantic
+conditions.
 
 \section{Background Ideas}
 
@@ -220,15 +222,16 @@ implement functions on expressions of $L$, and $\Gamma$ is a set of
 formulas of
 $L$~\cite{CaretteFarmer08,Farmer07b,FarmerMohrenschildt03}.  $L$
 includes, for each transformer $\pi \in \Pi$, a name for the function
-implemented by $\pi$.  The members of $\Gamma$ are the \emph{axioms}
-of $T$.  They specify the meaning of the nonlogical symbols in $L$
-including the names of the transformers of $T$.  In particular,
-$\Gamma$ may contain specifications of the computational behavior of
-the transformers in $\Pi$ and of the mathematical meaning of the SBMAs
-in $\Pi$.  A formula in $\Gamma$ that refers to the name of a
-transformer $\pi \in \Pi$ is called a \emph{meaning formula} for
-$\pi$.  We say $T$ is an \emph{axiomatic theory} if $\Pi$ is empty and
-an \emph{algorithmic theory} if $\Gamma$ is empty.
+implemented by $\pi$ that serves as a name for $\pi$.  The members of
+$\Gamma$ are the \emph{axioms} of $T$.  They specify the meaning of
+the nonlogical symbols in $L$ including the names of the transformers
+of $T$.  In particular, $\Gamma$ may contain specifications of the
+computational behavior of the transformers in $\Pi$ and of the
+mathematical meaning of the SBMAs in $\Pi$.  A formula in $\Gamma$
+that refers to the name of a transformer $\pi \in \Pi$ is called a
+\emph{meaning formula} for $\pi$.  We say $T$ is an \emph{axiomatic
+  theory} if $\Pi$ is empty and an \emph{algorithmic theory} if
+$\Gamma$ is empty.
 
 Formalizing a biform theory in the underlying logic requires
 infrastructure for reasoning about the expressions manipulated by the
@@ -388,9 +391,9 @@ couple years we plan to test this infrastructure by formalizing a
 variety of SBMAs in {\HLQE}.
 
 Building on the experience we gain in the development of {\HLQE}, we
-would like to create an implementation of {\churchqe} in {\MMT} that
-is well suited for general use.  We will transfer to this
-{\MMT}~\cite{RabeKohlhase13} implementation the most successful of the
+would like to create an implementation of {\churchqe} in
+{\MMT}~\cite{RabeKohlhase13} that is well suited for general use.  We
+will transfer to this {\MMT} implementation the most successful of the
 ideas and mechanisms we develop on the three subprojects that follow
 using {\HLQE}.
 
@@ -445,11 +448,12 @@ without having to hand-write such code.
 
 \section{Related Work}
 
-Directly related is~\cite{KohlhaseManceRabe13} who also work with biform theory
-graphs. Kohlhase and Rabe and their students are actively working on
-related topics. As a natural progression, we (the authors of this paper)
-have started actively collaborating with them, under the name of the
-\emph{Tetrapod Project}.
+Directly related is~\cite{KohlhaseManceRabe13} who authors also work
+with biform theory graphs. Michael Kohlhase and Florian Rabe and their
+students are actively working on related topics. As a natural
+progression, we (the authors of this paper) have started actively
+collaborating with them, under the name of the \emph{Tetrapod
+  Project}.
 
 One of the crucial features for supporting the interplay between
 syntax and semantics is \emph{reflection}, which has a long history
@@ -482,10 +486,10 @@ developers need to create their system. Current systems tend to expose
 this infrastructure, thus creating an additional burden for casual users
 who may well have a simple task to perform.
 
-The \emph{Biform Theories} project is indeed about infrastructure
-that we believe is essential to building large-scale mechanized mathematics
-systems. And yes, we do believe that eventual success would imply
-that casual users of such a system would never hear of ``biform theories''.
+The \emph{Biform Theories} project is indeed about infrastructure that
+we believe is essential to building large-scale mechanized mathematics
+systems. And yes, we do believe that eventual success would imply that
+casual users of such a system never hear of ``biform theories''.
 
 \bibliography{imps}
 \bibliographystyle{plain}
