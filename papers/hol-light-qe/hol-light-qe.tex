@@ -30,7 +30,7 @@
 Computing and Software, McMaster University, Canada\\
 \url{http://www.cas.mcmaster.ca/~carette}\\
 \url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
-1 February 2018
+22 April 2018
 }
 
 \pagestyle{headings}
@@ -148,20 +148,21 @@ $e$ as $\synbrack{e}$ and $\sembrack{e}$, respectively.
 
 \ee
 
-{\churchqe}~\cite{FarmerArxiv16,Farmer16} is version of Church's type
+{\churchqe}~\cite{Farmer16,Farmer18} is version of Church's type
 theory~\cite{Church40} with quotation and evaluation that solves these
 three design problems.  It is based on {\qzero}~\cite{Andrews02},
 Peter Andrews' version of Church's type theory.  We believe
 {\churchqe} is the first readily implementable version of simple type
 theory that includes \emph{global} quotation and evaluation operators.  We
-show in~\cite{FarmerArxiv16} that it is suitable for defining,
+show in~\cite{Farmer18} that it is suitable for defining,
 applying, and reasoning about SBMAs.
 
-To demonstrate that {\churchqe} is indeed implementable, we have
-done so by modifying \HL~\cite{Harrison09}, a
-compact implementation of the HOL proof assistant~\cite{GordonMelham93}.  The
-resulting version of \HL{} is called \HLQE.  Here we present its
-design, implementation, and the challenges encountered.
+To demonstrate that {\churchqe} is indeed implementable, we have done
+so by modifying \HL~\cite{Harrison09}, a compact implementation of the
+HOL proof assistant~\cite{GordonMelham93}.  The resulting version of
+{\HL} is called \HLQE.  Here we present its design, implementation,
+and the challenges encountered.  ({\HOLtwoP}~\cite{Voelker07} is another
+example of a logical system build by modifying {\HL}.)
 
 The rest of the paper is organized as follows.
 Section~\ref{sec:ctt-qe} presents the key ideas underlying {\churchqe}
@@ -195,10 +196,10 @@ The major contributions of the work presented here are:
 \section{${\rm CTT_{qe}}$}\label{sec:ctt-qe}
 
 The syntax, semantics and proof system of {\churchqe}
-are defined in~\cite{FarmerArxiv16}.  Here
+are defined in~\cite{Farmer18}.  Here
 we will only introduce the definitions and results of that
 are key to understanding how \HLQE{} implements {\churchqe}.  The
-reader is encouraged to consult~\cite{FarmerArxiv16} when additional
+reader is encouraged to consult~\cite{Farmer18} when additional
 details are required.
 
 \subsection{Syntax}
@@ -427,11 +428,11 @@ quotation $\synbrack{\Neg(\textbf{A}_o \And \textbf{C}_o)}$.
 
 The proof system for {\churchqe} consists of the axioms for {\qzero},
 the single rule of inference for {\qzero}, and additional
-axioms~\cite[B1--B13]{FarmerArxiv16} that define the logical constants
+axioms~\cite[B1--B13]{Farmer18} that define the logical constants
 of {\churchqe} (B1--B4,B5,B7), specify $\epsilon$ as an inductive type
 (B4,B6), state the properties of quotation and evaluation (B8,B10),
 and extend the rules for beta-reduction (B9,B11--13).  We prove
-in~\cite{FarmerArxiv16} that this proof system is sound for all
+in~\cite{Farmer18} that this proof system is sound for all
 formulas and complete for eval-free formulas.
 
 The axioms that express the properties of quotation and evaluation are:
@@ -666,9 +667,9 @@ assistant~\cite{GordonMelham93} written in OCaml and hosted on GitHub
 at \url{https://github.com/jrh13/hol-light/}.  Although it is a
 relatively small system, it has been used to formalize many kinds of
 mathematics and to check many proofs including the lion's share of Tom
-Hale's proof of the Kepler conjecture~\cite{HalesEtAl17}.
+Hales' proof of the Kepler conjecture~\cite{HalesEtAl17}.
 
-\HL{} is very well suited to serve as a foundation on which to build
+{\HL} is very well suited to serve as a foundation on which to build
 an implementation of {\churchqe}: First, it is an open-source system
 that can be freely modified as long as certain very minimal conditions
 are satisfied.  Second, it is an implementation of a version of simple
@@ -815,7 +816,7 @@ are all mapped to a single {\HOL} constant with the polymorphic type
 \texttt{a\_ty\_var->a\_ty\_var->bool} where \texttt{a\_ty\_var} is any
 chosen {\HOL} type variable.  
 
-The other logical constants of {\churchqe}~\cite[Table 1]{FarmerArxiv16}
+The other logical constants of {\churchqe}~\cite[Table 1]{Farmer18}
 are not mapped to primitive {\HOL} constants.  $\mname{app}_{\epsilon
   \tarrow \epsilon \tarrow \epsilon}$, $\mname{abs}_{\epsilon \tarrow
   \epsilon \tarrow \epsilon}$, and $\mname{quo}_{\epsilon \tarrow
@@ -879,7 +880,7 @@ is eval-free.  \texttt{Eval} constructs an evaluation of type $\alpha$
 with components $t$ and $\alpha$ from a term $t$ of type
 \texttt{epsilon} and a type $\alpha$.  \texttt{Hole} is used to
 construct ``holes'' of type \texttt{epsilon} in a quasiquotation as
-described in~\cite{FarmerArxiv16}.  A {\HLQE} quotation that contains
+described in~\cite{Farmer18}.  A {\HLQE} quotation that contains
 holes is a quasiquotation, while a quotation without any holes is a
 normal quotation.  The construction of terms has been
 modified to allow a hole (of type \texttt{epsilon}) to be used where a
@@ -988,6 +989,55 @@ respectively, and returns true iff $s_1$ represents
 the syntax tree of a term $t$, $s_2$ represents the syntax tree of a
 type $\alpha$, and $t$ is of type $\alpha$.
 
+\subsection{Metatheorems}
+
+We state three important metatheorems about {\HLQE}.  We give a very
+brief proof sketch for each of them.
+
+\begin{theorem}\bsp
+Every formula provable in {\HL}'s proof system is also provable in
+{\HLQE}'s proof system.\esp
+\end{theorem}
+
+\noindent
+\emph{Proof sketch.}  {\HLQE}'s proof system extends {\HL}'s proof
+system with new machinery for reasoning about quotations and
+evaluations (in the same way that {\churchqe}'s proof system extends
+{\qzero}'s proof system).  As a result, every proof that is valid in
+{\HL}'s proof system will also be valid in {\HLQE}'s proof system.
+$\Box$
+
+\bigskip
+
+One way to test the implementation of {\HLQE}'s proof system is to
+check whether proofs that work in {\HL} also work in {\HLQE}.  This is
+true for all the proofs in the files that are loaded as part of the
+{\HL} system; these proofs load without error in the {\HLQE} system.
+We can test the implementation further by loading a variety of large
+{\HL} proofs into {\HLQE}.
+
+\begin{theorem}
+The proof system for {\HLQE} is sound for all formulas and complete
+with for eval-free formulas.
+\end{theorem}
+
+\noindent
+\emph{Proof sketch.}  The analog of this theorem for {\churchqe} is
+proved in~\cite{}.  We believe we can prove this theorem by just
+imitating the proof for {\churchqe}. $\Box$
+
+\begin{theorem}\bsp
+{\HLQE} is a model-theoretic conservative extension of {\HL}, i.e.,
+every model of {\HL} can be expanded to a model of {\HLQE}.\esp
+\end{theorem}
+
+\noindent
+\emph{Proof sketch.}  A model of {\HLQE} is a model of {\HL} with
+definitions of the type $\epsilon$ and several constants and
+interpretations for the quasiquotation and evaluation operators.
+These additions do not impinge upon the semantics of {\HL} in any way.
+Hence every model of {\HL} can be easily expanded to a model of
+{\HLQE}.  $\Box$
 
 \section{Examples}\label{sec:examples}
 
@@ -1135,7 +1185,7 @@ in more than one field.  For example, one can find a
 vast literature on reflection in logic, programming languages,
 and theorem proving. Due to space restrictions, we cannot
 do justice to the full breadth of issues. For a full discussion,
-please see the related work section in~\cite{FarmerArxiv16}.
+please see the related work section in~\cite{Farmer18}.
 The surveys of Costantini~\cite{Costantini02},
 Harrison~\cite{Harrison95} are excellent. From a
 programming perspective, the discussion and extensive 
@@ -1148,7 +1198,7 @@ infrastructure~\cite{BoyerMoore81} for
 incorporating symbolic algorithms into the Nqthm~\cite{BoyerMoore88}
 theorem prover.  This approach is also used in
 ACL2~\cite{KaufmannMoore97}, the successor to Nqthm;
-see~\cite{HuntEtAl05}.  Over the last 30 years, the Nuprl group lead
+see~\cite{HuntEtAl05}.  Over the last 30 years, the Nuprl group led
 by Robert Constable has produced a large body of work on metareasoning
 and reflection for theorem
 proving~\cite{AllenEtAl90,Barzilay05,Constable95,Howe92,KnoblockConstable86,Nogin05,Yu07}
@@ -1169,7 +1219,7 @@ Isabelle/HOL~\cite{ChaiebNipkow08},
 Lean~\cite{ebner2017metaprogramming},
 Maude~\cite{ClavelMeseguer02}, 
 PVS~\cite{VonHenkeEtAl98}, 
-and
+reFLect~\cite{GrundyEtAl06,MelhamEtAl13},and
 Theorema~\cite{GieseBuchberger07,BuchbergerEtAl06}.
 
 The semantics of the quotation operator $\synbrack{\cdot}$ is based on
@@ -1225,7 +1275,7 @@ Nqthm, ACL2, Theorema (as well as now \HLQE) have global quotation
 and evaluation operators in the logic, as well as careful restrictions
 on their use to avoid paradoxes. Idris also has global quotation and
 evaluation, and the \emph{totality checker} is used to avoid
-paradoxes. MetaPRL have evaluation but no global quotation. Agda
+paradoxes. MetaPRL has evaluation but no global quotation. Agda
 has global quotation and evaluation, but their use are mediated by
 a built-in \texttt{TC} (TypeChecking) monad which ensures soundness.
 Lean works similarly: all reflection must happen in the \texttt{tactic}
@@ -1236,7 +1286,7 @@ extra-logical.
 
 \section{Conclusion}\label{sec:conclusion}
 
-{\churchqe}~\cite{FarmerArxiv16,Farmer16} is a version of Church's
+{\churchqe}~\cite{Farmer16,Farmer18} is a version of Church's
 type theory with global quotation and evaluation operators that is
 intended for defining, applying, proving properties about syntax-based
 mathematical algorithms (SBMAs), algorithms that manipulate
@@ -1262,7 +1312,7 @@ and~\ref{subsec:hlqe-proof-system}).  This is the only significant
 cost we see for using {\HLQE} in place of {\HL}.
 
 {\HLQE} provides a built-in global reflection
-infrastructure~\cite{FarmerArxiv16}.  This infrastructure can be used
+infrastructure~\cite{Farmer18}.  This infrastructure can be used
 to reason about the syntactic structure of terms and, as we have
 shown, to express formula schemas as single formulas.  More
 importantly, the infrastructure provides the means to define, apply,
@@ -1278,12 +1328,12 @@ We plan to continue the development of {\HLQE} and to show that it can
 be effectively used to develop SBMAs as we have just described.  In
 particular, we intend to formalize in {\HLQE} the example on the
 symbolic differentiation in {\churchqe} that is presented
-in~\cite{FarmerArxiv16}.  This will require defining the algorithm for
+in~\cite{Farmer18}.  This will require defining the algorithm for
 symbolic differentiation, writing its meaning formula, and finally
 proving the meaning formula from the algorithm's definition and
 standard facts about derivatives.
 
-\bibliography{imps,hol-light-qe}
+\bibliography{imps}
 \bibliographystyle{plain}
 
 %%\setcounter{tocdepth}{1}
