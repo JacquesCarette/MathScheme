@@ -176,7 +176,6 @@ paper ends with some final remarks including a brief discussion on future work.
 
 The major contributions of the work presented here are:
 
-\vspace*{-2.5mm}
 \be
 
   \item We show that the logical machinery for quotation and
@@ -211,7 +210,7 @@ operator, and a typed evaluation operator.
 A \emph{type} of {\churchqe} is defined inductively by the following
 formation rules:
 %
-\vspace*{-1.5mm}
+%\vspace*{-1.5mm}
 \be
 
   \item \emph{Type of individuals}: $\iota$ is a type.
@@ -249,7 +248,7 @@ ranging over expressions of type $\alpha$.  An expression is
 \emph{eval-free} if it is constructed using just the first five
 rules.
 %
-\vspace*{-3mm}
+%\vspace*{-3mm}
 \be
 
   \item \emph{Variable}: $\textbf{x}_\alpha$ is an expression of type
@@ -568,7 +567,7 @@ the properties of beta-reduction as Andrews does in the proof system
 for {\qzero}~\cite[p.~213]{Andrews02}.  The following three
 beta-reduction cases require discussion:
 
-\vspace*{-2.5mm}
+%\vspace*{-2.5mm}
 \be
 
   \item $(\LambdaApp \textbf{x}_\alpha \mdot \LambdaApp
@@ -848,7 +847,7 @@ define_type "epsilon = QuoVar string type
 \noindent
 Terms of type \texttt{type} denote the syntax trees of {\HLQE} types,
 while the terms of type \texttt{epsilon} denote the syntax trees of
-{\HLQE} terms that are eval-free.
+those terms that are eval-free.
 
 The OCaml type of {\HOL} types in {\HLQE}
 
@@ -880,7 +879,7 @@ is eval-free.  \texttt{Eval} constructs an evaluation of type $\alpha$
 with components $t$ and $\alpha$ from a term $t$ of type
 \texttt{epsilon} and a type $\alpha$.  \texttt{Hole} is used to
 construct ``holes'' of type \texttt{epsilon} in a quasiquotation as
-described in~\cite{Farmer18}.  A {\HLQE} quotation that contains
+described in~\cite{Farmer18}.  A quotation that contains
 holes is a quasiquotation, while a quotation without any holes is a
 normal quotation.  The construction of terms has been
 modified to allow a hole (of type \texttt{epsilon}) to be used where a
@@ -894,25 +893,24 @@ representation of an evaluation \texttt{Quote(t,ty)} is $\texttt{eval
 
 \subsection{Modification of the HOL Light Proof System}\label{subsec:hlqe-proof-system}
 
-We said in~\ref{subsec:cttqe-proof-system} that the proof system
-for {\churchqe} is obtained by extending the proof system for
-{\qzero} with additional axioms B1--B13.  Since {\qzero} and
+The proof system for {\churchqe} is obtained by extending {\qzero}'s
+with additional axioms B1--B13 (see~\ref{subsec:cttqe-proof-system}).
+Since {\qzero} and
 {\HL} are both complete (with respect to the semantics of Henkin-style
 general models), {\HL} includes the reasoning capabilities of the proof
-system for {\qzero} but obviously not the reasoning capabilities
-embodied in the B1--B13 axioms.  These capabilities must be
-implemented in {\HLQE}.  
-
-This is done in several ways.  First, the logical constants defined by
+system for {\qzero} but not the reasoning capabilities
+embodied in the B1--B13 axioms, which must be
+implemented in {\HLQE} as follows.
+First, the logical constants defined by
 Axioms B1--B4, B5, and B7 are defined in {\HLQE} as {\HOL} functions.
 Second, the no junk (B6) and no confusion (B4) requirements for
 $\epsilon$ are automatic consequences of defining \texttt{epsilon} as
 an inductive type.  Third, Axiom B9 is implemented directly
 in the {\HL} code for substitution.  Fourth, the remaining axioms, B8
-and B10--B13 are implemented by new rules of inference in {\HLQE} as
+and B10--B13 are implemented by new rules of inference in as
 shown in Table~\ref{tab:axioms}.
 
-\vspace{-2mm}
+%\vspace{-2mm}
 \begin{table}
 \bc
 \begin{tabular}{|ll|}
@@ -936,13 +934,12 @@ B13 (Beta-Reduction for Function Abstractions)  & \texttt{NEITHER\_EFFECTIVE}\\
 \caption{New Inference Rules in {\HLQE}}\label{tab:axioms} 
 \end{table}
 
-\vspace*{-7mm}
-The {\HL} \texttt{INST} rule of inference is also modified.  This rule
+%\vspace*{-7mm}
+The \texttt{INST} rule of inference is also modified.  This rule
 simultaneously substitutes a list of terms for a list of variables in
 a sequent.  The substitution function \texttt{vsubst} defined in the
 {\HL} kernel is modified so that it works like substitution (via
-beta-reduction  rules) does in {\churchqe}.  These are the
-main changes to the function:
+beta-reduction  rules) does in {\churchqe}.  The main changes are:
 
 \be
 
@@ -1003,18 +1000,14 @@ Every formula provable in {\HL}'s proof system is also provable in
 \emph{Proof sketch.}  {\HLQE}'s proof system extends {\HL}'s proof
 system with new machinery for reasoning about quotations and
 evaluations (in the same way that {\churchqe}'s proof system extends
-{\qzero}'s proof system in~\cite{Farmer18}).  As a result, every proof
-that is valid in {\HL}'s proof system will also be valid in {\HLQE}'s
-proof system.  $\Box$
-
-\bigskip
+{\qzero}'s proof system in~\cite{Farmer18}). Thus every {\HL} proof
+remains valid. $\Box$ 
 
 One way to test the implementation of {\HLQE}'s proof system is to
-check whether proofs that work in {\HL} also work in {\HLQE}.  This is
-true for all the proofs in the files that are loaded as part of the
-{\HL} system; these proofs load without error in the {\HLQE} system.
-We can test the implementation further by loading a variety of large
-{\HL} proofs into {\HLQE}.
+check whether proofs that work in {\HL} continue to work. This is
+true for all the proofs are loaded as part of the
+{\HL} system. We can further test the implementation by loading
+a variety of large {\HL} proofs.
 
 \begin{theorem}
 The proof system for {\HLQE} is sound for all formulas and complete
@@ -1027,25 +1020,21 @@ proved in~\cite{Farmer18}.  We believe we can prove this theorem by just
 imitating the proof for {\churchqe}. $\Box$
 
 \begin{theorem}\bsp
-{\HLQE} is a model-theoretic conservative extension of {\HL}, i.e.,
-every model of {\HL} can be expanded to a model of {\HLQE}.\esp
+{\HLQE} is a model-theoretic conservative extension of {\HL}.\esp
 \end{theorem}
 
 \noindent
 \emph{Proof sketch.}  A model of {\HLQE} is a model of {\HL} with
-definitions of the type $\epsilon$ and several constants and
+definitions of the type $\epsilon$ and constants and
 interpretations for the quasiquotation and evaluation operators.
-These additions do not impinge upon the semantics of {\HL} in any way.
-Hence every model of {\HL} can be easily expanded to a model of
-{\HLQE}.  $\Box$
+These additions do not impinge upon the semantics of {\HL},
+hence every model of the former can be expanded to a model of
+the latter.  $\Box$
 
 \section{Examples}\label{sec:examples}
 
-\bsp
-We present two examples that test the implementation
-of {\HLQE} and illustrate its capabilities by expressing,
-instantiating, and proving formula schemas.
-\esp
+We present two examples that illustrate its capabilities by expressing,
+instantiating, and proving formula schemas in {\HLQE}.
 
 \subsection{Law of Excluded Middle}
 
@@ -1057,14 +1046,13 @@ be formalized in {\churchqe} as the universal statement
 \[\ForallApp x_\epsilon \mdot 
 \mname{is-expr}_{\epsilon \tarrow o}^{o} \, x_\epsilon \Implies
 \sembrack{x_\epsilon}_o \Or \Neg \sembrack{x_\epsilon}_o.\] An
-instance of this statement of LEM is any instance of the universal
-formula. It can be directly written in {\HLQE} as the formula
+instance of LEM may be written in {\HLQE} as
 \begin{lstlisting}
 `!x:epsilon. isExprType (x:epsilon) (TyBase "bool")
    ==> ((eval x to bool) \/ ~(eval x to bool))`
 \end{lstlisting}
-that is readily proved.  An instance of this theorem is obtained by
-applying the rule of inference \texttt{INST} followed by
+that is readily proved.  Instances of this are obtained by
+applying \texttt{INST} followed by
 \texttt{BETA\_EVAL} or \texttt{BETA\_REVAL}, the beta-reduction rules
 for evaluations.
 
@@ -1133,36 +1121,33 @@ The induction schema for Peano arithmetic can be written in
 {\HLQE} just as easily as in {\churchqe}:
 \begin{lstlisting}
 `!f:epsilon. 
-   (isExprType (f:epsilon) 
-      (TyBiCons "fun" (TyVar "num") (TyBase "bool"))) 
+   (isExprType (f:epsilon) (TyBiCons "fun" (TyVar "num") (TyBase "bool"))) 
    /\ (isPeano f) 
    ==> 
    (eval (f:epsilon) to (num->bool)) 0 
-    /\ 
-   (!n:num. (eval (f:epsilon) to (num->bool)) n 
-      ==> 
-      (eval (f:epsilon) to (num->bool)) (SUC n)) 
+    /\ (!n:num. (eval (f:epsilon) to (num->bool)) n 
+      ==> (eval (f:epsilon) to (num->bool)) (SUC n)) 
    ==> (!n:num. (eval (f:epsilon) to (num->bool)) n)`
 \end{lstlisting}
 \esp
 
-This statement named \texttt{peanoInduction} is proved from
-\texttt{num\_INDUCTION} in {\HLQE} by the following steps:
+\noindent \texttt{peanoInduction} is proved from
+\texttt{num\_INDUCTION} in {\HLQE} by:
 
 \bsp
 \be
 
-  \item Instantiate \texttt{num\_INDUCTION} with the predicate
-    \texttt{`P:num->bool`} to obtain the formula \texttt{indinst}.
+  \item Instantiate \texttt{num\_INDUCTION} with
+    \texttt{`P:num->bool`} to obtain \texttt{indinst}.
 
   \item Prove and install the theorem \texttt{nei\_peano} that says the
     variable \texttt{(n:num)} is not effective in \texttt{(eval
       (f:epsilon) to (num->bool))}.
 
-  \item Logically reduce \texttt{peanoInduction} and then prove the
+  \item Logically reduce \texttt{peanoInduction}, then prove the
     result by instantiating \texttt{`P:num->bool`} in \texttt{indinst}
     with \texttt{`eval (f:epsilon) to (num->bool)`} using the
-    \texttt{INST} rule of inference.  This instantiation requires the
+    \texttt{INST} rule,  which requires the
     previously proved theorem \texttt{nei\_peano}.
 
 \ee 
@@ -1170,9 +1155,7 @@ This statement named \texttt{peanoInduction} is proved from
 
 \noindent 
 The induction schema for Presburger arithmetic is stated and proved in
-the very same way.
-
-By virtue of being able to express the Peano and Presburger induction
+the same way.  By being able to express the Peano and Presburger induction
 schemas, we can properly define the first-order theories of Peano
 arithmetic and Presburger arithmetic in {\HLQE}.
 
@@ -1193,13 +1176,13 @@ bibliography of Kavvos' D.Phil. thesis~\cite{Kavvos2017}
 are well worth reading.
 
 Focusing just on interactive proof assistants, we find
-that Robert Boyer and J Moore developed a global
+that Boyer and Moore developed a global
 infrastructure~\cite{BoyerMoore81} for
-incorporating symbolic algorithms into the Nqthm~\cite{BoyerMoore88}
-theorem prover.  This approach is also used in
+incorporating symbolic algorithms into Nqthm~\cite{BoyerMoore88}.
+This approach is also used in
 ACL2~\cite{KaufmannMoore97}, the successor to Nqthm;
-see~\cite{HuntEtAl05}.  Over the last 30 years, the Nuprl group led
-by Robert Constable has produced a large body of work on metareasoning
+see~\cite{HuntEtAl05}.  Over the last 30 years, the Nuprl group
+has produced a large body of work on metareasoning
 and reflection for theorem
 proving~\cite{AllenEtAl90,Barzilay05,Constable95,Howe92,KnoblockConstable86,Nogin05,Yu07}
 that has been implemented in the Nuprl~\cite{Constable86} and
@@ -1208,8 +1191,7 @@ mainstream technique in the Coq~\cite{Coq8.5} proof assistant with the
 development of tactics based on symbolic computations like the Coq
 ring tactic~\cite{Boutin97,GregoireMahboubi05} and the formalizations
 of the \emph{four color theorem}~\cite{Gonthier08} and the
-\emph{Feit-Thompson odd-order theorem}~\cite{GonthierEtAl13} led by
-Georges Gonthier.
+\emph{Feit-Thompson odd-order theorem}~\cite{GonthierEtAl13}.
 See~\cite{Boutin97,BraibantPous11,Chlipala13,gonthier2010introduction,GregoireMahboubi05,JamesHinze09,OostdijkGeuvers02}
 for a selection of the work done on using reflection in Coq.
 Many other systems also support metareasoning and reflection:
@@ -1258,16 +1240,15 @@ additional details for each system, leveraging information from the papers
 already cited above as well as the documentation of each system%
 \footnote{And some personal communication with some of system authors.}.
 
-In more detail, the Coq extension for reflection,
-\textrm{SSReflect}~\cite{gonthier2010introduction}, which stands for
-\emph{small scale reflection}, works by locally reflecting the
+\textrm{SSReflect}~\cite{gonthier2010introduction} (\emph{small scale
+reflection}) is a Coq extension that works by locally reflecting the
 syntax of particular kinds of objects --- such as decidable predicates
 and finite structures.  It is the pervasive use of decidability and
-computability which gives small scale reflection its power, and at the
-same time, its limitation.  An extension to PVS allows reasoning much
+computability which gives \textrm{SSReflect} its power, and at the
+same time, its limitations.  An extension to PVS allows reasoning much
 in the style of \textrm{SSReflect}.  Isabelle/HOL offers a nonlogical
 \texttt{reify} function (aka quotation), while its \texttt{interpret}
-function is in the logic; it uses global datatypes to represent {\HL}
+function is in the logic; it uses global datatypes to represent {\HOL}
 terms.
 
 The approach for the second list of systems also varies quite a bit.
