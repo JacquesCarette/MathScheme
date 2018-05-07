@@ -30,7 +30,7 @@
 Computing and Software, McMaster University, Canada\\
 \url{http://www.cas.mcmaster.ca/~carette}\\
 \url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
-22 April 2018
+%% 6 May 2018
 }
 
 \pagestyle{headings}
@@ -988,48 +988,49 @@ type $\alpha$, and $t$ is of type $\alpha$.
 
 \subsection{Metatheorems}
 
-We state three important metatheorems about {\HLQE}.  We give a very
-brief proof sketch for each of them.
+We state three important metatheorems about {\HLQE}.  The proofs of
+these metatheorems are straightforward but also tedious.  We label the
+metatheorems as conjectures since their proofs have not yet been
+written down.
 
-\begin{theorem}\bsp
+\begin{conjecture}\bsp
 Every formula provable in {\HL}'s proof system is also provable in
 {\HLQE}'s proof system.\esp
-\end{theorem}
+\end{conjecture}
 
 \noindent
 \emph{Proof sketch.}  {\HLQE}'s proof system extends {\HL}'s proof
 system with new machinery for reasoning about quotations and
-evaluations (in the same way that {\churchqe}'s proof system extends
-{\qzero}'s proof system in~\cite{Farmer18}). Thus every {\HL} proof
-remains valid. $\Box$ 
+evaluations. Thus every {\HL} proof remains valid in {\HLQE}. $\Box$
 
-One way to test the implementation of {\HLQE}'s proof system is to
-check whether proofs that work in {\HL} continue to work. This is
-true for all the proofs are loaded as part of the
-{\HL} system. We can further test the implementation by loading
-a variety of large {\HL} proofs.
-
-\begin{theorem}
-The proof system for {\HLQE} is sound for all formulas and complete
-for all eval-free formulas.
-\end{theorem}
+\bigskip
 
 \noindent
-\emph{Proof sketch.}  The analog of this theorem for {\churchqe} is
-proved in~\cite{Farmer18}.  We believe we can prove this theorem by just
-imitating the proof for {\churchqe}. $\Box$
+Note: All the proofs loaded with the {\HL} system continue to be valid
+when loaded in {\HLQE}.  A further test would be to load a variety of
+large {\HL} proofs in {\HLQE}.
 
-\begin{theorem}\bsp
+\begin{conjecture}
+The proof system for {\HLQE} is sound for all formulas and complete
+for all eval-free formulas.
+\end{conjecture}
+
+\noindent
+\emph{Proof sketch.}  The analog of this statement for {\churchqe} is
+proved in~\cite{Farmer18}.  This theorem is proved by just imitating
+the proof for {\churchqe}. $\Box$
+
+\begin{conjecture}\bsp
 {\HLQE} is a model-theoretic conservative extension of {\HL}.\esp
-\end{theorem}
+\end{conjecture}
 
 \noindent
 \emph{Proof sketch.}  A model of {\HLQE} is a model of {\HL} with
-definitions of the type $\epsilon$ and constants and
-interpretations for the quasiquotation and evaluation operators.
-These additions do not impinge upon the semantics of {\HL},
-hence every model of the former can be expanded to a model of
-the latter.  $\Box$
+definitions of the type $\epsilon$ and several constants and
+interpretations for the (quasi)quotation and evaluation operators.
+These additions do not impinge upon the semantics of {\HL}; hence
+every model of {\HL} can be expanded to a model of the {\HLQE}.
+$\Box$
 
 \section{Examples}\label{sec:examples}
 
@@ -1308,11 +1309,13 @@ assistant.
 We plan to continue the development of {\HLQE} and to show that it can
 be effectively used to develop SBMAs as we have just described.  In
 particular, we intend to formalize in {\HLQE} the example on the
-symbolic differentiation in {\churchqe} that is presented
-in~\cite{Farmer18}.  This will require defining the algorithm for
-symbolic differentiation, writing its meaning formula, and finally
-proving the meaning formula from the algorithm's definition and
-standard facts about derivatives.
+symbolic differentiation we formalized in {\churchqe}~\cite{Farmer18}.
+This will require defining the algorithm for symbolic differentiation,
+writing its meaning formula, and finally proving the meaning formula
+from the algorithm's definition and properties about derivatives.  We
+also intend, down the road, to formalize in {\HLQE} the graph of
+biform theories encoding natural number of arithmetic described
+in~\cite{CaretteFarmer17}.
 
 \bibliography{imps}
 \bibliographystyle{plain}
