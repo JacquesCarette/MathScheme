@@ -194,7 +194,7 @@ The major contributions of the work presented here are:
 
 \section{${\rm CTT_{qe}}$}\label{sec:ctt-qe}
 
-The syntax, semantics and proof system of {\churchqe}
+The syntax, semantics, and proof system of {\churchqe}
 are defined in~\cite{Farmer18}.  Here
 we will only introduce the definitions and results of that
 are key to understanding how \HLQE{} implements {\churchqe}.  The
@@ -385,10 +385,10 @@ syntactic device for specifying expressions and defining macros.
 Quasiquotation was introduced by Willard Van Orman Quine in 1940 in
 the first version of his book \emph{Mathematical
   Logic}~\cite{Quine03}.  It has been extensively employed in the Lisp
-family of programming languages~\cite{Bawden99},\footnote{In Lisp, the
+family of programming languages~\cite{Bawden99}\footnote{In Lisp, the
   standard symbol for quasiquotation is the backquote ({\tt `})
   symbol, and thus in Lisp, quasiquotation is usually called
-  \emph{backquote}.} and from there to other families of
+  \emph{backquote}.}, and from there to other families of
 programming languages, most notably the ML family.
 
 In {\churchqe}, constructing a large quotation from smaller quotations
@@ -428,9 +428,9 @@ quotation $\synbrack{\Neg(\textbf{A}_o \And \textbf{C}_o)}$.
 The proof system for {\churchqe} consists of the axioms for {\qzero},
 the single rule of inference for {\qzero}, and additional
 axioms~\cite[B1--B13]{Farmer18} that define the logical constants
-of {\churchqe} (B1--B4,B5,B7), specify $\epsilon$ as an inductive type
-(B4,B6), state the properties of quotation and evaluation (B8,B10),
-and extend the rules for beta-reduction (B9,B11--13).  We prove
+of {\churchqe} (B1--B4, B5, B7), specify $\epsilon$ as an inductive type
+(B4, B6), state the properties of quotation and evaluation (B8, B10),
+and extend the rules for beta-reduction (B9, B11--13).  We prove
 in~\cite{Farmer18} that this proof system is sound for all
 formulas and complete for eval-free formulas.
 
@@ -721,9 +721,9 @@ $\epsilon$ can be straightforwardly defined.
 \noindent
 The first and second stages have been completed; both stages involved
 modifying the kernel of {\HL}.  The third stage is sufficiently
-complete that our examples in~\ref{sec:examples} work well, and did
-not involve any further changes to the {\HL} kernel.  We do expect
-that adding further examples, which is ongoing, will require
+complete to enable our examples in section~\ref{sec:examples} to work
+well, and did not involve any further changes to the {\HL} kernel.  We
+do expect that adding further examples, which is ongoing, will require
 additional machinery but no changes to the kernel.
 
 The {\HLQE} system was developed by the third author under the
@@ -888,7 +888,7 @@ term of some other type is expected.
 The external representation of a quotation \texttt{Quote(t,ty)} is
 \texttt{Q\_ t \_Q}.  Similarly, the external representation of a hole
 \texttt{Hole(t,ty)} is \texttt{H\_ t \_H}.  The external
-representation of an evaluation \texttt{Quote(t,ty)} is $\texttt{eval
+representation of an evaluation \texttt{Eval(t,ty)} is $\texttt{eval
   t to ty}.$
 
 \subsection{Modification of the HOL Light Proof System}\label{subsec:hlqe-proof-system}
@@ -963,34 +963,34 @@ beta-reduction  rules) does in {\churchqe}.  The main changes are:
 
   \item A substitution of a term \texttt{t} for a variable \texttt{x}
     in an evaluation \texttt{Eval(e,ty)} returns (1)
-    \texttt{Eval(e,ty)} when \texttt{t} is \texttt{x} or \texttt{x}
-    does not occur \texttt{e} and (2) the function abstraction
-    application \texttt{Comb(Abs(x,Eval(e,ty)),t)} otherwise.  When
-    (2) happens, this part of the substitution is finished and the
-    user can possibly continue it by applying \texttt{BETA\_EVAL} or
-    \texttt{BETA\_REVAL}, the rules of inference corresponding to
-    Axioms B11.1 and B11.2 for beta-reduction of evaluations.
+    \texttt{Eval(e,ty)} when \texttt{t} is \texttt{x} and (2) the
+    function abstraction application
+    \texttt{Comb(Abs(x,Eval(e,ty)),t)} otherwise.  (1) is valid by
+    Axiom B11.1.  When (2) happens, this part of the substitution is
+    finished and the user can possibly continue it by applying
+    \texttt{BETA\_REVAL}, the rule of inference corresponding to Axiom
+    B11.2.
 
 \ee
 
 \subsection{Creation of Support Machinery}\label{subsec:machinery}
 
-The {\HLQE} contains a number of {\HOL} functions, tactics, and
+The {\HLQE} system contains a number of {\HOL} functions, tactics, and
 theorems that are useful for reasoning about constructions,
 quotations, and evaluations.  An important example is the {\HOL}
-function \texttt{isExprType} that implements the {\churchqe} family
-of logical constants $\mname{is-expr}_{\epsilon \tarrow o}^{\alpha}$
+function \texttt{isExprType} that implements the {\churchqe} family of
+logical constants $\mname{is-expr}_{\epsilon \tarrow o}^{\alpha}$
 where $\alpha$ ranges over members of $\sT$.  This function takes
 terms $s_1$ and $s_1$ of type \texttt{epsilon} and \texttt{type},
-respectively, and returns true iff $s_1$ represents
-the syntax tree of a term $t$, $s_2$ represents the syntax tree of a
-type $\alpha$, and $t$ is of type $\alpha$.
+respectively, and returns true iff $s_1$ represents the syntax tree of
+a term $t$, $s_2$ represents the syntax tree of a type $\alpha$, and
+$t$ is of type $\alpha$.
 
 \subsection{Metatheorems}
 
 We state three important metatheorems about {\HLQE}.  The proofs of
 these metatheorems are straightforward but also tedious.  We label the
-metatheorems as conjectures since their proofs have not yet been
+metatheorems as conjectures since their proofs have not yet been fully
 written down.
 
 \begin{conjecture}\bsp
@@ -1007,8 +1007,9 @@ evaluations. Thus every {\HL} proof remains valid in {\HLQE}. $\Box$
 
 \noindent
 Note: All the proofs loaded with the {\HL} system continue to be valid
-when loaded in {\HLQE}.  A further test would be to load a variety of
-large {\HL} proofs in {\HLQE}.
+when loaded in {\HLQE}.  A further test for the future would be to
+load a variety of large {\HL} proofs in {\HLQE} to check that their
+validity is preserved.
 
 \begin{conjecture}
 The proof system for {\HLQE} is sound for all formulas and complete
@@ -1017,8 +1018,8 @@ for all eval-free formulas.
 
 \noindent
 \emph{Proof sketch.}  The analog of this statement for {\churchqe} is
-proved in~\cite{Farmer18}.  This theorem is proved by just imitating
-the proof for {\churchqe}. $\Box$
+proved in~\cite{Farmer18}.  It should be possible to prove this
+conjecture by just imitating the proof for {\churchqe}. $\Box$
 
 \begin{conjecture}\bsp
 {\HLQE} is a model-theoretic conservative extension of {\HL}.\esp
@@ -1052,10 +1053,9 @@ instance of LEM may be written in {\HLQE} as
 `!x:epsilon. isExprType (x:epsilon) (TyBase "bool")
    ==> ((eval x to bool) \/ ~(eval x to bool))`
 \end{lstlisting}
-that is readily proved.  Instances of this are obtained by
-applying \texttt{INST} followed by
-\texttt{BETA\_EVAL} or \texttt{BETA\_REVAL}, the beta-reduction rules
-for evaluations.
+that is readily proved.  Instances of this are obtained by applying
+\texttt{INST} followed by \texttt{BETA\_REVAL}, the second
+beta-reduction rule for evaluations.
 
 \subsection{Induction Schema}
 
@@ -1318,7 +1318,7 @@ biform theories encoding natural number of arithmetic described
 in~\cite{CaretteFarmer17}.
 
 \bibliography{imps}
-\bibliographystyle{plain}
+\bibliographystyle{splncs04}
 
 %%\setcounter{tocdepth}{1}
 %%\listoftodos
