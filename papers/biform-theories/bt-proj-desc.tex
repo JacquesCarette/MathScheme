@@ -28,8 +28,8 @@
 \institute{%
 Computing and Software, McMaster University, Canada\\
 \url{http://www.cas.mcmaster.ca/~carette}\\
-\url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
-\today
+\url{http://imps.mcmaster.ca/wmfarmer}
+%\\[1.5ex]\today
 }
 
 \pagestyle{headings}
@@ -237,7 +237,7 @@ Formalizing a biform theory in the underlying logic requires
 infrastructure for reasoning about the expressions manipulated by the
 transformers as syntactic entities.  This infrastructure provides a
 basis for \emph{metareasoning with reflection}~\cite{FarmerArxiv16}.
-There are two main approaches to building such an
+There are two main approaches to build such an
 infrastructure~\cite{Farmer13}.  The \emph{local approach} is to
 produce a deep embedding of a sublanguage $L'$ of $L$ that includes
 all the expressions manipulated by the transformers of $\Pi$.  The
@@ -370,7 +370,7 @@ for {\qzero}.
 We show in~\cite{Farmer18} that {\churchqe} is suitable for defining
 SBMAs and stating and proving their mathematical meanings.  In
 particular, we prove within the proof system for {\churchqe} the
-mathematical meaning of an symbolic differentiation algorithm for
+mathematical meaning of a symbolic differentiation algorithm for
 polynomials.
 
 We have also defined {\churchuqe}~\cite{Farmer17}, a variant of
@@ -406,7 +406,7 @@ external transformers.  External transformers implemented in {\OCAML}
 can be linked in as well.
 
 The most difficult part of this subproject will be adequate renderings
-of \emph{meaning functions} that express the mathematical meaning of
+of \emph{meaning formulas} that express the mathematical meaning of
 transformers. We do have some
 experience~\cite{CaretteFarmer17,CaretteFarmerSorge07} creating biform
 theories.  The exploration and implementation of automatic generation
@@ -491,8 +491,10 @@ we believe is essential to building large-scale mechanized mathematics
 systems. And yes, we do believe that eventual success would imply that
 casual users of such a system never hear of ``biform theories''.
 
+%\input{bt-proj-desc.bbl}
+
 \bibliography{imps}
-\bibliographystyle{plain}
+\bibliographystyle{splncs04}
 
 %\setcounter{tocdepth}{1}
 %\listoftodos
