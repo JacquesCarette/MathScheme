@@ -196,6 +196,10 @@ all of this sort.  They all involve a mixture of computation and
 deduction that entwine syntactic representations with semantic
 conditions.
 
+In the next section we will introduce that notion of a \emph{biform
+  theory} that combines axiomatic and algorithmic theories so that we
+can define and reason about symbolic computation in the same setting.
+
 \section{Background Ideas}
 
 A \emph{transformer} is an algorithm that implements a function $\sE^n
@@ -232,6 +236,23 @@ that refers to the name of a transformer $\pi \in \Pi$ is called a
 \emph{meaning formula} for $\pi$.  We say $T$ is an \emph{axiomatic
   theory} if $\Pi$ is empty and an \emph{algorithmic theory} if
 $\Gamma$ is empty.
+
+\begin{example}
+Let $T = (L,\Gamma)$ be a first-order axiomatic theory of a ring with
+identity.  The language $L$ contains the usual constants (0 and 1),
+function symbols ($+$ and $*$), and predicate symbols ($=$), and
+$\Gamma$ contains the usual axioms.  Let $\Pi$ be a set of
+transformers on the terms in $L$ that are polynomials.  These
+transformers can include algorithms that normalize a polynomial,
+factor a polynomial, find the greatest common divisor of two
+polynomials, etc.  Let $L'$ be an extension of $L'$ that includes
+vocabulary for naming and specifying the transformers in $\Pi$, and
+let $\Gamma'$ contain meaning formulas for the transformers in $\Pi$
+expressed in $L'$.  Then $T' = (L',\Pi,\Gamma \cup \Gamma')$ is a
+biform theory for rings with identity --- that would be very
+challenging to express in ordinary first-order logic.  Notice that
+$T'' = (L',\Pi)$ is algorithmic theory of polynomials.
+\end{example}
 
 Formalizing a biform theory in the underlying logic requires
 infrastructure for reasoning about the expressions manipulated by the
