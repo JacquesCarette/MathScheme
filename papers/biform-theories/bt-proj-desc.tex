@@ -196,9 +196,10 @@ all of this sort.  They all involve a mixture of computation and
 deduction that entwine syntactic representations with semantic
 conditions.
 
-In the next section we will introduce that notion of a \emph{biform
-  theory} that combines axiomatic and algorithmic theories so that we
-can define and reason about symbolic computation in the same setting.
+In the next section we will introduce the notion of a \emph{biform
+  theory} that is a combination of an axiomatic theory and an
+algorithmic theory so that we can define and reason about symbolic
+computation in the same setting.
 
 \section{Background Ideas}
 
@@ -238,20 +239,24 @@ that refers to the name of a transformer $\pi \in \Pi$ is called a
 $\Gamma$ is empty.
 
 \begin{example}
-Let $T = (L,\Gamma)$ be a first-order axiomatic theory of a ring with
-identity.  The language $L$ contains the usual constants (0 and 1),
-function symbols ($+$ and $*$), and predicate symbols ($=$), and
-$\Gamma$ contains the usual axioms.  Let $\Pi$ be a set of
-transformers on the terms in $L$ that are polynomials.  These
-transformers can include algorithms that normalize a polynomial,
-factor a polynomial, find the greatest common divisor of two
-polynomials, etc.  Let $L'$ be an extension of $L'$ that includes
-vocabulary for naming and specifying the transformers in $\Pi$, and
-let $\Gamma'$ contain meaning formulas for the transformers in $\Pi$
-expressed in $L'$.  Then $T' = (L',\Pi,\Gamma \cup \Gamma')$ is a
-biform theory for rings with identity --- that would be very
-challenging to express in ordinary first-order logic.  Notice that
-$T'' = (L',\Pi)$ is algorithmic theory of polynomials.
+Let $R_{\rm ax} = (L,\Gamma)$ be a first-order axiomatic theory of a
+ring with identity.  The language $L$ contains the usual constants (0
+and 1), function symbols ($+$ and $*$), and predicate symbols ($=$),
+and $\Gamma$ contains the usual axioms.  The terms of $L$, which are
+built from 0, 1, and variables by applying $+$ and $*$, have the form
+of polynomials.  Thus algorithms that manipulate polynomials --- that
+normalize a polynomial, factor a polynomial, find the greatest common
+divisor of two polynomials, etc. --- would naturally be useful for
+reasoning about the expressions of $R_{\rm ax}$.  Let $\Pi$ be a set
+of such transformers on the terms in $L$, $L'$ be an extension of $L$
+that includes vocabulary for naming and specifying the transformers in
+$\Pi$, and $\Gamma'$ contain meaning formulas for the transformers in
+$\Pi$ expressed in $L'$.  Then $R_{\rm bt} = (L',\Pi,\Gamma \cup
+\Gamma')$ is a biform theory for rings with identity.  It would be
+very challenging to express $R_{\rm bt}$ in ordinary first-order
+logic; the meaning formulas in $\Gamma'$ would be especially difficult
+to express.  Notice that $R_{\rm alg} = (L',\Pi)$ is algorithmic
+theory of multivariate polynomials with constants 0 and 1.
 \end{example}
 
 Formalizing a biform theory in the underlying logic requires
@@ -320,15 +325,15 @@ into the following subprojects:
 
 \bi
 
-  \item[]\textbf{Logic} Design a logic \mname{Log} which is a
-    version of simple type theory~\cite{Farmer08} with an inductive
-    type of syntactic values, a global quotation operator, and a
-    global evaluation operator.  In addition to a syntax and
-    semantics, define a proof system for \mname{Log} and a notion of a
-    theory morphism from one axiomatic theory of \mname{Log} to
-    another.  Demonstrate that SBMAs can be defined in \mname{Log} and
-    that their mathematical meanings can be stated and proved using
-    \mname{Log}'s proof system.
+  \item[]\textbf{Logic} Design a logic \mname{Log} which is a version
+    of simple type theory~\cite{Farmer08} with an inductive type of
+    syntactic values, a global quotation operator, and a global
+    evaluation operator.  In addition to a syntax and semantics,
+    define a proof system for \mname{Log} and a notion of a theory
+    morphism from one axiomatic theory of \mname{Log} to another.
+    Demonstrate that SBMAs can be defined in \mname{Log} and that
+    their mathematical meanings can be stated, proved, and
+    instantiated using \mname{Log}'s proof system.
 
 \medskip
 
@@ -370,9 +375,10 @@ into the following subprojects:
 
 \section{Work Plan Status}
 
-The work plan is to pursue the five subproducts described above more or less in
-the order of their presentation.  Here we describe the parts of the work
-plan that have been completed as well as the parts that remain to be done.
+The work plan is to pursue the five subprojects described above more
+or less in the order of their presentation.  Here we describe the
+parts of the work plan that have been completed as well as the parts
+that remain to be done.
 
 \subsection*{Logic with Quotation and Evaluation}
 
@@ -389,10 +395,10 @@ The proof system for {\churchqe} is an extension of the proof system
 for {\qzero}.
 
 We show in~\cite{Farmer18} that {\churchqe} is suitable for defining
-SBMAs and stating and proving their mathematical meanings.  In
-particular, we prove within the proof system for {\churchqe} the
-mathematical meaning of a symbolic differentiation algorithm for
-polynomials.
+SBMAs and stating, proving, and instantiating their mathematical
+meanings.  In particular, we prove within the proof system for
+{\churchqe} the mathematical meaning of a symbolic differentiation
+algorithm for polynomials.
 
 We have also defined {\churchuqe}~\cite{Farmer17}, a variant of
 {\churchqe} in which undefinedness is incorporated in {\churchqe}
@@ -511,6 +517,11 @@ The \emph{Biform Theories} project is indeed about infrastructure that
 we believe is essential to building large-scale mechanized mathematics
 systems. And yes, we do believe that eventual success would imply that
 casual users of such a system never hear of ``biform theories''.
+
+\section*{Acknowledgments} 
+
+This research was supported by NSERC.  The authors would like to thank
+the referees for their comments and suggestions.
 
 %\input{bt-proj-desc.bbl}
 
