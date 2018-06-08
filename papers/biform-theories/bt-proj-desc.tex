@@ -204,7 +204,9 @@ computation in the same setting.
 \section{Background Ideas}
 
 A \emph{transformer} is an algorithm that implements a function $\sE^n
-\tarrow \sE$ where $\sE$ is a set of expressions.  Transformers can
+\tarrow \sE$ where $\sE$ is a set of expressions.  The expressions
+serve as data that can be manipulated.  Different kinds of expressions
+correspond to different data representations.  Transformers can
 manipulate expressions in various ways.  Simple transformers, for
 example, build bigger expressions from pieces, select components of
 expressions, or check whether a given expression satisfies some
@@ -234,9 +236,10 @@ of $T$.  In particular, $\Gamma$ may contain specifications of the
 computational behavior of the transformers in $\Pi$ and of the
 mathematical meaning of the SBMAs in $\Pi$.  A formula in $\Gamma$
 that refers to the name of a transformer $\pi \in \Pi$ is called a
-\emph{meaning formula} for $\pi$.  We say $T$ is an \emph{axiomatic
-  theory} if $\Pi$ is empty and an \emph{algorithmic theory} if
-$\Gamma$ is empty.
+\emph{meaning formula} for $\pi$.  The transformers in $\Pi$ may be
+written in the underlying logic or in an programming language external
+to the underlying logic.  We say $T$ is an \emph{axiomatic theory} if
+$\Pi$ is empty and an \emph{algorithmic theory} if $\Gamma$ is empty.
 
 \begin{example}
 Let $R_{\rm ax} = (L,\Gamma)$ be a first-order axiomatic theory of a
@@ -262,13 +265,13 @@ theory of multivariate polynomials with constants 0 and 1.
 Formalizing a biform theory in the underlying logic requires
 infrastructure for reasoning about the expressions manipulated by the
 transformers as syntactic entities.  This infrastructure provides a
-basis for \emph{metareasoning with reflection}~\cite{FarmerArxiv16}.
+basis for \emph{metareasoning with reflection}~\cite{Farmer18}.
 There are two main approaches to build such an
 infrastructure~\cite{Farmer13}.  The \emph{local approach} is to
 produce a deep embedding of a sublanguage $L'$ of $L$ that includes
 all the expressions manipulated by the transformers of $\Pi$.  The
 \emph{global approach} is to replace the underlying logic of $L$ with
-a logic such as \churchqe~\cite{FarmerArxiv16} that has an inductive
+a logic such as \churchqe~\cite{Farmer18} that has an inductive
 type of \emph{syntactic values} that represent the expressions in $L$
 and global quotation and evaluation operators.  A third approach,
 based on ``final tagless'' embeddings~\cite{CaretteKS09}, has not yet
@@ -419,10 +422,11 @@ variety of SBMAs in {\HLQE}.
 
 Building on the experience we gain in the development of {\HLQE}, we
 would like to create an implementation of {\churchqe} in
-{\MMT}~\cite{RabeKohlhase13} that is well suited for general use.  We
-will transfer to this {\MMT} implementation the most successful of the
-ideas and mechanisms we develop on the three subprojects that follow
-using {\HLQE}.
+{\MMT}~\cite{RabeKohlhase13} that is well suited for general use and
+has strong support for building theory graphs.  We will transfer to
+this {\MMT} implementation the most successful of the ideas and
+mechanisms we develop on the three subprojects that follow using
+{\HLQE}.
 
 \subsection*{Biform Theories, Transformers, and Generation}
 
