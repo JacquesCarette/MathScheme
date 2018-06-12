@@ -83,7 +83,7 @@ that it omits the unit (and thus does not document what happens for
 negative integers).
 
 This simple example illustrates the difference between a simple
-computation (\texttt{2 * 3}) and a more complex \emph{symbolic} query,
+computation \texttt{2 * 3} and a more complex \emph{symbolic} query,
 factoring.  The reason for using lists-of-lists in both systems is
 that multiplication and powering are both functions that evaluate
 immediately in these systems.  So that factoring \texttt{6} cannot
@@ -91,18 +91,17 @@ just return \verb+2^1 * 3^1+, as that simply evaluates to \texttt{6}.
 Thus it is inevitable that both systems must \emph{represent}
 multiplication and powering in some other manner.  Because
 \texttt{ifactors} and \texttt{FactorInteger} are so old, they are
-unable to take advantage of newer developments in both systems,
-in this case a feature to not immediately evaluate an expression
-but leave it as a representation of a future computation.
-Maple calls this feature
-an \emph{inert form}, while in Mathematica it is a \emph{hold form}.
-Nevertheless, the need for representing future computations was
-recognized early on: even in
-the earliest days of Maple, one could do \texttt{5 \&\textasciicircum
-256 mod 379} to compute the answer without ever computing
-$5^{256}$ over the integers.  In summary, this example shows that in
-some cases we are interested in \texttt{2 * 3} for its value and in
-other cases we are interested in it for its syntactic structure.
+unable to take advantage of newer developments in both systems, in
+this case a feature to not immediately evaluate an expression but
+leave it as a representation of a future computation.  Maple calls
+this feature an \emph{inert form}, while in Mathematica it is a
+\emph{hold form}.  Nevertheless, the need for representing future
+computations was recognized early on: even in the earliest days of
+Maple, one could do \texttt{5 \&\textasciicircum 256 mod 379} to
+compute the answer without ever computing $5^{256}$ over the integers.
+In summary, this example shows that in some cases we are interested in
+\texttt{2 * 3} for its value and in other cases we are interested in
+it for its syntactic structure.
 
 A legitimate question would be: Is this an isolated occurrence, or a
 more pervasive pattern? It is pervasive. It arises from the dichotomy
@@ -247,19 +246,20 @@ ring with identity.  The language $L$ contains the usual constants (0
 and 1), function symbols ($+$ and $*$), and predicate symbols ($=$),
 and $\Gamma$ contains the usual axioms.  The terms of $L$, which are
 built from 0, 1, and variables by applying $+$ and $*$, have the form
-of polynomials.  Thus algorithms that manipulate polynomials --- that
-normalize a polynomial, factor a polynomial, find the greatest common
-divisor of two polynomials, etc. --- would naturally be useful for
-reasoning about the expressions of $R_{\rm ax}$.  Let $\Pi$ be a set
-of such transformers on the terms in $L$, $L'$ be an extension of $L$
-that includes vocabulary for naming and specifying the transformers in
-$\Pi$, and $\Gamma'$ contain meaning formulas for the transformers in
-$\Pi$ expressed in $L'$.  Then $R_{\rm bt} = (L',\Pi,\Gamma \cup
-\Gamma')$ is a biform theory for rings with identity.  It would be
-very challenging to express $R_{\rm bt}$ in ordinary first-order
-logic; the meaning formulas in $\Gamma'$ would be especially difficult
-to express.  Notice that $R_{\rm alg} = (L',\Pi)$ is algorithmic
-theory of multivariate polynomials with constants 0 and 1.
+of multivariate polynomials.  Thus algorithms that manipulate
+polynomials --- that normalize a polynomial, factor a polynomial, find
+the greatest common divisor of two polynomials, etc. --- would
+naturally be useful for reasoning about the expressions of $R_{\rm
+  ax}$.  Let $\Pi$ be a set of such transformers on the terms in $L$,
+$L'$ be an extension of $L$ that includes vocabulary for naming and
+specifying the transformers in $\Pi$, and $\Gamma'$ contain meaning
+formulas for the transformers in $\Pi$ expressed in $L'$.  Then
+$R_{\rm bt} = (L',\Pi,\Gamma \cup \Gamma')$ is a biform theory for
+rings with identity.  It would be very challenging to express $R_{\rm
+  bt}$ in ordinary first-order logic; the meaning formulas in
+$\Gamma'$ would be especially difficult to express.  Notice that
+$R_{\rm alg} = (L',\Pi)$ is algorithmic theory of multivariate
+polynomials with constants 0 and 1.
 \end{example}
 
 Formalizing a biform theory in the underlying logic requires
@@ -479,7 +479,7 @@ without having to hand-write such code.
 
 \section{Related Work}
 
-Directly related is~\cite{KohlhaseManceRabe13} who authors also work
+Directly related is~\cite{KohlhaseManceRabe13} whose authors also work
 with biform theory graphs. Michael Kohlhase and Florian Rabe and their
 students are actively working on related topics. As a natural
 progression, we (the authors of this paper) have started actively
