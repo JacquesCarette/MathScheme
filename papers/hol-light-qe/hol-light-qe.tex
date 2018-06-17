@@ -33,7 +33,7 @@ Computing and Software, McMaster University, Canada\\
 %\email{\{carette,wmfarmer,laskowsp\}@mcmaster.ca}\\
 \url{http://www.cas.mcmaster.ca/~carette}\\
 \url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
-12 May 2018
+17 June 2018
 }
 
 \pagestyle{headings}
@@ -511,7 +511,7 @@ The axioms for extending the rules  for beta-reduction are:
   \be
 
     \item[] $(\LambdaApp \textbf{x}_\alpha \mdot
-      \synbrack{\textbf{B}_\beta}) \, \textbf{A}_\alpha) =
+      \synbrack{\textbf{B}_\beta}) \, \textbf{A}_\alpha =
       \synbrack{\textbf{B}_\beta}$.
 
   \ee
@@ -739,14 +739,14 @@ compile it with \textsc{OCaml 4.03.0} and \textsc{camlp5 6.16},
 both available from \textsc{opam}.
 
 To run {\HLQE}, execute the following commands in {\HLQE} top-level
-directory named \texttt{hol\_light}:
+directory named \texttt{hol-light-qe}:
 
 \begin{lstlisting}
 1) install opam
 2) opam init --comp 4.03.0                                                      
 3) opam install "camlp5=6.16" 
-5) opam `eval config env`
-5) cd hol_light
+4) opam config env
+5) cd hol-light-qe
 6) make
 7) run ocaml via                                                                
      ocaml -I `camlp5 -where` camlp5o.cma                                        
@@ -830,7 +830,7 @@ The {\churchqe} type $\epsilon$ is the type of constructions, the
 syntactic values that represent the syntax trees of eval-free
 expressions.  $\epsilon$ is formalized as an inductive type
 \texttt{epsilon}.  Since types are components of terms in
-{\HL}, an inductive type \texttt{type} of syntax values for
+{\HL}, an inductive type \texttt{type} of syntactic values for
 {\HLQE} types (which are the same as {\HOL} types) is also
 needed.  Specifically:
 
@@ -1317,7 +1317,7 @@ This will require defining the algorithm for symbolic differentiation,
 writing its meaning formula, and finally proving the meaning formula
 from the algorithm's definition and properties about derivatives.  We
 also intend, down the road, to formalize in {\HLQE} the graph of
-biform theories encoding natural number of arithmetic described
+biform theories encoding natural number arithmetic described
 in~\cite{CaretteFarmer17}.
 
 \bibliography{imps}
