@@ -33,7 +33,7 @@ Computing and Software, McMaster University, Canada\\
 %\email{\{carette,wmfarmer,laskowsp\}@mcmaster.ca}\\
 \url{http://www.cas.mcmaster.ca/~carette}\\
 \url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
-17 June 2018
+19 June 2018
 }
 
 \pagestyle{headings}
@@ -732,7 +732,7 @@ additional machinery but no changes to the kernel.
 The {\HLQE} system was developed by the third author under the
 supervision of the first two authors on an undergraduate NSERC USRA
 research project at McMaster University and is available at
-\[\mbox{\url{https://github.com/JacquesCarette/hol-light}}.\]
+\[\mbox{\url{https://github.com/JacquesCarette/hol-light-qe}}.\]
 It should be further remarked that our fork, from late April 2017, is not fully
 up-to-date with respect to {\HL}. In particular, this means that it is best to
 compile it with \textsc{OCaml 4.03.0} and \textsc{camlp5 6.16},
@@ -1004,7 +1004,8 @@ Every formula provable in {\HL}'s proof system is also provable in
 \noindent
 \emph{Proof sketch.}  {\HLQE}'s proof system extends {\HL}'s proof
 system with new machinery for reasoning about quotations and
-evaluations. Thus every {\HL} proof remains valid in {\HLQE}. $\Box$
+evaluations. Thus every {\HL} proof remains valid in {\HLQE}. \hfill
+$\Box$
 
 \bigskip
 
@@ -1022,7 +1023,7 @@ for all eval-free formulas.
 \noindent
 \emph{Proof sketch.}  The analog of this statement for {\churchqe} is
 proved in~\cite{Farmer18}.  It should be possible to prove this
-conjecture by just imitating the proof for {\churchqe}. $\Box$
+conjecture by just imitating the proof for {\churchqe}.  \hfill $\Box$
 
 \begin{conjecture}\bsp
 {\HLQE} is a model-theoretic conservative extension of {\HL}.\esp
@@ -1034,7 +1035,7 @@ definitions of the type $\epsilon$ and several constants and
 interpretations for the (quasi)quotation and evaluation operators.
 These additions do not impinge upon the semantics of {\HL}; hence
 every model of {\HL} can be expanded to a model of the {\HLQE}, which
-is the meaning of the conjecture. $\Box$
+is the meaning of the conjecture.  \hfill $\Box$
 
 \section{Examples}\label{sec:examples}
 
@@ -1206,7 +1207,7 @@ Lean~\cite{ebner2017metaprogramming},
 Maude~\cite{ClavelMeseguer02}, 
 PVS~\cite{VonHenkeEtAl98}, 
 reFLect~\cite{GrundyEtAl06,MelhamEtAl13},and
-Theorema~\cite{GieseBuchberger07,BuchbergerEtAl06}.
+Theorema~\cite{BuchbergerEtAl06,GieseBuchberger07}.
 
 The semantics of the quotation operator $\synbrack{\cdot}$ is based on
 the \emph{disquotational theory of quotation}~\cite{Quotation12}.
@@ -1319,6 +1320,11 @@ from the algorithm's definition and properties about derivatives.  We
 also intend, down the road, to formalize in {\HLQE} the graph of
 biform theories encoding natural number arithmetic described
 in~\cite{CaretteFarmer17}.
+
+\section*{Acknowledgments} 
+
+This research was supported by NSERC.  The authors would like to thank
+the referees for their comments and suggestions.
 
 \bibliography{imps}
 \bibliographystyle{splncs04}
