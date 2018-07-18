@@ -337,9 +337,9 @@ HOL Light QE
 
   \bi
 
-    \item If the value of \bred{$e'$} is a syntactic value \bred{$e$},
-      then the value of \bred{$\sembrack{e'}$} is the value of
-      \bred{$e$}.
+    \item If the value of \bred{$e'$} is a syntactic value
+      representing the expression~\bred{$e$}, then the value of
+      \bred{$\sembrack{e'}$} is the value of \bred{$e$}.
 
   \ei
 
@@ -369,18 +369,18 @@ HOL Light QE
 
 \bigskip
 
-  \item To formalize an SBMA $A$ in a logic Log we need
+  \item To formalize an SBMA $A$ in a logic \textbf{Log} we need
     to be able to:
 
   \be
 
-    \item Define in Log a function $B$ on syntactic
+    \item Define in \textbf{Log} a function $B$ on syntactic
       values representing $A$.
 
-    \item State and prove in Log the meaning formula for
+    \item State and prove in \textbf{Log} the meaning formula for
       $B$ from the definition of $B$.
 
-    \item Apply $B$ to mathematical expressions in Log by
+    \item Apply $B$ to mathematical expressions in \textbf{Log} by
       instantiating the meaning formula for $B$ and then simplifying.
 
   \ee
@@ -395,10 +395,10 @@ HOL Light QE
 \bi
 
   \item Let $A$ be an SBMA on expressions in a language $L_{\rm obj}$
-    of some logic Log.
+    of some logic \textbf{Log}.
 
-  \item We build a \bblue{metareasoning infrastructure} in Log
-    consisting of:
+  \item We build a \bblue{metareasoning infrastructure} in
+    \textbf{Log} consisting of:
 
   \be
 
@@ -415,9 +415,9 @@ HOL Light QE
 
   \ee
 
-  \item We define a function $B$ in Log from
-    syntactic values representing inputs of $A$ to syntactic
-    values representing outputs of $A$.
+  \item We define a function $B$ in \textbf{Log} from syntactic values
+    representing inputs of $A$ to syntactic values representing
+    outputs of $A$.
 
   \item The infrastructure is \bgreen{local} in the sense that $L_{\rm
     obj}$ is not the whole language $L$ of Log.
@@ -577,8 +577,9 @@ traditional logic:
 
   \be
 
-    \item An \bgreen{inductive type \bred{$\epsilon$} of syntactic values}
-      that represent all the expressions of the logic.
+    \item An \bgreen{inductive type \bred{$\epsilon$} of syntactic
+      values} that represent all the \bred{``eval-free''} expressions
+      of the logic.
 
     \item A partial global \bgreen{quotation operator}
       \bred{$\synbrack{\cdot}$}.
@@ -637,10 +638,12 @@ traditional logic:
       expression of type $\epsilon$ if $\textbf{A}_\alpha$ is
       \bred{eval-free}.
 
-    \item \bblue{Evaluation}: $\sembrack{\textbf{A}_\epsilon}_{{\bf
-        B}_\beta}$ is an expression of type $\beta$.
+    \item \bblue{Evaluation}: $\sembrack{\textbf{A}_\epsilon}_\beta$
+      is an expression of type $\beta$.
 
   \ee 
+
+\pause 
 
 \medskip
 
@@ -673,9 +676,9 @@ traditional logic:
   \ei
 
   holds iff ``$\textbf{C}_\beta$ is the result of substituting
-      $\textbf{A}_\alpha$ for each free occurrence of
-      $\textbf{x}_\alpha$ in $\textbf{B}_\beta$ without any variable
-      captures''\\ \bred{--- but this works only for eval-free expressions.}
+  $\textbf{A}_\alpha$ for each free occurrence of $\textbf{x}_\alpha$
+  in $\textbf{B}_\beta$ without any variable captures''\\ \bred{---
+    but this works only for eval-free expressions.}
 
 \pause
 
@@ -758,8 +761,9 @@ $(\mname{is-expr}_{\epsilon \tarrow o}^{\beta} \, ((\LambdaApp
 \frametitle{HOL Light QE}
 \bi
 
-  \item \bblue{HOL Light QE} is an implementation of {\churchqe}
-    obtained by modifying the \bblue{HOL Light} proof assistant.
+  \item \bblue{HOL Light QE} is an experimental implementation of
+    {\churchqe} obtained by modifying the \bblue{HOL Light} proof
+    assistant.
 
   \bi
 
@@ -787,6 +791,8 @@ $(\mname{is-expr}_{\epsilon \tarrow o}^{\beta} \, ((\LambdaApp
 
     \item It is open source software.
 
+    \item Its kernel is small.
+
     \item Its underlying logic is a version of Church's type theory.
 
     \item It provides support for defining inductive types.
@@ -807,8 +813,9 @@ $(\mname{is-expr}_{\epsilon \tarrow o}^{\beta} \, ((\LambdaApp
   \bi
 
     \item Constructors are added to the OCaml type: \bred{Quote},
-      \bred{Hole}, and \bred{Eval} for building \bgreen{quotations},
-      \bgreen{antiquotations}, and \bgreen{evaluations}.
+      \bred{Hole}, and \bred{Eval} for building
+      \bgreen{quasiquotations}, \bgreen{antiquotations}, and
+      \bgreen{evaluations}.
 
     \item Inductive types of syntactic values are added for HOL Light
       QE \bgreen{types} and \bgreen{eval-free terms}.
@@ -840,7 +847,7 @@ $(\mname{is-expr}_{\epsilon \tarrow o}^{\beta} \, ((\LambdaApp
 
     \item Law of Excluded Middle as a schema.
 
-    \item Induction schemas for Presburger and Peano arithmetic.
+    \item Induction schema for Peano arithmetic.
 
   \ei
 
@@ -884,8 +891,8 @@ $(\mname{is-expr}_{\epsilon \tarrow o}^{\beta} \, ((\LambdaApp
 
   \item SBMAs can be formalized using reflection.
 
-  \item Unlike local reflection, global reflection requires only a
-    single metareasoning infrastructure.
+  \item Global reflection requires only a single metareasoning
+    infrastructure unlike local reflection.
 
   \item {\churchqe} is a version of Church's type theory with a
     built-in global metareasoning infrastructure.
@@ -901,7 +908,7 @@ $(\mname{is-expr}_{\epsilon \tarrow o}^{\beta} \, ((\LambdaApp
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}\label{lastframe}
+\begin{frame}
 \frametitle{References}
 \bi
 
@@ -939,6 +946,36 @@ $(\mname{is-expr}_{\epsilon \tarrow o}^{\beta} \, ((\LambdaApp
       Computation}, 260:9--50, 2018.
 
 \ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}\label{lastframe}
+\frametitle{Conclusion}
+\be
+
+  \item SBMAs can be formalized using reflection.
+
+  \item Unlike local reflection, global reflection requires only a
+    single metareasoning infrastructure.
+
+  \item {\churchqe} is a version of Church's type theory with a
+    built-in global metareasoning infrastructure.
+
+  \item HOL Light QE demonstrates that is {\churchqe} is
+    implementable.
+
+  \item Further development of HOL Light QE is needed to demonstrate
+    the advantages global reflection has over local reflection.
+
+\ee
+
+\vfill
+\bc
+\bblue{\LARGE Thank You!}
+\ec
+\vfill
+
 \end{frame}
 
 \iffalse
