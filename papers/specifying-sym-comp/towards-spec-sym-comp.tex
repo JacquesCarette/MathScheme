@@ -1,0 +1,84 @@
+\documentclass[fleqn]{llncs}
+\usepackage{latexsym}
+\usepackage{amssymb,amsmath}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+%\usepackage{color}
+\usepackage{hyperref}
+\usepackage{phonetic}
+\usepackage{xargs}
+\usepackage[pdftex,dvipsnames]{xcolor}
+\usepackage{listings}
+
+\lstset{language=haskell,basicstyle=\ttfamily\small,breaklines=true,showspaces=false,
+  showstringspaces=false,breakatwhitespace=true,texcl=true}
+
+\input{towards-spec-sym-comp-def}
+
+\usepackage[colorinlistoftodos,textsize=tiny]{todonotes}
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
+
+\title{Towards Specifying Symbolic Computation\thanks{This research is
+    supported by NSERC.}}
+
+\author{Jacques Carette and William M. Farmer}
+
+\institute{%
+Computing and Software, McMaster University, Canada\\
+\url{http://www.cas.mcmaster.ca/~carette}\\
+\url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
+%21 Feburary 2019
+}
+
+\pagestyle{headings}
+
+\iffalse
+
+Examples:
+
+  1. Factoring integers
+  2. Change of representation for polynomials
+  3. Normalization of rational expressions
+  4. Integration by parts
+  5. Symbolic differentiation
+      o ln/exp example
+
+Example format:
+
+  1. Mathematical task
+  2. How the task is performed in Maple
+  3. Problems with performing the task
+  4. Proposed solution
+  5. Specification of the task in CTT_uqe
+
+\fi
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+??
+\end{abstract}
+
+\iffalse 
+
+\textbf{Keywords:} ??
+
+\fi
+
+\section{Introduction}
+
+\section{Conclusion}
+
+\bibliography{imps}
+\bibliographystyle{splncs04}
+
+\setcounter{tocdepth}{1}
+\listoftodos
+\setcounter{tocdepth}{0}
+
+\end{document}
