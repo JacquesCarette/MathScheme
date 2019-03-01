@@ -157,13 +157,24 @@ $r_0/s_0 = r_1/s_1$ if and only if $r_0 * s_1 = r_1 * s_0$ in $R$.
 
 Every computer algebra system implements a function that
 \emph{normalizes} expressions that denote elements of $\QQ(x)$
-(including elements of $\QQ$ and $\QQ[x]$).  Let {\NRE} be the name of
+(including elements of $\QQ$ and $\QQ[x]$).  \change{Unfortunately
+that statement is not quite right, because normalization in a CAS merely means
+that the result can checked to be 0 (or not) in O(1) time. This leads
+to different normalizations for all 3, implemented in 3 different
+functions. It turns out that, in the univariate case, they correspond,
+but already for 2 variables things are different.}
+\info{I think you might be conflating what CAS people call normal and
+canonical. Normal just means O(1) zero-testing, while canonical means
+a = b iff C(a) = C(b) with the later = being O(1) because of 
+hash-consing}
+Let {\NRE} be the name of
 the algorithm that implements this normalization function on $\Lang$.
 Thus the signature of $\NRE$ is $\Lang \rightarrow \Lang$ and the
 specification of $\NRE$ is that, for all $e \in \Lang$, (A) $\NRE(e)$
 is a normal form and (B) $e \simeq_{\QQ(x)} \NRE(e)$.  $\NRE$ is an
 example of an SBMA.  (A) is the syntactic component of its
 specification, and (B) is the semantic component.
+\change{in the above, you never actually define what a normal form is!}
 
 \subsection{Rational Functions}
 
@@ -202,6 +213,8 @@ a quasinormal form and (B) $\funQ{e} \simeq_{\QQ \rightarrow \QQ}
 \NRF(\funQ{e})$.  $\NRF$ is another example of an SBMA.  (A) is the
 syntactic component of its specification, and (B) is the semantic
 component.
+\unsure{Why those conditions on $r$? It is ok, over $\QQ(x)$, to remove
+a common factor of $x^2+1$. Or even $x^2-2$ !}
 
 \subsection{The Problem Here}
 
