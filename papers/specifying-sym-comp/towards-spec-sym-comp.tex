@@ -89,6 +89,31 @@ reasoning about syntax, undefinedness, quotation and evaluation.
 
 \section{Introduction}
 
+\iffalse
+
+A \emph{syntax-based mathematical algorithm (SBMA)} manipulates
+mathematical expressions in a meaningful way.  SBMAs
+are commonplace in mathematics.  Examples include algorithms that
+compute arithmetic operations by manipulating numerals, linear
+transformations by manipulating matrices, and derivatives by
+manipulating functional expressions.  Reasoning about the mathematical
+meaning of an SBMA requires reasoning about the relationship between
+how the expressions are manipulated by the SBMA and what the
+manipulations mean.
+
+A \emph{syntax-based mathematical algorithm (SBMA)}~\cite{Farmer13},
+such as a symbolic differentiation algorithm, manipulates mathematical
+expressions in a mathematically meaningful way.
+
+The \emph{computational
+  behavior} of a transformer is the relationship between its input and
+output expressions.  When the transformer is an SBMA, its
+\emph{mathematical meaning} is the relationship between the
+mathematical meanings of its input and output expressions.
+
+\fi
+
+
 \section{Background}
 
 \subsection{Definedness, Equality, and Quasi-Equality}
@@ -103,12 +128,38 @@ e'$, if they are both are defined in $D$ and they have the same values
 in $D$ and are \emph{quasi-equal in $D$}, written $e \simeq_D e'$, if
 either $e =_D e'$ or $e$ and $e'$ are both undefined in $D$.
 
-\subsection{SBMAs}
-
 \subsection{${\rm CTT}_{\rm uqe}$}
 
+{\churchqe}~\cite{Farmer18} is a version of Church's type theory with
+an inductive type of syntactic values that represent the expressions
+of the logic, a quotation operator that maps expressions to syntactic
+values, and an evaluation operator that maps syntactic values to the
+values of the expressions that they represent.  These components
+provide {\churchqe} with a \emph{global reflection facility} that is
+well-suited for reasoning about the interplay of syntax and semantics
+and, in particular, for specifying, defining, applying, and reasoning
+about SBMAs.  The syntax and semantics of {\churchqe} is presented
+in~\cite{Farmer18} in great detail.  A proof system for {\churchqe}
+that is sound for all formulas and complete for formulas that do not
+contain evaluations is also presented in~\cite{Farmer18}.  By
+modifying HOL Light~\cite{Harrison09}, we have produced an
+implementation of {\churchqe} called HOL Light
+QE~\cite{CaretteFarmerLaskowski18}.
+
+{\churchuqe}~\cite{Farmer17} is a variant of {\churchqe} that has
+built-in support for partial functions and undefinedness based on the
+traditional approach to undefinedness~\cite{Farmer04}.  It is
+well-suited for specifying SBMAs that manipulate expressions that may
+be undefined.  Its syntax and semantics are presented
+in~\cite{Farmer17}.  A proof system for {\churchuqe} is not given
+in~\cite{Farmer17}, but a proof system can be straightforwardly
+derived by merging the proof systems for {\churchqe}~\cite{Farmer18}
+and {\qzerou}~\cite{Farmer08a}.
+
+
+
+
 \iffalse
-SBMAs can be difficult to specify since they involve an interplay of
 syntax and semantics.  We have to be careful of \emph{which} semantics
 is used to guide the syntactic manipulations, as different semantics
 for the \textbf{same} expression can be inconsistent.
@@ -380,7 +431,7 @@ $\mname{specNormRatFun}_o$ that specify $\mname{normRatExpr}_{\epsilon
 (3) says that if the input represents a rational expression then the
 output is a normal form.  (4) says that if the input represents a
 rational expression then input and output are equal in the field of
-rational expressions.  And (5) says that if in input does not
+rational expressions.  And (5) says that if the input does not
 represent a rational expression then the output is undefined.
 
 $\mname{specNormRatFun}_o$ is the formula
@@ -406,6 +457,7 @@ and output denote the same function on the rational numbers).  And
 (11) says that if in input does not represent a rational function then
 the output is undefined.
 
+\section{Symbolic Differentiation of Rational Functions}
 
 
 \section{Related Work}
