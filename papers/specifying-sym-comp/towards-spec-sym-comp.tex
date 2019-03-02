@@ -91,16 +91,21 @@ reasoning about syntax, undefinedness, quotation and evaluation.
 
 \section{Background}
 
+\subsection{Definedness, Equality, and Quasi-Equality}
+
 Let $e$ be a mathematical expression and $D$ be a domain of
 mathematical values.  We say \emph{$e$ is defined in $D$} if $e$
 denotes an element in $D$.  When $e$ is defined in $D$, the
-\emph{value of $e$ in $D$}, written $\mname{val}_D(e)$, is the element
-in $D$ that $e$ denotes.  When $e$ is undefined in $D$, the value of
-$e$ in $D$ and $\mname{val}_D(e)$ are undefined.  Two expressions $e$
-and $e'$ are \emph{equal in $D$}, written $e =_D e'$, if $e$ and $e'$
-are defined in $D$ and $\mname{val}_D(e) = \mname{val}_D(e')$ and are
-\emph{quasi-equal in $D$}, written $e \simeq_D e'$, if either $e =_D
-e'$ or $e$ and $e'$ are both undefined in $D$.
+\emph{value of $e$ in $D$} is the element in $D$ that $e$ denotes.
+When $e$ is undefined in $D$, the value of $e$ in $D$ is undefined.
+Two expressions $e$ and $e'$ are \emph{equal in $D$}, written $e =_D
+e'$, if they are both are defined in $D$ and they have the same values
+in $D$ and are \emph{quasi-equal in $D$}, written $e \simeq_D e'$, if
+either $e =_D e'$ or $e$ and $e'$ are both undefined in $D$.
+
+\subsection{SBMAs}
+
+\subsection{${\rm CTT}_{\rm uqe}$}
 
 \iffalse
 SBMAs can be difficult to specify since they involve an interplay of
@@ -267,6 +272,141 @@ version of formal logic with undefinedness, quotation, and evaluation.
   symbol $y$, $f(y)$ \textbf{is} in $\Lang$.''}
 
 \subsection{The Formal Specification of {\NRE} and {\NRF}}
+
+We will specify {\NRE} and {\NRF} in {\churchuqe}.  To do this we need
+to develop a theory $T = (L,\Gamma)$ of {\churchuqe} in which {\NRE}
+and {\NRF} are constants in $L$, the language $L$ of $T$, and their
+specifications are formulas in $\Gamma$, the set of axioms of $T$.  A
+complete development of $T$ would be long and tedious, so we will only
+sketch the development of $T$.
+
+The first step is to define a theory $T_0 = (L_0,\Gamma_0)$ for the
+field $\QQ(x)$ of rational expressions in $x$ over $\QQ$.  $L_0$
+contains a base type $\kappa$ that represents the elements of
+$\QQ(x)$, a constant $X_\kappa$ which represents the indeterminant
+symbol $x$ of $\QQ(x)$, and constants $0_\kappa$, $1_\kappa$,
+$+_{\kappa \tarrow \kappa \tarrow \kappa}$, $*_{\kappa \tarrow \kappa
+  \tarrow \kappa}$, $-_{\kappa \tarrow \kappa}$, and
+$\phantom{}^{{-1}_{\kappa \tarrow \kappa}}$ representing the usual
+field elements and operators.  $\Gamma_0$ contains axioms that say the
+type $\kappa$ is a field.
+
+The next step is to extend $T_0$ to a theory $T_1 =
+(L_1,\Gamma_1)$ by defining in $T_0$ the following constants:
+
+\be
+
+  \item $\QQ_{\kappa \tarrow o}$ is the predicate representing the
+    subtype of $\kappa$ that denotes $\QQ$, the rational numbers.
+    Thus $\QQ_{\kappa \tarrow o} \, 1_\kappa$ is valid in $T_1$.
+
+  \item $\QQ[x]_{\kappa \tarrow o}$ is the predicate representing the
+    subtype of $\kappa$ that denotes $\QQ[x]$, the polynomials in $x$
+    over $\QQ$.  Thus $\QQ[x]_{\kappa \tarrow o} \, X_\kappa$ is valid
+    in $T_1$.
+
+  \item $\mname{RatExpr}_{\epsilon \tarrow o}$ is the predicate
+    representing the subtype of $\epsilon$ that denotes the
+    expressions of type $\kappa$ that have the form of rational
+    expressions in $x_\kappa$ (i.e., the expressions of type $\kappa$
+    built from the variable $x_\kappa$ and the field constants).  Thus
+    $\mname{RatExpr}_{\epsilon \tarrow o} \,
+    \synbrack{x_\kappa/x_\kappa}$ is valid in $T_1$.
+
+  \item $\mname{RatFun}_{\epsilon \tarrow o}$ is the predicate
+    representing the subtype of $\epsilon$ that denotes expressions of
+    the form $\LambdaApp x_\kappa \mdot \textbf{R}_\kappa$ where
+    $\textbf{R}_\kappa$ is a expression that has the form of a
+    rational expression in $x_\kappa$.  Thus $\mname{RatFun}_{\epsilon
+      \tarrow o} \, \synbrack{\LambdaApp x_\kappa \mdot
+      x_\kappa/x_\kappa}$ is valid in $T_1$.
+
+  \item $\mname{val-in-}\kappa_{\epsilon \tarrow \kappa}$ is a partial
+    function that maps each member of the subtype
+    $\mname{RatExpr}_{\epsilon \tarrow o}$ to its denotation in
+    $\kappa$.  Thus $\mname{val-in-}\kappa_{\epsilon \tarrow \kappa}
+    \, \synbrack{1_\kappa +_{\kappa \tarrow \kappa \tarrow \kappa}
+      x_\kappa} = 1_\kappa +_{\kappa \tarrow \kappa \tarrow \kappa}
+    X_\kappa$ and $\mname{val-in-}\kappa_{\epsilon \tarrow \kappa} \,
+    \synbrack{1_\kappa/0_\kappa} \IsUndefApp$ are valid in $T_1$.
+    Notice that the function is partial since an expression like
+    $1_\kappa/0_\kappa$ is undefined in $\kappa$.
+
+  \item \bsp $\mname{Norm}_{\epsilon \tarrow o}$ is the predicate
+    representing the subtype of $\epsilon$ that denotes the members of
+    the subtype $\mname{RatExpr}_{\epsilon \tarrow o}$ that are normal
+    forms.  Thus $\Neg(\mname{Norm}_{\epsilon \tarrow o}
+    \, \synbrack{x_\kappa/x_\kappa})$ and $\mname{Norm}_{\epsilon
+      \tarrow o} \, \synbrack{1_\kappa}$ are valid in $T_1$.\esp
+
+  \item \bsp $\mname{Quasinorm}_{\epsilon \tarrow o}$ is the predicate
+    representing the subtype of $\epsilon$ that denotes the members of
+    the subtype $\mname{RatExpr}_{\epsilon \tarrow o}$ that are
+    quasinormal forms.  Thus $\mname{Quasinorm}_{\epsilon \tarrow o}
+    \, \synbrack{x_\kappa/x_\kappa}$ and $\Neg(\mname{Quasinorm}_{\epsilon \tarrow o} \,
+    \synbrack{A_\kappa/A_\kappa})$, where $A_\kappa$ is
+    $x^{2}_{\kappa} +_{\kappa \tarrow \kappa \tarrow \kappa}
+    1_\kappa$, are valid in $T_1$. \esp
+
+  \item $\mname{body}_{\epsilon \tarrow \epsilon}$ is a partial
+    function that maps each member of $\epsilon$ denoting an
+    expression of of the form $\LambdaApp x_\alpha \mdot B_\beta$ to
+    the member of $\epsilon$ that denotes $B_\beta$ and is undefined
+    on the rest of $\epsilon$.
+
+\ee
+
+\bsp The final step is to extend $T_1$ to a theory $T_2 =
+(L_2,\Gamma_2)$ in which $L_2$ has two additional constants
+$\mname{normRatExpr}_{\epsilon \tarrow \epsilon}$ and
+$\mname{normRatFun}_{\epsilon \tarrow \epsilon}$ and $\Gamma_2$ has
+two additional axioms $\mname{specNormRatExpr}_o$ and
+$\mname{specNormRatFun}_o$ that specify $\mname{normRatExpr}_{\epsilon
+  \tarrow \epsilon}$ and $\mname{normRatFun}_{\epsilon \tarrow
+  \epsilon}$. $\mname{specNormRatExpr}_o$ is the formula\esp
+\begin{align}
+&
+\ForallApp u_\epsilon \mdot\\
+& \hspace*{2ex}
+\If \; (\mname{RatExpr}_{\epsilon \tarrow o} \, u_\epsilon)\\
+& \hspace*{4ex}
+(\mname{Norm}_{\epsilon \tarrow \epsilon}(\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon) \And {}\\
+& \hspace*{6ex}
+\mname{val-in-}\kappa_{\epsilon \tarrow \kappa} \, u_\epsilon \QuasiEqual
+\mname{val-in-}\kappa_{\epsilon \tarrow \kappa}(\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon))\\
+& \hspace*{4ex}
+(\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon)\IsUndefApp
+\end{align}
+(3) says that if the input represents a rational expression then the
+output is a normal form.  (4) says that if the input represents a
+rational expression then input and output are equal in the field of
+rational expressions.  And (5) says that if in input does not
+represent a rational expression then the output is undefined.
+
+$\mname{specNormRatFun}_o$ is the formula
+\begin{align}
+&
+\ForallApp u_\epsilon \mdot\\
+& \hspace*{2ex}
+\If \; (\mname{RatFun}_{\epsilon \tarrow o} \, u_\epsilon)\\
+& \hspace*{4ex}
+(\mname{RatFun}_{\epsilon \tarrow o} \, (\mname{normRatFun}_{\epsilon \tarrow o} \, u_\epsilon) \And {}\\
+& \hspace*{6ex}
+\mname{Quasinorm}_{\epsilon \tarrow \epsilon}(\mname{body}_{\epsilon \tarrow \epsilon}(\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon)) \And {}\\
+& \hspace*{6ex}
+\sembrack{u_\epsilon}_{\kappa \tarrow \kappa} \QuasiEqual
+\sembrack{\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon}_{\kappa \tarrow \kappa})\\
+& \hspace*{4ex}
+(\mname{normRatFun}_{\epsilon \tarrow o} \, u_\epsilon)\IsUndefApp
+\end{align}
+(8-9) say that if the input represents a rational function then the
+output represents a rational fun whose body is a quasinormal form.
+(10) says that if the input represents a rational function then input
+and output denote the same function on the rational numbers).  And
+(11) says that if in input does not represent a rational function then
+the output is undefined.
+
+
 
 \section{Related Work}
 
