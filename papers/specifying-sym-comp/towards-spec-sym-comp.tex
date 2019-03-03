@@ -331,89 +331,90 @@ specifications are formulas in $\Gamma$, the set of axioms of $T$.  A
 complete development of $T$ would be long and tedious, so we will only
 sketch the development of $T$.
 
-The first step is to define a theory $T_0 = (L_0,\Gamma_0)$ for the
-field $\QQ(x)$ of rational expressions in $x$ over $\QQ$.  $L_0$
-contains a base type $\kappa$ that represents the elements of
-$\QQ(x)$, a constant $X_\kappa$ which represents the indeterminant
-symbol $x$ of $\QQ(x)$, and constants $0_\kappa$, $1_\kappa$,
-$+_{\kappa \tarrow \kappa \tarrow \kappa}$, $*_{\kappa \tarrow \kappa
-  \tarrow \kappa}$, $-_{\kappa \tarrow \kappa}$, and
-$\phantom{}^{{-1}_{\kappa \tarrow \kappa}}$ representing the usual
-field elements and operators.  $\Gamma_0$ contains axioms that say the
-type $\kappa$ is a field.
+The first step is to define a theory $T_0 = (L_0,\Gamma_0)$ that
+axiomatizes $\QQ$, the field of rational numbers.  $L_0$ contains a
+base type $q$ and constants $0_q$, $1_q$, $+_{q \tarrow q \tarrow q}$,
+$*_{q \tarrow q \tarrow q}$, $-_{q \tarrow q}$, and
+$\phantom{}^{{-1}_{q \tarrow q}}$ representing the standard elements
+and operators of a field.  $\Gamma_0$ contains axioms that say the
+type $q$ is the field of rational numbers.
 
-The next step is to extend $T_0$ to a theory $T_1 =
-(L_1,\Gamma_1)$ by defining in $T_0$ the following constants:
+The second step is to extend $T_0$ to a theory $T_1 = (L_1,\Gamma_1)$
+that axiomatizes $\QQ(x)$, the field of rational expressions over
+$\QQ$.  $L_0$ contains a base type $r$; constants $0_r$, $1_r$, $+_{r
+  \tarrow r \tarrow r}$, $*_{r \tarrow r \tarrow r}$, $-_{r \tarrow
+  r}$, and $\phantom{}^{{-1}_{r \tarrow r}}$ representing the standard
+elements and operators of a field; and a constant $X_r$ representing
+the indeterminant of $\QQ(x)$.  $\Gamma_0$ contains axioms that say
+the type $r$ is the field of rational expressions over $\QQ$.  Notice
+that the types $q$ and $r$ are completely separate from each other
+since {\churchuqe} does not admit subtypes as in~\cite{Farmer91}.
+
+The third step is to extend $T_1$ to a theory $T_2 = (L_2,\Gamma_2)$
+that is equipped to express ideas about the expressions of type $q$
+and $q \tarrow q$ that have the form of rational expressions and
+rational functions, respectively.  $T_2$ is obtain by defining 
+the following constants:
 
 \be
 
-  \item $\QQ_{\kappa \tarrow o}$ is the predicate representing the
-    subtype of $\kappa$ that denotes $\QQ$, the rational numbers.
-    Thus $\QQ_{\kappa \tarrow o} \, 1_\kappa$ is valid in $T_1$.
-
-  \item $\QQ[x]_{\kappa \tarrow o}$ is the predicate representing the
-    subtype of $\kappa$ that denotes $\QQ[x]$, the polynomials in $x$
-    over $\QQ$.  Thus $\QQ[x]_{\kappa \tarrow o} \, X_\kappa$ is valid
-    in $T_1$.
-
   \item $\mname{RatExpr}_{\epsilon \tarrow o}$ is the predicate
     representing the subtype of $\epsilon$ that denotes the
-    expressions of type $\kappa$ that have the form of rational
-    expressions in $x_\kappa$ (i.e., the expressions of type $\kappa$
-    built from the variable $x_\kappa$ and the field constants).  Thus
-    $\mname{RatExpr}_{\epsilon \tarrow o} \,
-    \synbrack{x_\kappa/x_\kappa}$ is valid in $T_1$.
+    expressions of type $q$ that have the form of rational expressions
+    in $x_q$ (i.e., the expressions of type $q$ built from the
+    variable $x_q$ and the constants representing the field elements
+    and operators for $q$).  Thus $\mname{RatExpr}_{\epsilon \tarrow
+      o} \, \synbrack{x_q/x_q}$ is valid in $T_2$.
 
   \item $\mname{RatFun}_{\epsilon \tarrow o}$ is the predicate
-    representing the subtype of $\epsilon$ that denotes expressions of
-    the form $\LambdaApp x_\kappa \mdot \textbf{R}_\kappa$ where
-    $\textbf{R}_\kappa$ is a expression that has the form of a
-    rational expression in $x_\kappa$.  Thus $\mname{RatFun}_{\epsilon
-      \tarrow o} \, \synbrack{\LambdaApp x_\kappa \mdot
-      x_\kappa/x_\kappa}$ is valid in $T_1$.
+    representing the subtype of $\epsilon$ that denotes the
+    expressions of type $q \tarrow q$ that are rational functions in
+    $x_q$ (i.e., the expressions of the form $\LambdaApp x_q \mdot
+    \textbf{R}_q$ where $\textbf{R}_q$ is an expression having the
+    form of a rational expression in $x_q$).  Thus
+    $\mname{RatFun}_{\epsilon \tarrow o} \, \synbrack{\LambdaApp x_q
+      \mdot x_q/x_q}$ is valid in $T_2$.
 
-  \item $\mname{val-in-}\kappa_{\epsilon \tarrow \kappa}$ is a partial
+  \item \bsp $\mname{val-in-}r_{\epsilon \tarrow r}$ is a partial
     function that maps each member of the subtype
-    $\mname{RatExpr}_{\epsilon \tarrow o}$ to its denotation in
-    $\kappa$.  Thus $\mname{val-in-}\kappa_{\epsilon \tarrow \kappa}
-    \, \synbrack{1_\kappa +_{\kappa \tarrow \kappa \tarrow \kappa}
-      x_\kappa} = 1_\kappa +_{\kappa \tarrow \kappa \tarrow \kappa}
-    X_\kappa$ and $\mname{val-in-}\kappa_{\epsilon \tarrow \kappa} \,
-    \synbrack{1_\kappa/0_\kappa} \IsUndefApp$ are valid in $T_1$.
-    Notice that the function is partial since an expression like
-    $1_\kappa/0_\kappa$ is undefined in $\kappa$.
+    $\mname{RatExpr}_{\epsilon \tarrow o}$ to its denotation in $r$.
+    Thus $\mname{val-in-}r_{\epsilon \tarrow r} \, \synbrack{x_q +_{q
+        \tarrow q \tarrow q} 1_q} = X_r +_{r \tarrow r \tarrow r} 1_r$
+    and $(\mname{val-in-}r_{\epsilon \tarrow r} \,
+    \synbrack{1_q/0_q})\IsUndefApp$ are valid in $T_2$.  Notice that
+    the function is partial since an expression like $1_q/0_q$ does
+    not denote a member of either the field $q$ or $r$. \esp
 
   \item \bsp $\mname{Norm}_{\epsilon \tarrow o}$ is the predicate
     representing the subtype of $\epsilon$ that denotes the members of
     the subtype $\mname{RatExpr}_{\epsilon \tarrow o}$ that are normal
     forms.  Thus $\Neg(\mname{Norm}_{\epsilon \tarrow o}
-    \, \synbrack{x_\kappa/x_\kappa})$ and $\mname{Norm}_{\epsilon
-      \tarrow o} \, \synbrack{1_\kappa}$ are valid in $T_1$.\esp
+    \, \synbrack{x_q/x_q})$ and $\mname{Norm}_{\epsilon
+      \tarrow o} \, \synbrack{1_q}$ are valid in $T_2$.\esp
 
   \item \bsp $\mname{Quasinorm}_{\epsilon \tarrow o}$ is the predicate
     representing the subtype of $\epsilon$ that denotes the members of
     the subtype $\mname{RatExpr}_{\epsilon \tarrow o}$ that are
     quasinormal forms.  Thus $\mname{Quasinorm}_{\epsilon \tarrow o}
-    \, \synbrack{x_\kappa/x_\kappa}$ and $\Neg(\mname{Quasinorm}_{\epsilon \tarrow o} \,
-    \synbrack{A_\kappa/A_\kappa})$, where $A_\kappa$ is
-    $x^{2}_{\kappa} +_{\kappa \tarrow \kappa \tarrow \kappa}
-    1_\kappa$, are valid in $T_1$. \esp
+    \, \synbrack{x_q/x_q}$ and $\Neg(\mname{Quasinorm}_{\epsilon
+      \tarrow o} \, \synbrack{A_q/A_q})$, where $A_q$ is $x^{2}_{q}
+    +_{q \tarrow q \tarrow q} 1_q$, are valid in $T_2$. \esp
 
   \item $\mname{body}_{\epsilon \tarrow \epsilon}$ is a partial
     function that maps each member of $\epsilon$ denoting an
-    expression of of the form $\LambdaApp x_\alpha \mdot B_\beta$ to
-    the member of $\epsilon$ that denotes $B_\beta$ and is undefined
-    on the rest of $\epsilon$.
+    expression of the form $\LambdaApp x_\alpha \mdot B_\beta$ to the
+    member of $\epsilon$ that denotes $B_\beta$ and is undefined on
+    the rest of $\epsilon$.
 
 \ee
 
-\bsp The final step is to extend $T_1$ to a theory $T_2 =
-(L_2,\Gamma_2)$ in which $L_2$ has two additional constants
-$\mname{normRatExpr}_{\epsilon \tarrow \epsilon}$ and
-$\mname{normRatFun}_{\epsilon \tarrow \epsilon}$ and $\Gamma_2$ has
-two additional axioms $\mname{specNormRatExpr}_o$ and
-$\mname{specNormRatFun}_o$ that specify $\mname{normRatExpr}_{\epsilon
+\bsp The final step is to extend $T_2$ to a theory $T = (L,\Gamma)$ in
+which $L$ has two additional constants $\mname{normRatExpr}_{\epsilon
   \tarrow \epsilon}$ and $\mname{normRatFun}_{\epsilon \tarrow
+  \epsilon}$ and $\Gamma$ has two additional axioms
+$\mname{specNormRatExpr}_o$ and $\mname{specNormRatFun}_o$ that
+specify $\mname{normRatExpr}_{\epsilon \tarrow \epsilon}$ and
+$\mname{normRatFun}_{\epsilon \tarrow
   \epsilon}$. $\mname{specNormRatExpr}_o$ is the formula\esp
 \begin{align}
 &
@@ -423,16 +424,18 @@ $\mname{specNormRatFun}_o$ that specify $\mname{normRatExpr}_{\epsilon
 & \hspace*{4ex}
 (\mname{Norm}_{\epsilon \tarrow \epsilon}(\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon) \And {}\\
 & \hspace*{6ex}
-\mname{val-in-}\kappa_{\epsilon \tarrow \kappa} \, u_\epsilon \QuasiEqual
-\mname{val-in-}\kappa_{\epsilon \tarrow \kappa}(\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon))\\
+\mname{val-in-}r_{\epsilon \tarrow r} \, u_\epsilon \QuasiEqual
+\mname{val-in-}r_{\epsilon \tarrow r}(\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon))\\
 & \hspace*{4ex}
 (\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon)\IsUndefApp
 \end{align}
-(3) says that if the input represents a rational expression then the
-output is a normal form.  (4) says that if the input represents a
-rational expression then input and output are equal in the field of
-rational expressions.  And (5) says that if the input does not
-represent a rational expression then the output is undefined.
+(3) says that, if the input represents a rational expression in $x_q$,
+then the output represents a rational expression in $x_q$ in normal
+form.  (4) says that, if the input represents a rational expression in
+$x_q$, then either the input and output denote the same member of $r$
+or they both do not denote any member of $r$.  And (5) says that, if
+the input does not represent a rational expression in $x_q$, then the
+output is undefined.
 
 $\mname{specNormRatFun}_o$ is the formula
 \begin{align}
@@ -445,17 +448,24 @@ $\mname{specNormRatFun}_o$ is the formula
 & \hspace*{6ex}
 \mname{Quasinorm}_{\epsilon \tarrow \epsilon}(\mname{body}_{\epsilon \tarrow \epsilon}(\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon)) \And {}\\
 & \hspace*{6ex}
-\sembrack{u_\epsilon}_{\kappa \tarrow \kappa} \QuasiEqual
-\sembrack{\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon}_{\kappa \tarrow \kappa})\\
+\sembrack{u_\epsilon}_{r \tarrow r} =
+\sembrack{\mname{normRatExpr}_{\epsilon \tarrow o} \, u_\epsilon}_{r \tarrow r})\\
 & \hspace*{4ex}
 (\mname{normRatFun}_{\epsilon \tarrow o} \, u_\epsilon)\IsUndefApp
 \end{align}
-(8-9) say that if the input represents a rational function then the
-output represents a rational fun whose body is a quasinormal form.
-(10) says that if the input represents a rational function then input
-and output denote the same function on the rational numbers).  And
-(11) says that if in input does not represent a rational function then
-the output is undefined.
+(8-9) say that, if the input represents a rational function in $x_q$,
+then the output represents a rational function in $x_q$ whose body is
+in quasinormal form.  (10) says that, if the input represents a
+rational function in $x_q$, then input and output denote the same
+(possibly partial) function on the rational numbers.  And (11) says
+that, if in input does not represent a rational function in $x_q$,
+then the output is undefined.
+
+Not only is it possible to specifying the algorithms
+$\mname{normRatExpr}$ and $\mname{normRatFun}$ in {\churchuqe}, it is
+also possible to define the functions that these algorithms implement.
+Then applications of these functions can be evaluated using a proof
+system for {\churchuqe}.
 
 \section{Symbolic Differentiation of Rational Functions}
 
