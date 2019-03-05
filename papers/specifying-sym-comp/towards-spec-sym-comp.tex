@@ -22,6 +22,7 @@
 \newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
 
 \newcommand{\QQ}{\ensuremath{\mathbb{Q}}}
+\newcommand{\NN}{\ensuremath{\mathbb{N}}}
 \newcommand{\NRE}{\ensuremath{\mname{normRatExpr}}}
 \newcommand{\NRF}{\ensuremath{\mname{normRatFun}}}
 \newcommand{\funQ}[1]{\ensuremath{\LambdaApp x : \QQ \mdot #1}}
@@ -210,8 +211,67 @@ We are thus interested in the following questions:
 \ee
 \fi
 
+\section{Factoring}
 
+\subsection{Task}
+Here is a seemingly simple mathematical question: factor (over $\NN$)
+the number $12$. One common answer would be $12 = 2^2\cdot 3$ --- which
+is true, but not actually an answer in most systems!  This is because, in
+any system with built-in $\beta$-reduction (as all CAS do, as do theorem
+provers based on dependent type theory), the above is \emph{exactly}
+$12 = 12$, which is certainly not very informative.
 
+\subsection{The problem}
+
+So why is $2^2\cdot 3$ not an answer? Because this mixes \emph{syntax}
+and \emph{semantics}. A better answer would be $\synbrack{2^2\cdot 3}$,
+that would then make it clear that $\cdot$ \emph{represents} multiplication
+rather than \emph{being} multiplication. In other words, this is
+about intension and extension: we want to be able to both represent
+operations and perform operations. In Maple, one talks about
+\textsf{inert forms}, while in Mathematica, there are various related
+concepts such as \texttt{Hold}, \texttt{Inative} and \texttt{Unevaluated}.
+They both capture the same fundamental dichotomy about passive representations
+and active computations.
+
+\subsection{Solution}
+
+Coming back to integer factorization, interestingly both Maple and
+Mathematica choose a fairly similar option to represent the answer ---
+a list of pairs, with the first component being the primes of the
+factorization, and the second component being the multiplicity (i.e.
+exponent); Maple furthermore gives a leading unit, so that one can also
+factor negative numbers. In other words, in Maple, the result of
+\texttt{ifactors(12)} is
+\[ \left[ 1, \left[2,2\right], \left[3,1\right]\right] \]
+where lists are used (rather than proper pairs) as the host system is
+untyped (Mathematica does something similar).
+
+\subsection{Specification}
+
+\subsection{Discussion}
+
+Why do neither of the systems use their own means of representing 
+intensional information? History! In both cases, the integer factorization
+routines predate the intensional features by more than \emph{two decades}.
+And backward compatibility definitely prevents them from making that
+change.
+
+Furthermore, factoring as an operation produces output in a very predicable
+\emph{shape}: $u\cdot p_1^{i_1} \cdot p_2^{i_2} \cdot \ldots \cdot p_k^{i_k}$.
+Having to essentially parse such a term syntax to extract the information is
+tedious and error prone, at least in an untyped system. Such a shape could
+easily be coded up in a typed system using a very simple algebraic data type
+that would obviate the problem. But CAS are very good at manipulating lists%
+\footnote{Unsurprisingly, since the builders of both Maple and Mathematica
+were well acquainted with Macsyma}, and thus this output \emph{composes}
+well with other system features.
+
+Nevertheless, the main lesson is that a simple mathematical question,
+such as factoring the number $12$, which seems like a question about
+Peano Arithmetic, isn't. It is a question that can only be properly answered
+in a context with a significantly richer term language --- either lists,
+or lists and pairs, or algebraic type, or a full syntactic term language.
 
 \section{Rational Expressions, Rational Functions}
 
