@@ -46,12 +46,39 @@ Computing and Software, McMaster University, Canada\\
 
 Examples:
 
-  1. Factoring integers
-  2. Change of representation for polynomials
-  3. Normalization of rational expressions
-  4. Integration by parts
-  5. Symbolic differentiation
-      o ln/exp example
+1. Factoring - integers and polynomials
+   Explained 'in full'
+2. Normalization of rational expressions
+   Explained 'in full'
+3. Change of representation for polynomials
+   Explained informally.
+   The message is that the "term language" matters a lot, but so does
+representation. "is a polynomial" is quite overloaded. Choosing a good
+representation is a task-driven operation which in many ways is a
+post-facto decision!
+4. solve, int, sum, dsolve, etc
+   Explained informally.
+   The idea here is that even an informal specification of what these
+commands might do is problematic. One huge problem is the *vocabulary*
+that is allowed to express the answer. [Again, often this should be
+task-dependent, which is a post-facto decision]
+   ex: Are Elliptic functions allowed in the output of solve?  If so, we
+can solve degree 5 and 6 equations in "closed form", at the cost of
+producing even longer results than the wallpaper for degree 4 (in terms
+of radicals). What about multivariate hypergeometric? That buys us a
+couple more degrees.  Why is it ok for 'int' and 'sum' to return an
+answer with an 'int' in it? Why is it ok to have a hypergeometric in the
+answer to dsolve?
+5. Integration by parts
+   Explained informally
+   Basic problem is that this method, while justified semantically, is
+always applied by people syntactically. And the specification method
+relies on being able to name the integration variable -- which is
+irrelevant, by alpha-renaming.
+6. symbolic diff (ln/exp example)
+   Explained informally
+   [if there is room?] The usual informal rules do not respect
+undefinedness. diff(x/x,x) gives 0 (which is defined everywhere). etc.
 
 Example format:
 
@@ -80,7 +107,7 @@ quotation, and evaluation.
 
 \end{abstract}
 
-\iffalse 
+\iffalse
 
 \textbf{Keywords:} Symbolic computation, computer algebra systems,
 reasoning about syntax, undefinedness, quotation and evaluation.
@@ -231,7 +258,7 @@ functions. It turns out that, in the univariate case, they correspond,
 but already for 2 variables things are different.}
 \info{I think you might be conflating what CAS people call normal and
 canonical. Normal just means O(1) zero-testing, while canonical means
-a = b iff C(a) = C(b) with the later = being O(1) because of 
+a = b iff C(a) = C(b) with the later = being O(1) because of
 hash-consing}
 Let {\NRE} be the name of
 the algorithm that implements this normalization function on $\Lang$.
@@ -247,7 +274,7 @@ specification, and (B) is the semantic component.
 Let $\Langp$ be the set of expressions of the form $\LambdaApp x : \QQ
 \mdot e$ where $e \in \Lang$.  We will call members of $\Langp$
 \emph{rational functions (over $\QQ$)}.  That is, a rational function
-is a lambda expression whose body is a rational expression.  
+is a lambda expression whose body is a rational expression.
 
 If $f_i = \funQ{e_i}$ are rational functions for $i=1,2$, one might
 think that $f_1 =_{\QQ \rightarrow \QQ} f_2$ if $e_1 =_{\QQ(x)} e_2$.
@@ -353,7 +380,7 @@ since {\churchuqe} does not admit subtypes as in~\cite{Farmer91}.
 The third step is to extend $T_1$ to a theory $T_2 = (L_2,\Gamma_2)$
 that is equipped to express ideas about the expressions of type $q$
 and $q \tarrow q$ that have the form of rational expressions and
-rational functions, respectively.  $T_2$ is obtain by defining 
+rational functions, respectively.  $T_2$ is obtain by defining
 the following constants:
 
 \be
