@@ -22,6 +22,7 @@
 \newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
 
 \newcommand{\QQ}{\ensuremath{\mathbb{Q}}}
+\newcommand{\NN}{\ensuremath{\mathbb{N}}}
 \newcommand{\NRE}{\ensuremath{\mname{normRatExpr}}}
 \newcommand{\NRF}{\ensuremath{\mname{normRatFun}}}
 \newcommand{\funQ}[1]{\ensuremath{\LambdaApp x : \QQ \mdot #1}}
@@ -46,12 +47,39 @@ Computing and Software, McMaster University, Canada\\
 
 Examples:
 
-  1. Factoring integers
-  2. Change of representation for polynomials
-  3. Normalization of rational expressions
-  4. Integration by parts
-  5. Symbolic differentiation
-      o ln/exp example
+1. Factoring - integers and polynomials
+   Explained 'in full'
+2. Normalization of rational expressions
+   Explained 'in full'
+3. Change of representation for polynomials
+   Explained informally.
+   The message is that the "term language" matters a lot, but so does
+representation. "is a polynomial" is quite overloaded. Choosing a good
+representation is a task-driven operation which in many ways is a
+post-facto decision!
+4. solve, int, sum, dsolve, etc
+   Explained informally.
+   The idea here is that even an informal specification of what these
+commands might do is problematic. One huge problem is the *vocabulary*
+that is allowed to express the answer. [Again, often this should be
+task-dependent, which is a post-facto decision]
+   ex: Are Elliptic functions allowed in the output of solve?  If so, we
+can solve degree 5 and 6 equations in "closed form", at the cost of
+producing even longer results than the wallpaper for degree 4 (in terms
+of radicals). What about multivariate hypergeometric? That buys us a
+couple more degrees.  Why is it ok for 'int' and 'sum' to return an
+answer with an 'int' in it? Why is it ok to have a hypergeometric in the
+answer to dsolve?
+5. Integration by parts
+   Explained informally
+   Basic problem is that this method, while justified semantically, is
+always applied by people syntactically. And the specification method
+relies on being able to name the integration variable -- which is
+irrelevant, by alpha-renaming.
+6. symbolic diff (ln/exp example)
+   Explained informally
+   [if there is room?] The usual informal rules do not respect
+undefinedness. diff(x/x,x) gives 0 (which is defined everywhere). etc.
 
 Example format:
 
@@ -80,7 +108,7 @@ quotation, and evaluation.
 
 \end{abstract}
 
-\iffalse 
+\iffalse
 
 \textbf{Keywords:} Symbolic computation, computer algebra systems,
 reasoning about syntax, undefinedness, quotation and evaluation.
@@ -183,8 +211,83 @@ We are thus interested in the following questions:
 \ee
 \fi
 
+\section{Factoring}
 
+\subsection{Task}
+Here is a seemingly simple mathematical question: factor (over $\NN$)
+the number $12$. One common answer would be $12 = 2^2\cdot 3$ --- which
+is true, but not actually an answer in most systems!  This is because, in
+any system with built-in $\beta$-reduction (as all CAS do, as do theorem
+provers based on dependent type theory), the above is \emph{exactly}
+$12 = 12$, which is certainly not very informative.
 
+\subsection{The problem}
+
+So why is $2^2\cdot 3$ not an answer? Because this mixes \emph{syntax}
+and \emph{semantics}. A better answer would be $\synbrack{2^2\cdot 3}$,
+that would then make it clear that $\cdot$ \emph{represents} multiplication
+rather than \emph{being} multiplication. In other words, this is
+about intension and extension: we want to be able to both represent
+operations and perform operations. In Maple, one talks about
+\textsf{inert forms}, while in Mathematica, there are various related
+concepts such as \texttt{Hold}, \texttt{Inative} and \texttt{Unevaluated}.
+They both capture the same fundamental dichotomy about passive representations
+and active computations.
+
+\subsection{Solution}
+
+Coming back to integer factorization, interestingly both Maple and
+Mathematica choose a fairly similar option to represent the answer ---
+a list of pairs, with the first component being the primes of the
+factorization, and the second component being the multiplicity (i.e.
+exponent); Maple furthermore gives a leading unit, so that one can also
+factor negative numbers. In other words, in Maple, the result of
+\texttt{ifactors(12)} is
+\[ \left[ 1, \left[2,2\right], \left[3,1\right]\right] \]
+where lists are used (rather than proper pairs) as the host system is
+untyped (Mathematica does something similar).
+
+\subsection{Specification}
+
+Given the following Maple routine\footnote{There are non-essential
+Maple-isms in this routine: because of how \textsf{foldr} is defined,
+\textsf{op} to transform a list to an expression sequence is needed;
+in other languages, this is unnecessary. Note however that it is
+possible to express the type extremely precisely.}
+\begin{verbatim}
+remult := proc(l :: [{-1,1}, list([prime,posint])]) 
+  local f := proc(x, y) (x[1] ^ x[2]) * y end proc;
+  l[1] * foldr(f, 1, op(l[2]))
+end proc; 
+\end{verbatim}
+\noindent then the specification for \texttt{ifactors} is that
+for all $n\in \mathbb{Z}$,
+\[ \mathsf{remult}\left(\mathsf{ifactors}\left(n\right)\right) = n \]
+and the primes in the decomposition are unique.
+
+\subsection{Discussion}
+
+Why do neither of the systems use their own means of representing 
+intensional information? History! In both cases, the integer factorization
+routines predate the intensional features by more than \emph{two decades}.
+And backward compatibility definitely prevents them from making that
+change.
+
+Furthermore, factoring as an operation produces output in a very predicable
+\emph{shape}: $u\cdot p_1^{i_1} \cdot p_2^{i_2} \cdot \ldots \cdot p_k^{i_k}$.
+Having to essentially parse such a term syntax to extract the information is
+tedious and error prone, at least in an untyped system. Such a shape could
+easily be coded up in a typed system using a very simple algebraic data type
+that would obviate the problem. But CAS are very good at manipulating lists%
+\footnote{Unsurprisingly, since the builders of both Maple and Mathematica
+were well acquainted with Macsyma}, and thus this output \emph{composes}
+well with other system features.
+
+Nevertheless, the main lesson is that a simple mathematical question,
+such as factoring the number $12$, which seems like a question about
+Peano Arithmetic, isn't. It is a question that can only be properly answered
+in a context with a significantly richer term language --- either lists,
+or lists and pairs, or algebraic type, or a full syntactic term language.
 
 \section{Rational Expressions, Rational Functions}
 
@@ -231,7 +334,7 @@ functions. It turns out that, in the univariate case, they correspond,
 but already for 2 variables things are different.}
 \info{I think you might be conflating what CAS people call normal and
 canonical. Normal just means O(1) zero-testing, while canonical means
-a = b iff C(a) = C(b) with the later = being O(1) because of 
+a = b iff C(a) = C(b) with the later = being O(1) because of
 hash-consing}
 Let {\NRE} be the name of
 the algorithm that implements this normalization function on $\Lang$.
@@ -247,7 +350,7 @@ specification, and (B) is the semantic component.
 Let $\Langp$ be the set of expressions of the form $\LambdaApp x : \QQ
 \mdot e$ where $e \in \Lang$.  We will call members of $\Langp$
 \emph{rational functions (over $\QQ$)}.  That is, a rational function
-is a lambda expression whose body is a rational expression.  
+is a lambda expression whose body is a rational expression.
 
 If $f_i = \funQ{e_i}$ are rational functions for $i=1,2$, one might
 think that $f_1 =_{\QQ \rightarrow \QQ} f_2$ if $e_1 =_{\QQ(x)} e_2$.
@@ -353,7 +456,7 @@ since {\churchuqe} does not admit subtypes as in~\cite{Farmer93b}.
 The third step is to extend $T_1$ to a theory $T_2 = (L_2,\Gamma_2)$
 that is equipped to express ideas about the expressions of type $q$
 and $q \tarrow q$ that have the form of rational expressions and
-rational functions, respectively.  $T_2$ is obtain by defining 
+rational functions, respectively.  $T_2$ is obtain by defining
 the following constants:
 
 \be
@@ -472,6 +575,27 @@ system for {\churchuqe}.
 
 \section{Related Work}
 
+These are just notes to be turned into a proper related work section.
+
+There are some attempts at specifying CA:
+\begin{itemize}
+\item a PhD thesis 
+\url{https://www3.risc.jku.at/publications/download/risc_4981/main.pdf}
+\item (There are talks by Stephen Watt on Computer Algebra vs Symbolic
+Computation, but I can't find any published papers). For example
+\url{https://cs.uwaterloo.ca/~smwatt/talks/2008-trics-dirty-secret.pdf}
+\item Cezary's thesis; I would devote real space to this, as well as doing
+both forward and backward searches on it.
+\item lightweight formal methods for computer algebra
+\url{http://axiom-wiki.newsynthesis.org/public/refs/formal.pdf}
+\item Some old work of Dominique Duval, such as
+Towards Diagrammatic Specifications of Symbolic Computation Systems.
+Maybe there's more on his DBLP page?
+\url{https://dblp.uni-trier.de/pers/hd/d/Duval:Dominique}
+\end{itemize}
+
+And then there's the intension/extension stuff, to be pulled from
+the {\churchuqe} paper, somewhat.  I think that's less relevant.
 \section{Conclusion}
 
 \bibliography{imps}
