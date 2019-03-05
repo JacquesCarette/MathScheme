@@ -249,6 +249,22 @@ untyped (Mathematica does something similar).
 
 \subsection{Specification}
 
+Given the following Maple routine\footnote{There are non-essential
+Maple-isms in this routine: because of how \textsf{foldr} is defined,
+\textsf{op} to transform a list to an expression sequence is needed;
+in other languages, this is unnecessary. Note however that it is
+possible to express the type extremely precisely.}
+\begin{verbatim}
+remult := proc(l :: [{-1,1}, list([prime,posint])]) 
+  local f := proc(x, y) (x[1] ^ x[2]) * y end proc;
+  l[1] * foldr(f, 1, op(l[2]))
+end proc; 
+\end{verbatim}
+\noindent then the specification for \texttt{ifactors} is that
+for all $n\in \mathbb{Z}$,
+\[ \mathsf{remult}\left(\mathsf{ifactors}\left(n\right)\right) = n \]
+and the primes in the decomposition are unique.
+
 \subsection{Discussion}
 
 Why do neither of the systems use their own means of representing 
