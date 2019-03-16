@@ -95,7 +95,11 @@
 \newcommand{\LambdaApp}{\lambda\,}
 \newcommand{\Neg}{\neg}
 \newcommand{\NegAlt}{{\sim}}
+\ifdefined \And 
 \renewcommand{\And}{\wedge}
+\else
+\newcommand{\And}{\wedge}
+\fi
 \newcommand{\Implies}{\supset}
 \newcommand{\Or}{\vee}
 \newcommand{\Iff}{\equiv}
