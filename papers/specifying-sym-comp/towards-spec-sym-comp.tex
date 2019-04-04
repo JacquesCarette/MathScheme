@@ -40,7 +40,7 @@
 Computing and Software, McMaster University, Canada\\
 \url{http://www.cas.mcmaster.ca/~carette}\\
 \url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
-%21 Feburary 2019
+4 April 2019
 }
 
 \pagestyle{headings}
@@ -495,7 +495,7 @@ Normalizing a rational function is another useful task.  Let $f =
 (\funQ{r})$ be a rational function.  We would like to normalize $f$ by
 putting its body $r$ in normal form of some appropriate kind.  Let
 $\NRF$ be the SBMA that takes $f \in \Langrf$ as input and returns a
-$f' \in \Langre$ as output such that $f'$ is the normal form of $f$.
+$f' \in \Langrf$ as output such that $f'$ is the normal form of $f$.
 How should $\NRF$ be specified?
 
 \subsection{Problem 2}
@@ -690,10 +690,10 @@ So why are we concerned about rational expressions and rational
 functions?  Every computer algebra system implements functions that
 normalize rational expressions in several indeterminants over various
 fields guaranteeing that the normal form will be 0 if the rational
-function equals 0 in the corresponding field of fractions.  However,
+expression equals 0 in the corresponding field of fractions.  However,
 computer algebra systems make little distinction between a rational
 expression interpreted as a member of a field of fractions and a
-rational expression interpreted as a rational function.  
+rational expression interpreted as a rational function.
 
 For example, one can always \emph{evaluate} an expression by assigning
 values to its free variables or even convert it to a function.  In
@@ -714,7 +714,7 @@ expression and the evaluation of an expression at a value are not
 compatible with each other.  Indeed the function $g_q : \QQ(x) \tarrow
 \QQ$ where $q \in \QQ$ that maps a rational expression $r$ to the
 rational number obtained by replacing each occurrence of $x$ in $r$
-with $q$ is not a homomorphism!  In particular, it $x/x$ is defined in
+with $q$ is not a homomorphism!  In particular, $x/x$ is defined in
 $\QQ(x)$, but $g_0(x/x)$ is undefined in $\QQ$.
 
 \iffalse
@@ -737,8 +737,8 @@ mathematical systems, we need to carefully, if not formally, specify
 what these algorithms are intended to do.  This is not a
 straightforward task to do in a traditional logic since SBMAs involve
 an interplay of syntax and semantics and algorithms like {\NRE} and
-{\NRF} can sensitive to definedness considerations.  We can, however,
-specify these algorithm, as we have shown, in a logic like
+{\NRF} can be sensitive to definedness considerations.  We can,
+however, specify these algorithm, as we have shown, in a logic like
 {\churchqe}.
 
 \section{Symbolically Differentiating Functions}\label{sec:diff}
@@ -845,14 +845,14 @@ $\Gamma$ contains the following axiom $\mname{specDiff}_o$:
 \end{align}
 (3) says that, if the input $u_e$ to $\mname{specDiff}_o$ is a member
 of the subtype $\mname{DiffExpr}_{\epsilon \tarrow o}$, then the
-output is also a member of $\mname{DiffExpr}_{\epsilon \tarrow
-  o}$. (4--6) say that, if the input is a member of
-$\mname{DiffExpr}_{\epsilon \tarrow o}$ and, for all real numbers $a$,
-if the function $f$ represented by $u_e$ is differentiable at $a$,
-then $f$ equals the function represented by $\mname{diff}_{\epsilon
-  \tarrow \epsilon} \, u_e$ at $a$.  And (7) says that, if the input
-is not a member of $\mname{DiffExpr}_{\epsilon \tarrow o}$, then the
-output is undefined.
+output is also a member of $\mname{DiffExpr}_{\epsilon \tarrow o}$
+(the syntactic component). (\mbox{4--6})~say that, if the input is a
+member of $\mname{DiffExpr}_{\epsilon \tarrow o}$ and, for all real
+numbers $a$, if the function $f$ represented by $u_e$ is
+differentiable at $a$, then $f$ equals the function represented by
+$\mname{diff}_{\epsilon \tarrow \epsilon} \, u_e$ at $a$ (the semantic
+component).  And (7) says that, if the input is not a member of
+$\mname{DiffExpr}_{\epsilon \tarrow o}$, then the output is undefined.
 
 \subsection{Discussion}
 
@@ -922,7 +922,7 @@ nature, the algorithms involve an interplay of syntax and semantics,
 and undefined expressions are often generated from the syntactic
 manipulations.  SBMAs can be tricky to implement in mathematical
 software systems that do not provide good support for the interplay of
-syntax and semantics that is inherent in these algorithm.  For the
+syntax and semantics that is inherent in these algorithms.  For the
 same reason, they are challenging to specify in a traditional formal
 logic that provides little built-in support for reasoning about
 syntax.
