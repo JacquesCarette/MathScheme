@@ -103,27 +103,6 @@
 %\begin{frame}[fragile]
 %\end{frame}
 
-%\section{Context, goals, method}
-
-\begin{frame}
-\frametitle{The Big Picture: MetaProgramming on Theories}
-\begin{center}
-(Co)Limits of diagrams, fibered functors \\
-{\huge $\Downarrow$} \\
-Concepts and theory combinators \\
-{\huge $\Downarrow$} \\
-(Generalized) Algebraic theories \\
-{\huge $\Downarrow$} \\
-Biform theories \\
-{\huge $\Downarrow$} \\
-\color<2>{blue}Generic algorithm\\
-{\huge $\Downarrow$} \\
-Library \\
-{\huge $\Downarrow$} \\
-Efficient Program
-\end{center}
-\end{frame}
-
 \begin{frame}[t,fragile]
 \frametitle{(Presentations of) Algebraic Theories}
 \lstset{language=mathscheme,basicstyle=\small}
@@ -626,22 +605,6 @@ Most of these work for Generalized Algebraic Theories (\`{a} la Cartmell):
 \item Partial evaluator
 \item Sub-theory, Product Theory, Co-product Theory
 \item Internalization (making a record that represents a theory)
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle[Open Problems]
-Back down!  Given:
-\begin{itemize}
-\item The theory presentation of 2-categories, can you specialize to category?
-\item Category to monoid?
-\item Monoidal Category to... monoid?
-\item Braided Category to... ?
-\end{itemize}
-\vspace*{1cm}
-\begin{itemize}
-\item How do you (as a library builder) not repeat yourself,
-\item while giving end-users a huge, rich, as-they-expect it to look library?
 \end{itemize}
 \end{frame}
 
