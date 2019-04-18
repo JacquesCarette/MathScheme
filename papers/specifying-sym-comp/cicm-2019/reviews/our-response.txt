@@ -3,14 +3,13 @@ Dear Reviewers:
 Thank you very much for reviewing our submission and for your
 comments, suggestions, and questions.
 
-  1. To Reviewer 1 expresses concern that the paper is short on the
-     results.
+  1. To Reviewer 1 expresses concern that the paper is short on results.
 
      The purpose of the paper is to illustrate the problem that, since
      SBMAs involve an interplay of syntax and semantics, more logical
      machinery is needed to specify SBMAs than ordinary mathematical
      functions.  We believe that this problem is at the core of the
-     calculemus initiative.  We do not claim that we have a solution
+     Calculemus initiative.  We do not claim that we have a solution
      to the problem, but we do claim to have a program for solving the
      problem.  Significant future work will be needed to determine if
      the program is viable.
@@ -91,7 +90,8 @@ comments, suggestions, and questions.
 
      The meaning here is that SBMAs, in addition to a computational
      behavior, have a mathematical meaning which is defined in the
-     Introduction.
+     Introduction. PL people would say well-defined denotational
+     semantics to mean the same as "mathematically meaningful".
 
  11. Reviewer 3 asks, "Is [the logic of HOL Light QE] provably
      conservative over HOL?"
