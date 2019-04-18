@@ -8,11 +8,14 @@ comments, suggestions, and questions.
      The purpose of the paper is to illustrate the problem that, since
      SBMAs involve an interplay of syntax and semantics, more logical
      machinery is needed to specify SBMAs than ordinary mathematical
-     functions.  We believe that this problem is at the core of the
-     Calculemus initiative.  We do not claim that we have a solution
-     to the problem, but we do claim to have a program for solving the
-     problem.  Significant future work will be needed to determine if
-     the program is viable.
+     functions.  In other words, it is more about very carefully laying
+     out the problem than a definitive solution to the problem. We
+     believe that this problem is at the core of the Calculemus initiative.  
+     We do not claim that we have a solution to the problem, but we do
+     claim to have a program for solving the problem, and that this problem
+     must be solved.  Thus having the Calculemus community agree on that
+     much already would represent a solid step forward.  Significant
+     future work will be needed to determine if the program is viable.
 
   2. Reviewer 1 would like us to "spell out the grammar" and to "see
      what the specification would look like in detail".  
@@ -107,8 +110,9 @@ comments, suggestions, and questions.
 
      The main work in Agda, Coq, Lean, and other systems involves
      local reflection; extensive references can be found in [8].
-     There has been some work work moving towards global reflection.
-     We will add an sentence in section 2.2 referencing this work.
+     There has been some work work moving towards global reflection;
+     little is published, and not all has well-understood meta-theory.
+     We will add references to this work in section 2.2.
 
 Sincerely,
 
