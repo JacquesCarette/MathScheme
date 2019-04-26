@@ -50,13 +50,19 @@ fit.  Specifically, we'll look closely at
 we have
 \begin{itemize}
 \item a single carrier set (1-sorted)
-\item we declare finitely many symbols, each with arity $≥ 0$
-\item the axioms are all of the form
+\item we declare finitely many symbols, denoting operations,
+each with arity $≥ 0$
+\item axioms of the form
 \[ ∀ x y z. term ≡ term \]
 \end{itemize}
 Naturally, each one of these can be generalized, but each such
 generalization brings in non-trivial difficulties that obscure
-the great usefullness of the common core. Our motto here:
+the great usefullness of the common core. The above coincides
+exactly with \textsf{Universal Algebra} as initiated by
+Alfred North Whitehead in his 1898 book \textit{A Treatise of Universal
+Algebra}.
+
+Our motto here:
 
 \begin{centering}
 \Large Make easy things easy
@@ -68,83 +74,78 @@ is to create tools for humans to \emph{automate drudgery} so that
 they may spend more time on aspects where creativity and insight
 are actually needed.
 
+Let us proceed to see many examples of information that can be
+derived automatically or with very little user intervention.
+To aid in showing that things are not specific to
+\AgdaRecord{Monoid}, it is useful to have a second example in
+hand; it is also useful for this example to be ``unknown'' so
+that particular characteristics of the structure, or familiarity
+with the structure, do not obscure things. For this purpose,
+\AgdaRecord{Squag} will work nicely:
 \begin{code}
-record Monoid-Signature : Set₁ where
-  field
-    m : Set₀
-    e : m
-    _*_ : m → m → m
-
-record SubMonoid (A : Monoid) : Set₁ where
-  module a = Monoid A
-  field
-     B⊂A : Pred a.m lzero
-     B⊂A-contr : ∀ {x : a.m} → {p q : B⊂A x} → p ≡ q
-     e∈ : a.e ∈ B⊂A
-     closed : ∀ {x y : a.m} → B⊂A x → B⊂A y → B⊂A (x a.* y)
-
--- dependently typed cong₂
-cong₂D  :  {a b c : Level} {A : Set a} {B : A → Set b} {C : Set c} (f : (x : A) → B x → C)
-          →  {x₁ x₂ : A} {y₁ : B x₁} {y₂ : B x₂}
-          →  (x₁≡x₂ : x₁ ≡ x₂) → y₁ ≡ subst B (sym x₁≡x₂) y₂ → f x₁ y₁ ≡ f x₂ y₂
-cong₂D f refl refl = refl
-
-SubM⇒M : {A : Monoid} → SubMonoid A → Monoid
-SubM⇒M {mon m e _*_ left-unit right-unit assoc} record { B⊂A = B⊂A ; B⊂A-contr = contr; e∈ = e∈ ; closed = closed } =
-  mon m′ (e , e∈) _op_ left-unit′ (λ x → cong₂D _,_ (right-unit (proj₁ x)) contr)
-    (λ x y z → cong₂D _,_ (assoc (proj₁ x) (proj₁ y) (proj₁ z)) contr)
-  where
-    m′ : Set₀
-    m′ = Σ m B⊂A
-    _op_ : m′ → m′ → m′
-    (a , p) op (b , q) = (a * b , closed p q )
-    left-unit′ : (x : m′) → ((e , e∈) op x) ≡ x
-    left-unit′ (a , a⊂ ) = cong₂D _,_ (left-unit a) contr
-
-record Monoid-Homomorphism (A B : Monoid) : Set₁ where
+-- Yasmine, can you add Squag here please?
+\end{code}
+First, there is a general notion of homomorphism between
+theories: a mapping from the carrier of one theory to
+the other, that \emph{preserves} each of the operations:
+\begin{code}
+module Derived where
+record Homomorphism (A B : Monoid) : Set₁ where
   open Monoid
   module a = Monoid A
   module b = Monoid B
   field
     f : a.m → b.m
     pres-e : f a.e ≡ b.e
-    pres-* : (x y : a.m) → f (x a.* y) ≡ (f x) b.* (f y)
+    pres-* : ∀ x y → f (x a.* y) ≡ (f x) b.* (f y)
+\end{code}
 
-record Monoid-Identity-Homomorphism (A : Monoid) : Set₁ where
-  open Monoid
-  module a = Monoid A
+The above makes fundamental use of what is often called
+(in the Universal Algebra literature) the \emph{signature}
+of the theory:
+\begin{code}
+record Signature : Set₁ where
   field
-    f : a.m → a.m
-    equivalence : ∀ x → f x ≡ x
-    hom : (x y : a.m) → f (x a.* y) ≡ (f x) a.* (f y)
+    m : Set₀
+    e : m
+    _*_ : m → m → m
+\end{code}
+Of course, in a dependently-typed setting, Monoid itself is
+also called a signature, which can unfortunately lead to
+confusion.
 
-record Monoid-Homomorphism-Equality {A B : Monoid} (F G : Monoid-Homomorphism A B) : Set₁ where
-  module f = Monoid-Homomorphism F
-  module g = Monoid-Homomorphism G
+Observe how each item (field) of \AgdaRecord{Homomorphism}
+comes from one of \AgdaRecord{Signature}. This generalizes
+``on the nose'' for other theories.
+
+\begin{code}
+record Monoid-Homomorphism-Equality {A B : Monoid} (F G : Homomorphism A B) : Set₁ where
+  module f = Homomorphism F
+  module g = Homomorphism G
   field
     F≡G : ∀ a → f.f a ≡ g.f a
 
-record Monoid-Homomorphism-Kernel {A B : Monoid} (F : Monoid-Homomorphism A B) : Set₁ where
+record Monoid-Homomorphism-Kernel {A B : Monoid} (F : Homomorphism A B) : Set₁ where
   module a = Monoid A
   module b = Monoid B
-  module f = Monoid-Homomorphism F
+  module f = Homomorphism F
   field
     cond : Σ (a.m × a.m) λ { (x , y) → f.f x ≡ f.f y }
 
 record Monoid-Isomorphism (A B : Monoid) : Set₁ where
   open Monoid
-  open Monoid-Homomorphism
+  open Homomorphism
   field
-    A⇒B : Monoid-Homomorphism A B
+    A⇒B : Homomorphism A B
     g : m B → m A
     f∘g≡id : ∀ x → ((f A⇒B) F.∘ g) x ≡ F.id x
     g∘f≡id : ∀ x → (g F.∘ (f A⇒B)) x ≡ F.id x
 
 record Monoid-Endomorphism (A : Monoid) : Set₁ where
    open Monoid
-   open Monoid-Homomorphism
+   open Homomorphism
    field
-     A⇒A : Monoid-Homomorphism A A
+     A⇒A : Homomorphism A A
 
 record Monoid-Automorphism (A : Monoid) : Set₁ where
    open Monoid
@@ -162,8 +163,8 @@ record _×M_ (A B : Monoid) : Set₂ where
    constructor prod
    field
      ProdM : Monoid
-     Proj1 : Monoid-Homomorphism ProdM A
-     Proj2 : Monoid-Homomorphism ProdM B
+     Proj1 : Homomorphism ProdM A
+     Proj2 : Homomorphism ProdM B
 
 Cartesian-Product : (A : Monoid) → (B : Monoid) → A ×M B
 Cartesian-Product (mon m e _*_ left-unit right-unit assoc) (mon m₁ e₁ _*₁_ left-unit₁ right-unit₁ assoc₁) =
