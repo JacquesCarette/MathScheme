@@ -85,14 +85,15 @@ with the structure, do not obscure things. For this purpose,
 \AgdaRecord{Squag} will work nicely:
 \begin{code}
 record Squag : Set₁ where
-   constructor sq
-   field 
-     s : Set₀
-     _*_ : s → s → s
-     idempotent_* : ∀ x → x * x ≡ x
-     commutative_* : ∀ x y → x * y ≡ y * x
-     antiAbsorbent_* : ∀ x y → (x * (x * y)) ≡ (y)
+  constructor sq
+  field
+    s : Set₀
+    _*_ : s → s → s
+    idempotent : ∀ x → x * x ≡ x
+    commutative : ∀ x y → x * y ≡ y * x
+    antiAbsorbent : ∀ x y → x * (x * y) ≡ y
 \end{code}
+
 First, there is a general notion of homomorphism between
 theories: a mapping from the carrier of one theory to
 the other, that \emph{preserves} each of the operations. It is
@@ -170,7 +171,7 @@ record Isomorphism (A B : Monoid) : Set₁ where
 \end{code}
 
 From that, it is useful to create abbreviations for
-endomorphisms and automoprhisms:
+endomorphisms and automorphisms:
 \begin{code}
 Endomorphism : Monoid → Set₁
 Endomorphism A = Hom A A
@@ -179,6 +180,9 @@ Automorphism : Monoid → Set₁
 Automorphism A = Isomorphism A A
 \end{code}
 
+Another generic concept is that of \AgdaRecord{Kernel} of a
+homorphism, which is the set of pairs of points that map to
+the same value.
 \begin{code}
 record Kernel {A B : Monoid} (F : Hom A B) : Set₁ where
   open Monoid
@@ -186,13 +190,15 @@ record Kernel {A B : Monoid} (F : Hom A B) : Set₁ where
     x : m A
     y : m A
     cond : F $ x ≡ F $ y
+\end{code}
 
-foo : {A B : Set} → {ab : A × B} → {a : A} → {b : B} → proj₁ ab ≡ a → proj₂ ab ≡ b → ab ≡ (a , b)
-foo refl refl = refl
+It is then possible to prove (generically) that this
+induces an equivalence relation (on $A$) which is furthermore
+a congruence, which means that this can be used, at least in a
+classical setting, to form quotients.
 
-foo2 : {A B : Set} → A × B → A
-foo2 (a , b) = a
-
+Cartesian products also exist generically.
+\begin{code}
 record _×M_ (A B : Monoid) : Set₂ where
    constructor prod
    field
@@ -201,38 +207,101 @@ record _×M_ (A B : Monoid) : Set₂ where
      Proj2 : Hom ProdM B
 
 Cartesian-Product : (A : Monoid) → (B : Monoid) → A ×M B
-Cartesian-Product (mon m e _*_ left-unit right-unit assoc) (mon m₁ e₁ _*₁_ left-unit₁ right-unit₁ assoc₁) =
-   prod product (record { f = prod1 ; pres-e = refl ; pres-* = assoc1 }) (record { f = prod2 ; pres-e = refl ; pres-* = assoc2 })
+Cartesian-Product
+  (mon m e _*_ left-unit right-unit assoc)
+  (mon m₁ e₁ _*₁_ left-unit₁ right-unit₁ assoc₁) =
+   prod product (record { f = proj₁ ; pres-e = refl ; pres-* = pres-* })
+                (record { f = proj₂ ; pres-e = refl ; pres-* = pres-*₁ })
      where
-       mprod = (m × m₁)
-       eprod = (e , e₁)
+       e₂ = (e , e₁)
        _*₂_ = λ {(a , b) (c , d) → (a * c , b *₁ d)}
-       left-unit₂ : (x : mprod) → eprod *₂ x ≡ x
+       left-unit₂ : ∀ x → e₂ *₂ x ≡ x
        left-unit₂ (a , b) = cong₂ _,_ (left-unit a) (left-unit₁ b)
-       right-unit₂ : (x : mprod) → x *₂ eprod ≡ x
+       right-unit₂ : ∀ x → x *₂ e₂ ≡ x
        right-unit₂ (a , b) = cong₂ _,_ (right-unit a) (right-unit₁ b)
-       assoc₂ : (x y z : mprod) → (x *₂ y) *₂ z ≡ x *₂ (y *₂ z)
+       assoc₂ : ∀ x y z → (x *₂ y) *₂ z ≡ x *₂ (y *₂ z)
        assoc₂ (a , b) (c , d) (m , n) = cong₂ _,_ (assoc a c m) (assoc₁ b d n)
-       product = (mon mprod eprod _*₂_  left-unit₂ right-unit₂ assoc₂)
-       prod1 : mprod → m
-       prod1 (a , b) = a
-       prod2 : mprod → m₁
-       prod2 (a , b) = b
-       assoc1 : (x y : mprod) → prod1 (x *₂ y) ≡ (prod1 x) * (prod1 y)
-       assoc1 (a , b) (c , d) = refl
-       assoc2 : (x y : mprod) → prod2 (x *₂ y) ≡ (prod2 x) *₁ (prod2 y)
-       assoc2 (a , b) (c , d) = refl
+       product = (mon (m × m₁) e₂ _*₂_  left-unit₂ right-unit₂ assoc₂)
 
--- finally tagless representation of a theory
-record Lift_Monoid (rep : Set₀ → Set₀) (A : Monoid) : Set₁ where
-  module a = Monoid A
+       pres-* : ∀ x y → proj₁ (x *₂ y) ≡ (proj₁ x) * (proj₁ y)
+       pres-* (a , b) (c , d) = refl
+       pres-*₁ : ∀ x y → proj₂ (x *₂ y) ≡ (proj₂ x) *₁ (proj₂ y)
+       pres-*₁ (a , b) (c , d) = refl
+\end{code}
+
+In Agda, like in many other languages, we can also be abstract
+over representations, much like in ``finally tagless':
+\begin{code}
+record Symantics (rep : Set₀ → Set₀) (A : Monoid) : Set₁ where
+  a = Monoid.m A
   field
-    e′ : rep a.m
-    _*′_ : rep a.m → rep a.m → rep a.m
+    e : rep a
+    _*_ : rep a → rep a → rep a
+\end{code}
 
-data Monoid-Closed-Term : Set where
-  e : Monoid-Closed-Term
-  _*_ : Monoid-Closed-Term → Monoid-Closed-Term → Monoid-Closed-Term
+We can further choose to internalize the proofs too, as well as add
+a generic lifting operator -- though that will only really work for
+certain kinds of monoids. Note that Agda allows us to overload field
+names, but we must be careful with what we bring into scope when we
+work with these.
+
+The original definition of \AgdaRecord{Monoid} is not the only
+way to arrange things. For those familiar with Haskell typeclasses
+or Coq's canonical structures, it might also make sense to
+priviledge the carrier as follows:
+
+\begin{code}
+record Monoid′ (A : Set₀) : Set₀ where
+  field
+    e : A
+    _*_ : A → A → A
+    left-unit : ∀ x → e * x ≡ x
+    right-unit : ∀ x → x * e ≡ x
+    assoc : ∀ x y z → (x * y) * z ≡ x * (y * z)
+\end{code}
+
+There are definite advantages for doing this. First, we don't need
+to bump up the universe level, because now our monoid no longer
+\emph{contains} a type, rather it is \emph{parametrized} by a type.
+Second, certain mathematical statements are much simpler to state
+and prove.  For example, something like
+\textit{Given two monoid structures on the same carrier set $S$,
+show that $∀ x → e₂ *₂ (x *₁ e₁) ≡ x$}.
+\begin{code}
+module Try₁ where
+  postulate
+    S : Set
+    M₁ M₂ : Monoid′ S
+  open Monoid′ M₁ renaming (e to e₁; _*_ to _*₁_; right-unit to ru)
+  open Monoid′ M₂ renaming (e to e₂; _*_ to _*₂_; left-unit to lu)
+  stat : ∀ x → e₂ *₂ (x *₁ e₁) ≡ x
+  stat x = trans (lu _) (ru x)
+\end{code}
+If we attempt to do the same in the original setting, the
+formula $∀ x → e₂ *₂ (x *₁ e₁) ≡ x$ does not even typecheck! We have
+to resort so different contortions.  For example, if we forget about
+the name $S$, we can instead say
+\begin{code}
+module Try₂ where
+  postulate
+    M₁ M₂ : Monoid
+  open Monoid M₁ renaming (e to e₁; _*_ to _*₁_; right-unit to ru; m to m₁)
+  open Monoid M₂ renaming (e to e₂; _*_ to _*₂_; left-unit to lu; m to m₂)
+  postulate
+    eq : m₁ ≡ m₂
+  coe : {A B : Set} → A ≡ B → (a : A) → B
+  coe refl a = a
+  stat : (x : m₁) → e₂ *₂ (coe eq (x *₁ e₁)) ≡ coe eq x
+  stat x = trans (lu _) (cong (coe eq) (ru x))
+\end{code}
+which is not nearly as nice. NB: this isn't a problem specific to Agda,
+it is also present in Lean as well. It is a ``feature'' of MLTT.
+
+Going back to representing the ``language'' associated to a theory
+\begin{code}
+data CTerm : Set where
+  e : CTerm
+  _*_ : CTerm → CTerm → CTerm
 
 data Monoid-Open-Term (V : Setoid lzero lzero) : Set where
   v : Setoid.Carrier V → Monoid-Open-Term V
@@ -240,7 +309,7 @@ data Monoid-Open-Term (V : Setoid lzero lzero) : Set where
   _*_ : Monoid-Open-Term V → Monoid-Open-Term V → Monoid-Open-Term V
 
 -- evaluation : mapping a closed term from syntax to interpretation
-_⟦_⟧ : (A : Monoid) → Monoid-Closed-Term → Monoid.m A
+_⟦_⟧ : (A : Monoid) → CTerm → Monoid.m A
 A ⟦ e ⟧ = Monoid.e A
 A ⟦ x * y ⟧ = let _op_ = Monoid._*_ A in (A ⟦ x ⟧) op (A ⟦ y ⟧)
 
