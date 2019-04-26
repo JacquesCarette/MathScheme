@@ -105,6 +105,13 @@ record Homomorphism (A B : Monoid) : Set₁ where
     f : a.m → b.m
     pres-e : f a.e ≡ b.e
     pres-* : ∀ x y → f (x a.* y) ≡ (f x) b.* (f y)
+record Squag-Homomorphism (A B : Squag) : Set₁ where
+   open Squag
+   module a = Squag A
+   module b = Squag B
+   field
+     f : a.s → b.s
+     pres-* : ∀ x y → f (x a.* y) ≡ (f x) b.* (f y) 
 \end{code}
 
 The above makes fundamental use of what is often called
@@ -116,6 +123,10 @@ record Signature : Set₁ where
     m : Set₀
     e : m
     _*_ : m → m → m
+record Squag-Signature : Set₁ where
+  field
+    m : Set₀
+    e : m 
 \end{code}
 Of course, in a dependently-typed setting, Monoid itself is
 also called a signature, which can unfortunately lead to
@@ -131,6 +142,11 @@ record Monoid-Homomorphism-Equality {A B : Monoid} (F G : Homomorphism A B) : Se
   module g = Homomorphism G
   field
     F≡G : ∀ a → f.f a ≡ g.f a
+record Squag-Homomorphism-Equality {A B : Squag} (F G : Squag-Homomorphism A B) : Set₁ where
+  module f = Squag-Homomorphism F
+  module g = Squag-Homomorphism G
+  field
+    F≡G : ∀ a → f.f a ≡ g.f a
 
 record Monoid-Homomorphism-Kernel {A B : Monoid} (F : Homomorphism A B) : Set₁ where
   module a = Monoid A
@@ -138,6 +154,12 @@ record Monoid-Homomorphism-Kernel {A B : Monoid} (F : Homomorphism A B) : Set₁
   module f = Homomorphism F
   field
     cond : Σ (a.m × a.m) λ { (x , y) → f.f x ≡ f.f y }
+record Squag-Homomorphism-Kernel {A B : Squag} (F : Squag-Homomorphism A B) : Set₁ where
+  module a = Squag A
+  module b = Squag B
+  module f = Squag-Homomorphism F
+  field
+    cond : Σ (a.s × a.s) λ { (x , y) → f.f x ≡ f.f y }
 
 record Monoid-Isomorphism (A B : Monoid) : Set₁ where
   open Monoid
