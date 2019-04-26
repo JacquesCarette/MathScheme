@@ -137,6 +137,7 @@ homomorphisms could be. So we compute the ``signature''
 of \AgdaRecord{Hom} and insist that each field be
 appropritely related.  In particular, for functions,
 this is going to be pointwise:
+
 \begin{code}
 _∼_ : {A B : Set} (f g : A → B) → Set
 f ∼ g = ∀ a → f a ≡ g a
