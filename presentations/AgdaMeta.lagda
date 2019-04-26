@@ -12,6 +12,7 @@ thus not as well suited for clear communication.
 \begin{code}
 module AgdaMeta where
 
+open import Relation.Nullary
 open import Relation.Unary
 open import Relation.Binary
 import Function as F
@@ -19,6 +20,9 @@ open F using (id; _∘_)
 open import Agda.Primitive
 open import Data.Product
 open import Relation.Binary.PropositionalEquality
+open import Data.Nat using (ℕ; _+_; _>_; s≤s; z≤n)
+open import Data.Unit using (⊤)
+open import Data.Empty using (⊥)
 
 open ≡-Reasoning
 \end{code}
@@ -58,7 +62,13 @@ each with arity $≥ 0$
 \end{itemize}
 Naturally, each one of these can be generalized, but each such
 generalization brings in non-trivial difficulties that obscure
-the great usefullness of the common core. The above coincides
+the great usefullness of the common core.
+
+For later convenience, let us call each kind of definition
+\textbf{sorts}, \textbf{operations} and \textbf{equations}
+respectively.
+
+The above coincides
 exactly with \textsf{Universal Algebra} as initiated by
 Alfred North Whitehead in his 1898 book \textit{A Treatise of Universal
 Algebra}.
@@ -126,11 +136,23 @@ record Signature : Set₁ where
 \end{code}
 Of course, in a dependently-typed setting, Monoid itself is
 also called a signature, which can unfortunately lead to
-confusion.
+confusion. What is important to notice here is that it ought to
+be possible to write the follow meta-program:
+
+\begin{pseudocode}
+derive Signature = filter (not equations) ''Monoid
+\end{pseudocode}
 
 Observe how each item (field) of \AgdaRecord{Hom}
 comes from one of \AgdaRecord{Signature}. This generalizes
-``on the nose'' for other theories.
+``on the nose'' for other theories.  So homomorphisms can be
+given generically by
+\begin{pseudocode}
+derive Hom foo = apply
+  { sorts      |-> map
+  ; operations |-> preserve
+  } (filter (not equations) foo)
+\end{pseudocode}
 
 For example, we can look at what equality of two
 homomorphisms could be. So we compute the ``signature''
@@ -192,6 +214,9 @@ record Kernel {A B : Monoid} (F : Hom A B) : Set₁ where
     y : m A
     cond : F $ x ≡ F $ y
 \end{code}
+\AgdaRecord{Kernel} is essentially generic, and can be derived
+as a template -- unlike previous definitions, which really do need
+simple but ``real'' programs to be run on the representations.
 
 It is then possible to prove (generically) that this
 induces an equivalence relation (on $A$) which is furthermore
@@ -229,22 +254,6 @@ Cartesian-Product
        pres-*₁ : ∀ x y → proj₂ (x *₂ y) ≡ (proj₂ x) *₁ (proj₂ y)
        pres-*₁ (a , b) (c , d) = refl
 \end{code}
-
-In Agda, like in many other languages, we can also be abstract
-over representations, much like in ``finally tagless':
-\begin{code}
-record Symantics (rep : Set₀ → Set₀) (A : Monoid) : Set₁ where
-  a = Monoid.m A
-  field
-    e : rep a
-    _*_ : rep a → rep a → rep a
-\end{code}
-
-We can further choose to internalize the proofs too, as well as add
-a generic lifting operator -- though that will only really work for
-certain kinds of monoids. Note that Agda allows us to overload field
-names, but we must be careful with what we bring into scope when we
-work with these.
 
 The original definition of \AgdaRecord{Monoid} is not the only
 way to arrange things. For those familiar with Haskell typeclasses
@@ -298,28 +307,184 @@ module Try₂ where
 which is not nearly as nice. NB: this isn't a problem specific to Agda,
 it is also present in Lean as well. It is a ``feature'' of MLTT.
 
-Going back to representing the ``language'' associated to a theory
+Here what we want to do is along the lines of
+\begin{pseudocode}
+derive Monoid′ = hoist sorts
+\end{pseudocode}
+In the Agda standard library, another variation is used. Here we present
+a simplified version, as the actual version (correctly!) takes advantage
+of the fact that there is structure on theories as well.
 \begin{code}
-data CTerm : Set where
-  e : CTerm
-  _*_ : CTerm → CTerm → CTerm
-
-data Monoid-Open-Term (V : Setoid lzero lzero) : Set where
-  v : Setoid.Carrier V → Monoid-Open-Term V
-  e : Monoid-Open-Term V
-  _*_ : Monoid-Open-Term V → Monoid-Open-Term V → Monoid-Open-Term V
-
--- evaluation : mapping a closed term from syntax to interpretation
-_⟦_⟧ : (A : Monoid) → CTerm → Monoid.m A
-A ⟦ e ⟧ = Monoid.e A
-A ⟦ x * y ⟧ = let _op_ = Monoid._*_ A in (A ⟦ x ⟧) op (A ⟦ y ⟧)
-
--- record Monoid_Signature_Expansion (A : Monoid_Signature) : Set₁ where
---   open Monoid_Signature
---   module a = Monoid_Signature A
---   field
---     b : Monoid_Signature
---      subset : a.m ⊆ b.m
---      func_eq : ∀ f
-
+record IsMonoid {A : Set} (_*_ : A → A → A) (e : A) : Set where
+  field
+    left-unit : ∀ x → e * x ≡ x
+    right-unit : ∀ x → x * e ≡ x
+    assoc : ∀ x y z → (x * y) * z ≡ x * (y * z)
 \end{code}
+
+This could be written as
+\begin{pseudocode}
+derive IsMonoid = hoist-implicit sorts $
+  hoist-expanded operations ''Monoid
+\end{pseudocode}
+
+Going back to representing the ``language'' associated to a theory,
+we can shift from the labelled-product form of the Signature record
+to the labelled-sum form, i.e. an algebraic data type:
+\begin{code}
+module Closed where
+  data CTerm : Set where
+    e : CTerm
+    _*_ : CTerm → CTerm → CTerm
+\end{code}
+
+Naturally, for \AgdaRecord{Monoid}, this is not particularly interesting,
+unlike for \AgdaRecord{SemiRing} (say).
+
+Nevertheless, we can still usefully write some generic functions,
+such as mapping a closed term from its syntax tree to its
+interpretation in that monoid, a generic length function, and
+a generic (decidable) equality on the syntax.
+\begin{code}
+  _⟦_⟧ : (A : Monoid) → CTerm → Monoid.m A
+  A ⟦ e ⟧ = Monoid.e A
+  A ⟦ x * y ⟧ = let _++_ = Monoid._*_ A in (A ⟦ x ⟧) ++ (A ⟦ y ⟧)
+
+  length : CTerm → ℕ
+  length e = 1
+  length (x * y) = 1 + length x + length y
+
+  _≈CT_ : Rel CTerm lzero
+  e ≈CT e = ⊤
+  e ≈CT (b * b₁) = ⊥
+  (a * a₁) ≈CT e = ⊥
+  (a * a₁) ≈CT (b * b₁) = a ≈CT b × a₁ ≈CT b₁
+\end{code}
+
+Of course, much more useful is a type that may contain
+\emph{free variables}, i.e. open terms.  As we'd like to maintain decidable
+equality of our syntax trees, we'll insist that our variables
+come from a \emph{decidable setoid}.
+\begin{code}
+module Open where
+  data OTerm (V : DecSetoid lzero lzero) : Set where
+    v : DecSetoid.Carrier V → OTerm V
+    e : OTerm V
+    _*_ : OTerm V → OTerm V → OTerm V
+\end{code}
+The overall code remains straightforward, but we can illustrate the
+interpreter to see the kind of adjustment needed. The attentive
+reader will recognize this as a non-trivial \textsf{catamorphism}
+for the algebra of open terms over the language of monoids.
+\begin{code}
+  module Interpret {V : DecSetoid lzero lzero} (A : Monoid) where
+    open DecSetoid V renaming (Carrier to c)
+    open Monoid A renaming (m to a; e to zero; _*_ to _*₀_)
+    open OTerm
+    ⟦_⟧_ : OTerm V → (c → a) → a
+    ⟦ v x ⟧ σ = σ x
+    ⟦ e ⟧ σ = zero
+    ⟦ t * t₁ ⟧ σ = (⟦ t ⟧ σ) *₀ (⟦ t₁ ⟧ σ)
+
+    length : OTerm V → ℕ
+    length (v _) = 1
+    length e = 1
+    length (x * y) = 1 + length x + length y
+\end{code}
+We can use such open terms as part of a generic language of
+\emph{formulas}, so that we can then reify the syntax of the
+equations too.
+\begin{code}
+    infix 5 _≃_
+    data Formula : Set where
+      _≃_ : OTerm V → OTerm V → Formula
+    lhs : Formula → OTerm V
+    lhs (a ≃ _) = a
+    rhs : Formula → OTerm V
+    rhs (_ ≃ b) = b
+\end{code}
+But we can go further and look at the
+(dependently typed!) induction principle associated to
+\AgdaRecord{OTerm}.
+\begin{code}
+    induction : (P : OTerm V → Set) → (∀ (x : c) → P (v x)) → P e
+      → (∀ x y → P (x * y)) → ∀ (y : OTerm V) → P y
+    induction P vars zer pr (v x)    = vars x
+    induction P vars zer pr e        = zer
+    induction P vars zer pr (t * t₁) = pr t t₁
+\end{code}
+
+For simplicity, let's fix $V$ to be characters.
+\begin{code}
+  module Example (B : Monoid) where
+    import Data.Char as C
+    CharSetoid : DecSetoid lzero lzero
+    CharSetoid = StrictTotalOrder.decSetoid C.strictTotalOrder
+    open Interpret {CharSetoid} B
+    OT = OTerm CharSetoid
+
+    left-unit-term : Formula
+    left-unit-term = e * v 'x' ≃ v 'x'
+    assoc-term : Formula
+    assoc-term = v 'x' * (v 'y' * v 'z') ≃ (v 'x' * v 'y') * v 'z'
+\end{code}
+
+The ``obvious'' idea is then to filter the formulas, and only
+use the ones that reduce the length when oriented.  If we bias
+things from left-to-right, this gives:
+\begin{code}
+    reduces : Formula → Set
+    reduces F = length (lhs F) > length (rhs F)
+
+    left-unit-reduces : reduces left-unit-term
+    left-unit-reduces = s≤s (s≤s z≤n)
+
+    not-assoc-reduces : ¬ (reduces assoc-term)
+    not-assoc-reduces = λ { (s≤s (s≤s (s≤s (s≤s (s≤s ())))))}
+\end{code}
+Those proofs are ugly, but automatic. In any case, what they
+really allow is to induce a rewriting which preserves meaning
+and terminating. It is incomplete!  We need to be smarter to
+make it complete (left to another day, as that is not easy).
+
+\begin{code}
+    simp : OT → OT
+    simp (v x) = v x
+    simp e = e
+    simp (e * y) = simp y
+    simp (v x * y) = v x * simp y
+    simp (x@(_ * _) * v y) = simp x * v y
+    simp (x@(_ * _) * e) = simp x
+    simp (x@(_ * _) * y@(_ * _)) = simp x * simp y
+
+    _++_ = Monoid._*_ B
+    coherence : ∀ x σ → ⟦ x ⟧ σ ≡ ⟦ simp x ⟧ σ
+    coherence (v x) σ = refl
+    coherence e σ = refl
+    coherence (v x * x₁) σ = cong (λ z → (σ x) ++ z) (coherence x₁ σ)
+    coherence (e * x₁) σ = trans (Monoid.left-unit B _) (coherence x₁ σ)
+    coherence (x@(_ * _) * v x₁) σ = cong (λ z → z ++ σ x₁) (coherence x σ)
+    coherence (x@(_ * _) * e) σ = trans (Monoid.right-unit B _) (coherence x σ)
+    coherence (x@(_ * _) * y@(_ * _)) σ = cong₂ _++_ (coherence x σ) (coherence y σ)
+\end{code}
+
+In Agda, like in many other languages, we can also be abstract
+over representations, much like in ``finally tagless':
+\begin{code}
+module Tagless where
+  record Symantics (rep : Set₀ → Set₀) (A : Monoid) : Set₁ where
+    a = Monoid.m A
+    field
+      e : rep a
+      _*_ : rep a → rep a → rep a
+\end{code}
+
+We can further choose to internalize the proofs too, as well as add
+a generic lifting operator -- though that will only really work for
+certain kinds of monoids. Note that Agda allows us to overload field
+names, but we must be careful with what we bring into scope when we
+work with these.
+
+From here, one can continue and define a \AgdaType{Code} type that
+simulates \textsf{metaocaml}'s, and from there to put all things together
+to generate a \textbf{partial evaluator} for the term language.
