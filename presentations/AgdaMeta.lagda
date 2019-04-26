@@ -112,7 +112,7 @@ infixr 20 _$_
 _$_ : {A B : Monoid} → Hom A B → (Monoid.m A → Monoid.m B)
 H $ x = Hom.f H x
 
-record Squag-Homomorphism (A B : Squag) : Set₁ where
+record Squag-Hom (A B : Squag) : Set₁ where
    open Squag
    module a = Squag A
    module b = Squag B
@@ -157,12 +157,9 @@ record Hom-Equality {A B : Monoid} (F G : Hom A B) : Set₁ where
   field
     F≡G : Hom.f F ∼ Hom.f G
 
-
-record Squag-Homomorphism-Equality {A B : Squag} (F G : Squag-Homomorphism A B) : Set₁ where
-  module f = Squag-Homomorphism F
-  module g = Squag-Homomorphism G
+record Squag-Hom-Equality {A B : Squag} (F G : Squag-Hom A B) : Set₁ where
   field
-    F≡G : ∀ a → f.f a ≡ g.f a
+    F≡G : Squag-Hom.f F ∼ Squag-Hom.f G
     
 \end{code}
 
@@ -214,10 +211,10 @@ foo refl refl = refl
 foo2 : {A B : Set} → A × B → A
 foo2 (a , b) = a
 
-record Squag-Homomorphism-Kernel {A B : Squag} (F : Squag-Homomorphism A B) : Set₁ where
+record Squag-Homo-Kernel {A B : Squag} (F : Squag-Hom A B) : Set₁ where
   module a = Squag A
   module b = Squag B
-  module f = Squag-Homomorphism F
+  module f = Squag-Hom F
   field
     cond : Σ (a.s × a.s) λ { (x , y) → f.f x ≡ f.f y }
 
