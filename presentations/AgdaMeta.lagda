@@ -23,6 +23,7 @@ open ≡-Reasoning
 \end{code}
 }
 
+Our primary example will be Monoid:
 \begin{code}
 record Monoid : Set₁ where
   constructor mon
@@ -33,7 +34,41 @@ record Monoid : Set₁ where
     left-unit : ∀ x → e * x ≡ x
     right-unit : ∀ x → x * e ≡ x
     assoc : ∀ x y z → (x * y) * z ≡ x * (y * z)
+\end{code}
 
+A Monoid is over a type, has a distinguished point in that type
+and a (total) binary operation over that type. There are also three
+axioms: that the point is a left and right unit for the operation,
+and that the operation is associative. Note that we choose to use
+propositional equality for the axioms.
+
+In general, we will here consider particular kinds of \emph{theories},
+for which we know how to manipulate definitions. These are not
+particularly restrictive as most theories from traditional Algebra
+fit.  Specifically, we'll look closely at
+\emph{1-sorted finitary equational theories}, meaning that
+we have
+\begin{itemize}
+\item a single carrier set (1-sorted)
+\item we declare finitely many symbols, each with arity $≥ 0$
+\item the axioms are all of the form
+\[ ∀ x y z. term ≡ term \]
+\end{itemize}
+Naturally, each one of these can be generalized, but each such
+generalization brings in non-trivial difficulties that obscure
+the great usefullness of the common core. Our motto here:
+
+\begin{centering}
+\Large Make easy things easy
+\end{centering}
+
+A lot of CS research focuses on the other end of the spectrum,
+perhaps aptly phrased as \emph{Make hard things feasible}. Our aim
+is to create tools for humans to \emph{automate drudgery} so that
+they may spend more time on aspects where creativity and insight
+are actually needed.
+
+\begin{code}
 record Monoid-Signature : Set₁ where
   field
     m : Set₀
