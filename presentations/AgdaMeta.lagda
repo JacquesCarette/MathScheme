@@ -14,7 +14,8 @@ module AgdaMeta where
 
 open import Relation.Unary
 open import Relation.Binary
-open import Function as F
+import Function as F
+open F using (id; _∘_)
 open import Agda.Primitive
 open import Data.Product
 open import Relation.Binary.PropositionalEquality
@@ -94,10 +95,11 @@ record Squag : Set₁ where
 \end{code}
 First, there is a general notion of homomorphism between
 theories: a mapping from the carrier of one theory to
-the other, that \emph{preserves} each of the operations:
+the other, that \emph{preserves} each of the operations. It is
+customary to shorten the name to $\AgdaRecord{Hom}$.
 \begin{code}
 module Derived where
-record Homomorphism (A B : Monoid) : Set₁ where
+record Hom (A B : Monoid) : Set₁ where
   open Monoid
   module a = Monoid A
   module b = Monoid B
@@ -105,6 +107,11 @@ record Homomorphism (A B : Monoid) : Set₁ where
     f : a.m → b.m
     pres-e : f a.e ≡ b.e
     pres-* : ∀ x y → f (x a.* y) ≡ (f x) b.* (f y)
+
+infixr 20 _$_
+_$_ : {A B : Monoid} → Hom A B → (Monoid.m A → Monoid.m B)
+H $ x = Hom.f H x
+
 record Squag-Homomorphism (A B : Squag) : Set₁ where
    open Squag
    module a = Squag A
@@ -132,55 +139,74 @@ Of course, in a dependently-typed setting, Monoid itself is
 also called a signature, which can unfortunately lead to
 confusion.
 
-Observe how each item (field) of \AgdaRecord{Homomorphism}
+Observe how each item (field) of \AgdaRecord{Hom}
 comes from one of \AgdaRecord{Signature}. This generalizes
 ``on the nose'' for other theories.
 
+For example, we can look at what equality of two
+homomorphisms could be. So we compute the ``signature''
+of \AgdaRecord{Hom} and insist that each field be
+appropritely related.  In particular, for functions,
+this is going to be pointwise:
 \begin{code}
-record Monoid-Homomorphism-Equality {A B : Monoid} (F G : Homomorphism A B) : Set₁ where
-  module f = Homomorphism F
-  module g = Homomorphism G
+
+_∼_ : {A B : Set} (f g : A → B) → Set
+f ∼ g = ∀ a → f a ≡ g a
+
+record Hom-Equality {A B : Monoid} (F G : Hom A B) : Set₁ where
   field
-    F≡G : ∀ a → f.f a ≡ g.f a
+    F≡G : Hom.f F ∼ Hom.f G
+
+
 record Squag-Homomorphism-Equality {A B : Squag} (F G : Squag-Homomorphism A B) : Set₁ where
   module f = Squag-Homomorphism F
   module g = Squag-Homomorphism G
   field
     F≡G : ∀ a → f.f a ≡ g.f a
+    
+\end{code}
 
-record Monoid-Homomorphism-Kernel {A B : Monoid} (F : Homomorphism A B) : Set₁ where
-  module a = Monoid A
-  module b = Monoid B
-  module f = Homomorphism F
-  field
-    cond : Σ (a.m × a.m) λ { (x , y) → f.f x ≡ f.f y }
-record Squag-Homomorphism-Kernel {A B : Squag} (F : Squag-Homomorphism A B) : Set₁ where
-  module a = Squag A
-  module b = Squag B
-  module f = Squag-Homomorphism F
-  field
-    cond : Σ (a.s × a.s) λ { (x , y) → f.f x ≡ f.f y }
-
-record Monoid-Isomorphism (A B : Monoid) : Set₁ where
+Other similar notions can also be defined. A minimalist version
+of \emph{isomorphism} requires a (forward) homomorphism
+between two monoids, and a mere inverse function. This is because
+one can then prove that such a function is necessarily a homomorphism.
+\begin{code}
+record Isomorphism (A B : Monoid) : Set₁ where
   open Monoid
-  open Homomorphism
+  open Hom
   field
-    A⇒B : Homomorphism A B
+    A⇒B : Hom A B
     g : m B → m A
-    f∘g≡id : ∀ x → ((f A⇒B) F.∘ g) x ≡ F.id x
-    g∘f≡id : ∀ x → (g F.∘ (f A⇒B)) x ≡ F.id x
+    f∘g≡id : (f A⇒B ∘ g) ∼ id
+    g∘f≡id : (g ∘ f A⇒B) ∼ id
 
-record Monoid-Endomorphism (A : Monoid) : Set₁ where
-   open Monoid
-   open Homomorphism
-   field
-     A⇒A : Homomorphism A A
+  inv-is-Hom : Hom B A
+  inv-is-Hom = record
+    { f = g
+    ; pres-e = trans (sym (cong g (pres-e A⇒B))) (g∘f≡id (e A))
+    ; pres-* = λ x y →  trans (cong g (sym (cong₂ (_*_ B) (f∘g≡id x) (f∘g≡id y))))
+               (trans (cong g (sym (pres-* A⇒B (g x) (g y))))
+               (g∘f≡id _))
+    }
+\end{code}
 
-record Monoid-Automorphism (A : Monoid) : Set₁ where
-   open Monoid
-   open Monoid-Isomorphism
-   field
-     A⇒A : Monoid-Isomorphism A A
+From that, it is useful to create abbreviations for
+endomorphisms and automoprhisms:
+\begin{code}
+Endomorphism : Monoid → Set₁
+Endomorphism A = Hom A A
+
+Automorphism : Monoid → Set₁
+Automorphism A = Isomorphism A A
+\end{code}
+
+\begin{code}
+record Kernel {A B : Monoid} (F : Hom A B) : Set₁ where
+  open Monoid
+  field
+    x : m A
+    y : m A
+    cond : F $ x ≡ F $ y
 
 foo : {A B : Set} → {ab : A × B} → {a : A} → {b : B} → proj₁ ab ≡ a → proj₂ ab ≡ b → ab ≡ (a , b)
 foo refl refl = refl
@@ -188,12 +214,19 @@ foo refl refl = refl
 foo2 : {A B : Set} → A × B → A
 foo2 (a , b) = a
 
+record Squag-Homomorphism-Kernel {A B : Squag} (F : Squag-Homomorphism A B) : Set₁ where
+  module a = Squag A
+  module b = Squag B
+  module f = Squag-Homomorphism F
+  field
+    cond : Σ (a.s × a.s) λ { (x , y) → f.f x ≡ f.f y }
+
 record _×M_ (A B : Monoid) : Set₂ where
    constructor prod
    field
      ProdM : Monoid
-     Proj1 : Homomorphism ProdM A
-     Proj2 : Homomorphism ProdM B
+     Proj1 : Hom ProdM A
+     Proj2 : Hom ProdM B
 
 Cartesian-Product : (A : Monoid) → (B : Monoid) → A ×M B
 Cartesian-Product (mon m e _*_ left-unit right-unit assoc) (mon m₁ e₁ _*₁_ left-unit₁ right-unit₁ assoc₁) =
