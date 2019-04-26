@@ -83,7 +83,14 @@ that particular characteristics of the structure, or familiarity
 with the structure, do not obscure things. For this purpose,
 \AgdaRecord{Squag} will work nicely:
 \begin{code}
--- Yasmine, can you add Squag here please?
+record Squag : Set₁ where
+   constructor sq
+   field 
+     s : Set₀
+     _*_ : s → s → s
+     idempotent_* : ∀ x → x * x ≡ x
+     commutative_* : ∀ x y → x * y ≡ y * x
+     antiAbsorbent_* : ∀ x y → (x * (x * y)) ≡ (y)
 \end{code}
 First, there is a general notion of homomorphism between
 theories: a mapping from the carrier of one theory to
