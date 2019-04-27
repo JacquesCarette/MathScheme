@@ -169,14 +169,14 @@ of the theory:
 \begin{code}
 record Signature : Set₁ where
   field
-    m : Set₀
-    e : m
-    _⨾_ : m → m → m
+    Carrier : Set₀
+    Id      : Carrier
+    _⨾_     : Carrier → Carrier → Carrier
 \end{code}
-Of course, in a dependently-typed setting, Monoid itself is
-also called a signature, which can unfortunately lead to
+Of course, in a dependently-typed setting, all records, including Monoid itself, are
+also called signatures, which can unfortunately lead to
 confusion. What is important to notice here is that it ought to
-be possible to write the follow meta-program:
+be possible to write the follow TemplateHaskell-like meta-program:
 
 \begin{pseudocode}
 derive Signature = filter (not equations) ''Monoid
@@ -193,6 +193,8 @@ derive Hom foo = apply
   } (filter (not equations) foo)
 \end{pseudocode}
 
+\fbox{\textbf{MA: This syntax requires some explanation. }}
+
 For example, we can look at what equality of two
 homomorphisms could be. So we compute the ``signature''
 of \AgdaRecord{Hom} and insist that each field be
@@ -203,9 +205,8 @@ this is going to be pointwise:
 _∼_ : {A B : Set} (f g : A → B) → Set
 f ∼ g = ∀ a → f a ≡ g a
 
-record Hom-Equality {A B : Monoid} (F G : Hom A B) : Set₁ where
-  field
-    F≡G : Hom.mor F ∼ Hom.mor G
+Hom-Equality : ∀ {A B : Monoid} (F G : Hom A B) → Set
+Hom-Equality F G = Hom.mor F ∼ Hom.mor G
 \end{code}
 
 Other similar notions can also be defined. A minimalist version
