@@ -44,6 +44,33 @@ record Monoid : Set₁ where
     left-unit  : ∀ x → Id ⨾ x ≡ x
     right-unit : ∀ x → x ⨾ Id ≡ x
     assoc      : ∀ x y z → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
+
+-- Sometimes we need to produce phrases involving multiple monoids;
+-- we thus introduce the following decorations.
+--
+-- It would be nice if we could “generate” such tediousness.
+
+module Monoid₁ (M : Monoid) where
+  open Monoid M public renaming
+    ( Carrier    to Carrier₁
+    ; Id         to Id₁
+    ; _⨾_        to _⨾₁_
+    ; left-unit  to left-unit₁
+    ; right-unit to right-unit₁
+    ; assoc      to assoc₁
+    )
+
+module Monoid₂ (M : Monoid) where
+  open Monoid M public renaming
+    ( Carrier    to Carrier₂
+    ; Id         to Id₂
+    ; _⨾_        to _⨾₂_
+    ; left-unit  to left-unit₂
+    ; right-unit to right-unit₂
+    ; assoc      to assoc₂
+    )
+
+-- Monoid₃, Monoid₄, etc, …
 \end{code}
 
 A Monoid has a type, along with a distinguished point in that type
@@ -112,24 +139,28 @@ record Squag : Set₁ where
     antiAbsorbent : ∀ x y → x ⨾ (x ⨾ y) ≡ y
 \end{code}
 
+We now turn to some mechanically derivable notions
+--for which there is sadly no machine support, yet, in Agda.
+\begin{code}
+module Derived where
+\end{code}
+
 First, there is a general notion of homomorphism between
-theories: a mapping from the carrier of one theory to
+theories: A mapping from the carrier of one theory to
 the other, that \emph{preserves} each of the operations. It is
 customary to shorten the name to $\AgdaRecord{Hom}$.
 \begin{code}
-module Derived where
 record Hom (A B : Monoid) : Set₁ where
-  open Monoid
-  module a = Monoid A
-  module b = Monoid B
+  open Monoid₁ A; open Monoid₂ B
   field
-    f : a.Carrier → b.Carrier
-    pres-e : f a.Id ≡ b.Id
-    pres-⨾ : ∀ x y → f (x a.⨾ y) ≡ (f x) b.⨾ (f y)
+    mor    : Carrier₁ → Carrier₂
+    pres-e : mor Id₁ ≡ Id₂
+    pres-⨾ : ∀ x y → mor (x ⨾₁ y) ≡ (mor x) ⨾₂ (mor y)
 
+-- “Apply” a homomorphism onto an element
 infixr 20 _$_
 _$_ : {A B : Monoid} → Hom A B → (Monoid.Carrier A → Monoid.Carrier B)
-H $ x = Hom.f H x
+F $ x = Hom.mor F x
 \end{code}
 
 The above makes fundamental use of what is often called
@@ -174,7 +205,7 @@ f ∼ g = ∀ a → f a ≡ g a
 
 record Hom-Equality {A B : Monoid} (F G : Hom A B) : Set₁ where
   field
-    F≡G : Hom.f F ∼ Hom.f G
+    F≡G : Hom.mor F ∼ Hom.mor G
 \end{code}
 
 Other similar notions can also be defined. A minimalist version
@@ -188,12 +219,12 @@ record Isomorphism (A B : Monoid) : Set₁ where
   field
     A⇒B : Hom A B
     g : Carrier B → Carrier A
-    f∘g≡id : (f A⇒B ∘ g) ∼ id
-    g∘f≡id : (g ∘ f A⇒B) ∼ id
+    f∘g≡id : (mor A⇒B ∘ g) ∼ id
+    g∘f≡id : (g ∘ mor A⇒B) ∼ id
 
   inv-is-Hom : Hom B A
   inv-is-Hom = record
-    { f = g
+    { mor = g
     ; pres-e = trans (sym (cong g (pres-e A⇒B))) (g∘f≡id (Id A))
     ; pres-⨾ = λ x y →  trans (cong g (sym (cong₂ (_⨾_ B) (f∘g≡id x) (f∘g≡id y))))
                (trans (cong g (sym (pres-⨾ A⇒B (g x) (g y))))
@@ -244,8 +275,8 @@ Cartesian-Product : (A : Monoid) → (B : Monoid) → A ×M B
 Cartesian-Product
   (mon m e _⨾_ left-unit right-unit assoc)
   (mon m₁ e₁ _⨾₁_ left-unit₁ right-unit₁ assoc₁) =
-   prod product (record { f = proj₁ ; pres-e = refl ; pres-⨾ = pres-⨾ })
-                (record { f = proj₂ ; pres-e = refl ; pres-⨾ = pres-⨾₁ })
+   prod product (record { mor = proj₁ ; pres-e = refl ; pres-⨾ = pres-⨾ })
+                (record { mor = proj₂ ; pres-e = refl ; pres-⨾ = pres-⨾₁ })
      where
        e₂ = (e , e₁)
        _⨾₂_ = λ {(a , b) (c , d) → (a ⨾ c , b ⨾₁ d)}
