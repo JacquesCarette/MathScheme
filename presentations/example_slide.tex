@@ -1,0 +1,120 @@
+\documentclass{beamer}
+\setcounter{errorcontextlines}{100}
+%\usepackage[T1]{fontenc}
+%\usepackage{charter}
+\usepackage{graphicx}
+\usepackage{eulervm}
+\usepackage{amssymb,amsmath,amscd}
+%\usepackage{colortbl}
+\usepackage{comment}
+\usepackage{multicol}
+
+\usepackage{tikz}
+\usepackage{listings}
+
+\usepackage{color}
+\usepackage{stmaryrd,bbm,mathtools}
+
+\usetheme{Boadilla}
+\usecolortheme{crane}
+\useoutertheme{split}
+\setbeamercolor{alerted text}{fg=red!80!craneorange!80!fg}
+\setbeamersize{text margin left=2mm,text margin right=2mm}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+%%%%%%%%%%% Some useful definitions
+
+\newcommand{\thy}[1]{\texttt{#1}}
+\newcommand{\B}{\mathbbm{B}}
+\newcommand{\E}{\mathbbm{E}}
+\newcommand{\V}{\mathbbm{V}}
+\newcommand{\N}{\mathbbm{N}}
+\newcommand{\EmpThy}{\left\langle\,\right\rangle}
+
+\newcommand{\semantics}[2]{\ensuremath{\llbracket{#2}\rrbracket_{#1}}}
+\newcommand{\semC}[1]{\semantics{\B}{#1}}
+\newcommand{\semE}[1]{\semantics{\E}{#1}}
+\newcommand{\semP}[1]{\semantics{\pi}{#1}}
+\newcommand{\partialf}{\rightharpoonup}
+
+\newcommand{\ctx}[4]{\ensuremath{\left\langle #1:#2 \right\rangle_{#3}^{#4}}}
+\newcommand{\ren}[4]{\ensuremath{\left[ #1\mapsto #2 \right]_{#3}^{#4}}}
+\newcommand{\ctxcat}{\fatsemi}
+
+\newcommand{\tmop}[1]{\ensuremath{\operatorname{#1}}}
+\newcommand{\tmtexttt}[1]{{\ttfamily{#1}}}
+\newcommand{\assign}{:=}
+\newcommand{\tmdfn}[1]{\textbf{#1}}
+
+\def\sem#1{\llbracket #1 \rrbracket}
+
+\newbox\gnBoxA
+\newdimen\gnCornerHgt
+\setbox\gnBoxA=\hbox{$\ulcorner$}
+\global\gnCornerHgt=\ht\gnBoxA
+\newdimen\gnArgHgt
+
+
+\def\Syntax #1{%
+	\setbox\gnBoxA=\hbox{$#1$}%
+	\gnArgHgt=\ht\gnBoxA%
+	\ifnum \gnArgHgt<\gnCornerHgt
+	\gnArgHgt=0pt%
+	\else
+	\advance \gnArgHgt by -\gnCornerHgt%
+	\fi
+	\raise\gnArgHgt\hbox{$\ulcorner$} \box\gnBoxA %
+	\raise\gnArgHgt\hbox{$\urcorner$}}
+
+\definecolor{slidered}{rgb}{1,0,0}
+\definecolor{slideblue}{rgb}{0,0,1}
+\definecolor{slidepurple}{rgb}{0,1,1}
+\definecolor{slidegray}{rgb}{0.5,0.5,0.5}
+\newcommand{\highlight}[1]{\textcolor{slidered}{#1}}
+\newcommand{\sred}[1]{\textcolor{slidered}{#1}}
+\newcommand{\sblue}[1]{\textcolor{slideblue}{#1}}
+\newcommand{\sgray}[1]{\textcolor{slidegray}{#1}}
+\newcommand{\spurple}[1]{\textcolor{slidepurple}{#1}}
+
+\lstdefinelanguage{metaocaml}
+{morekeywords={module,struct,sig,end,let,Some,None,code,ret,type,fun,
+		val,float,list,match,with,when}}
+
+\lstdefinelanguage{mathscheme}
+{morekeywords={Theory,combine,extended,by,type,over,axiom,leftDomain,
+		implies,not,forall}}
+
+\lstset{language=metaocaml,basicstyle=\small}
+
+\usepackage{agda}
+\usepackage{catchfilebetweentags}
+
+\begin{document}
+
+% Remember to put 'fragile' on slides that use certain features
+%\begin{frame}[fragile]
+%\end{frame}
+
+\begin{frame}
+\frametitle{The Problem}
+
+\begin{columns}
+	\begin{column}{0.5\textwidth}
+		{\tiny
+			\ExecuteMetaData[latex/AgdaMeta.tex]{theory}
+		}
+	   {\tiny 
+	       \ExecuteMetaData[latex/AgdaMeta.tex]{sig}
+       }
+	\end{column}
+	\begin{column}{0.5\textwidth}
+		{\tiny
+            \ExecuteMetaData[latex/AgdaMeta.tex]{hom}
+		}
+	\end{column}
+\end{columns}
+
+\end{frame}
+
+\end{document}

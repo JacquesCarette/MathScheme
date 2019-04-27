@@ -34,6 +34,7 @@ open ≡-Reasoning
 }
 
 Our primary example will be Monoid:
+%<*theory>
 \begin{code}
 record Monoid : Set₁ where
   field
@@ -43,12 +44,15 @@ record Monoid : Set₁ where
     left-unit  : ∀ {x} → Id ⨾ x ≡ x
     right-unit : ∀ {x} → x ⨾ Id ≡ x
     assoc      : ∀ {x y z} → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
+\end{code}
+%</theory>
 
 -- Sometimes we need to produce phrases involving multiple monoids;
 -- we thus introduce the following decorations.
 --
 -- It would be nice if we could “generate” such tediousness.
 
+\begin{code}
 module Monoid₁ (M : Monoid) where
   open Monoid M public renaming
     ( Carrier    to Carrier₁
@@ -111,7 +115,7 @@ Algebra}.
 Our motto here:
 
 \begin{centering}
-\Large “Make easy things easy!”
+\Large “Keep easy things easy!”
 \end{centering}
 
 A lot of CS research focuses on the other end of the spectrum,
@@ -139,10 +143,15 @@ record Squag : Set₁ where
     antiAbsorbent : ∀ x y → x ⨾ (x ⨾ y) ≡ y
 \end{code}
 
+\fbox{\textbf{YS: I would prefer ∘ over ⨾}}
+
 \fbox{\textbf{MA: You mention Squag but everything below is about Monoid!? }}
 
 We now turn to some mechanically derivable notions
 --for which there is sadly no machine support, yet, in Agda.
+
+\fbox{\textbf{YS: are they supported in any other system?}}
+
 \begin{code}
 module Derived where
 \end{code}
@@ -151,6 +160,8 @@ First, there is a general notion of homomorphism between
 theories: A mapping from the carrier of one theory to
 the other, that \emph{preserves} each of the operations. It is
 customary to shorten the name to $\AgdaRecord{Hom}$.
+
+%<*hom>
 \begin{code}
 record Hom (A B : Monoid) : Set₁ where
   open Monoid₁ A; open Monoid₂ B
@@ -164,10 +175,12 @@ infixr 20 _$_
 _$_ : {A B : Monoid} → Hom A B → (Monoid.Carrier A → Monoid.Carrier B)
 F $ x = Hom.mor F x
 \end{code}
+%</hom>
 
 The above makes fundamental use of what is often called
 (in the Universal Algebra literature) the \emph{signature}
 of the theory:
+%<*sig>
 \begin{code}
 record Signature : Set₁ where
   field
@@ -175,16 +188,17 @@ record Signature : Set₁ where
     Id      : Carrier
     _⨾_     : Carrier → Carrier → Carrier
 \end{code}
+%</sig>
 Of course, in a dependently-typed setting, all records, including Monoid itself, are
 also called signatures, which can unfortunately lead to
 confusion. What is important to notice here is that it ought to
-be possible to write the follow TemplateHaskell-like meta-program:
+be possible to write the following TemplateHaskell-like meta-program:
 
 \begin{pseudocode}
 derive Signature = filter (not equations) ''Monoid
 \end{pseudocode}
 
-Observe how each item (field) of \AgdaRecord{Hom}
+Observe how each item (field or declaration) of \AgdaRecord{Hom}
 comes from one of \AgdaRecord{Signature}. This generalizes
 ``on the nose'' for other theories.  So homomorphisms can be
 given generically by
@@ -555,6 +569,7 @@ things from left-to-right, this gives:
 \begin{code}
     reduces : Formula → Set
     reduces F = length (lhs F) > length (rhs F)
+
 \end{code}
 
 \fbox{\textbf{MA: Perhaps mention that this is essentially how Isabelle/Coq/etc do simpl rewriting? }}
@@ -597,6 +612,7 @@ Such simplification does not destory semantics:
     coherence (x@(_ ⨾ _) ⨾ Var x₁) σ    = cong (λ z → z ⨾₂ σ x₁) (coherence x σ)
     coherence (x@(_ ⨾ _) ⨾ Id) σ        = trans right-unit₂ (coherence x σ)
     coherence (x@(_ ⨾ _) ⨾ y@(_ ⨾ _)) σ = cong₂ _⨾₂_ (coherence x σ) (coherence y σ)
+
 \end{code}
 
 In Agda, like in many other languages, we can also be abstract
