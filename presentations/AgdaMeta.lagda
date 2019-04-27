@@ -34,10 +34,10 @@ record Monoid : Set₁ where
   constructor mon
   field
     Carrier : Set₀
-    e : Carrier
+    Id : Carrier
     _*_ : Carrier → Carrier → Carrier
-    left-unit : ∀ x → e * x ≡ x
-    right-unit : ∀ x → x * e ≡ x
+    left-unit : ∀ x → Id * x ≡ x
+    right-unit : ∀ x → x * Id ≡ x
     assoc : ∀ x y z → (x * y) * z ≡ x * (y * z)
 \end{code}
 
@@ -116,7 +116,7 @@ record Hom (A B : Monoid) : Set₁ where
   module b = Monoid B
   field
     f : a.Carrier → b.Carrier
-    pres-e : f a.e ≡ b.e
+    pres-e : f a.Id ≡ b.Id
     pres-* : ∀ x y → f (x a.* y) ≡ (f x) b.* (f y)
 
 infixr 20 _$_
@@ -186,7 +186,7 @@ record Isomorphism (A B : Monoid) : Set₁ where
   inv-is-Hom : Hom B A
   inv-is-Hom = record
     { f = g
-    ; pres-e = trans (sym (cong g (pres-e A⇒B))) (g∘f≡id (e A))
+    ; pres-e = trans (sym (cong g (pres-e A⇒B))) (g∘f≡id (Id A))
     ; pres-* = λ x y →  trans (cong g (sym (cong₂ (_*_ B) (f∘g≡id x) (f∘g≡id y))))
                (trans (cong g (sym (pres-* A⇒B (g x) (g y))))
                (g∘f≡id _))
@@ -295,8 +295,8 @@ the name $S$, we can instead say
 module Try₂ where
   postulate
     M₁ M₂ : Monoid
-  open Monoid M₁ renaming (e to e₁; _*_ to _*₁_; right-unit to ru; Carrier to Carrier₁)
-  open Monoid M₂ renaming (e to e₂; _*_ to _*₂_; left-unit to lu;  Carrier to Carrier₂)
+  open Monoid M₁ renaming (Id to e₁; _*_ to _*₁_; right-unit to ru; Carrier to Carrier₁)
+  open Monoid M₂ renaming (Id to e₂; _*_ to _*₂_; left-unit to lu;  Carrier to Carrier₂)
   postulate
     eq : Carrier₁ ≡ Carrier₂
   coe : {A B : Set} → A ≡ B → (a : A) → B
@@ -347,7 +347,7 @@ interpretation in that monoid, a generic length function, and
 a generic (decidable) equality on the syntax.
 \begin{code}
   _⟦_⟧ : (A : Monoid) → CTerm → Monoid.Carrier A
-  A ⟦ e ⟧ = Monoid.e A
+  A ⟦ e ⟧ = Monoid.Id A
   A ⟦ x * y ⟧ = let _++_ = Monoid._*_ A in (A ⟦ x ⟧) ++ (A ⟦ y ⟧)
 
   length : CTerm → ℕ
@@ -379,7 +379,7 @@ for the algebra of open terms over the language of monoids.
 \begin{code}
   module Interpret {V : DecSetoid lzero lzero} (A : Monoid) where
     open DecSetoid V renaming (Carrier to c)
-    open Monoid A renaming (Carrier to a; e to zero; _*_ to _*₀_)
+    open Monoid A renaming (Carrier to a; Id to zero; _*_ to _*₀_)
     open OTerm
     ⟦_⟧_ : OTerm V → (c → a) → a
     ⟦ v x ⟧ σ = σ x
