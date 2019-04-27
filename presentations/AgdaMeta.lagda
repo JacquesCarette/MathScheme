@@ -35,10 +35,10 @@ record Monoid : Set₁ where
   field
     Carrier : Set₀
     Id : Carrier
-    _*_ : Carrier → Carrier → Carrier
-    left-unit : ∀ x → Id * x ≡ x
-    right-unit : ∀ x → x * Id ≡ x
-    assoc : ∀ x y z → (x * y) * z ≡ x * (y * z)
+    _⨾_ : Carrier → Carrier → Carrier
+    left-unit : ∀ x → Id ⨾ x ≡ x
+    right-unit : ∀ x → x ⨾ Id ≡ x
+    assoc : ∀ x y z → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
 \end{code}
 
 A Monoid is over a type, has a distinguished point in that type
@@ -98,10 +98,10 @@ record Squag : Set₁ where
   constructor sq
   field
     s : Set₀
-    _*_ : s → s → s
-    idempotent : ∀ x → x * x ≡ x
-    commutative : ∀ x y → x * y ≡ y * x
-    antiAbsorbent : ∀ x y → x * (x * y) ≡ y
+    _⨾_ : s → s → s
+    idempotent : ∀ x → x ⨾ x ≡ x
+    commutative : ∀ x y → x ⨾ y ≡ y ⨾ x
+    antiAbsorbent : ∀ x y → x ⨾ (x ⨾ y) ≡ y
 \end{code}
 
 First, there is a general notion of homomorphism between
@@ -117,7 +117,7 @@ record Hom (A B : Monoid) : Set₁ where
   field
     f : a.Carrier → b.Carrier
     pres-e : f a.Id ≡ b.Id
-    pres-* : ∀ x y → f (x a.* y) ≡ (f x) b.* (f y)
+    pres-⨾ : ∀ x y → f (x a.⨾ y) ≡ (f x) b.⨾ (f y)
 
 infixr 20 _$_
 _$_ : {A B : Monoid} → Hom A B → (Monoid.Carrier A → Monoid.Carrier B)
@@ -132,7 +132,7 @@ record Signature : Set₁ where
   field
     m : Set₀
     e : m
-    _*_ : m → m → m
+    _⨾_ : m → m → m
 \end{code}
 Of course, in a dependently-typed setting, Monoid itself is
 also called a signature, which can unfortunately lead to
@@ -187,8 +187,8 @@ record Isomorphism (A B : Monoid) : Set₁ where
   inv-is-Hom = record
     { f = g
     ; pres-e = trans (sym (cong g (pres-e A⇒B))) (g∘f≡id (Id A))
-    ; pres-* = λ x y →  trans (cong g (sym (cong₂ (_*_ B) (f∘g≡id x) (f∘g≡id y))))
-               (trans (cong g (sym (pres-* A⇒B (g x) (g y))))
+    ; pres-⨾ = λ x y →  trans (cong g (sym (cong₂ (_⨾_ B) (f∘g≡id x) (f∘g≡id y))))
+               (trans (cong g (sym (pres-⨾ A⇒B (g x) (g y))))
                (g∘f≡id _))
     }
 \end{code}
@@ -234,25 +234,25 @@ record _×M_ (A B : Monoid) : Set₂ where
 
 Cartesian-Product : (A : Monoid) → (B : Monoid) → A ×M B
 Cartesian-Product
-  (mon m e _*_ left-unit right-unit assoc)
-  (mon m₁ e₁ _*₁_ left-unit₁ right-unit₁ assoc₁) =
-   prod product (record { f = proj₁ ; pres-e = refl ; pres-* = pres-* })
-                (record { f = proj₂ ; pres-e = refl ; pres-* = pres-*₁ })
+  (mon m e _⨾_ left-unit right-unit assoc)
+  (mon m₁ e₁ _⨾₁_ left-unit₁ right-unit₁ assoc₁) =
+   prod product (record { f = proj₁ ; pres-e = refl ; pres-⨾ = pres-⨾ })
+                (record { f = proj₂ ; pres-e = refl ; pres-⨾ = pres-⨾₁ })
      where
        e₂ = (e , e₁)
-       _*₂_ = λ {(a , b) (c , d) → (a * c , b *₁ d)}
-       left-unit₂ : ∀ x → e₂ *₂ x ≡ x
+       _⨾₂_ = λ {(a , b) (c , d) → (a ⨾ c , b ⨾₁ d)}
+       left-unit₂ : ∀ x → e₂ ⨾₂ x ≡ x
        left-unit₂ (a , b) = cong₂ _,_ (left-unit a) (left-unit₁ b)
-       right-unit₂ : ∀ x → x *₂ e₂ ≡ x
+       right-unit₂ : ∀ x → x ⨾₂ e₂ ≡ x
        right-unit₂ (a , b) = cong₂ _,_ (right-unit a) (right-unit₁ b)
-       assoc₂ : ∀ x y z → (x *₂ y) *₂ z ≡ x *₂ (y *₂ z)
+       assoc₂ : ∀ x y z → (x ⨾₂ y) ⨾₂ z ≡ x ⨾₂ (y ⨾₂ z)
        assoc₂ (a , b) (c , d) (m , n) = cong₂ _,_ (assoc a c m) (assoc₁ b d n)
-       product = (mon (m × m₁) e₂ _*₂_  left-unit₂ right-unit₂ assoc₂)
+       product = (mon (m × m₁) e₂ _⨾₂_  left-unit₂ right-unit₂ assoc₂)
 
-       pres-* : ∀ x y → proj₁ (x *₂ y) ≡ (proj₁ x) * (proj₁ y)
-       pres-* (a , b) (c , d) = refl
-       pres-*₁ : ∀ x y → proj₂ (x *₂ y) ≡ (proj₂ x) *₁ (proj₂ y)
-       pres-*₁ (a , b) (c , d) = refl
+       pres-⨾ : ∀ x y → proj₁ (x ⨾₂ y) ≡ (proj₁ x) ⨾ (proj₁ y)
+       pres-⨾ (a , b) (c , d) = refl
+       pres-⨾₁ : ∀ x y → proj₂ (x ⨾₂ y) ≡ (proj₂ x) ⨾₁ (proj₂ y)
+       pres-⨾₁ (a , b) (c , d) = refl
 \end{code}
 
 The original definition of \AgdaRecord{Monoid} is not the only
@@ -264,10 +264,10 @@ priviledge the carrier as follows:
 record Monoid′ (A : Set₀) : Set₀ where
   field
     e : A
-    _*_ : A → A → A
-    left-unit : ∀ x → e * x ≡ x
-    right-unit : ∀ x → x * e ≡ x
-    assoc : ∀ x y z → (x * y) * z ≡ x * (y * z)
+    _⨾_ : A → A → A
+    left-unit : ∀ x → e ⨾ x ≡ x
+    right-unit : ∀ x → x ⨾ e ≡ x
+    assoc : ∀ x y z → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
 \end{code}
 
 There are definite advantages for doing this. First, we don't need
@@ -276,32 +276,32 @@ to bump up the universe level, because now our monoid no longer
 Second, certain mathematical statements are much simpler to state
 and prove.  For example, something like
 \textit{Given two monoid structures on the same carrier set $S$,
-show that $∀ x → e₂ *₂ (x *₁ e₁) ≡ x$}.
+show that $∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x$}.
 \begin{code}
 module Try₁ where
   postulate
     S : Set
     M₁ M₂ : Monoid′ S
-  open Monoid′ M₁ renaming (e to e₁; _*_ to _*₁_; right-unit to ru)
-  open Monoid′ M₂ renaming (e to e₂; _*_ to _*₂_; left-unit to lu)
-  stat : ∀ x → e₂ *₂ (x *₁ e₁) ≡ x
+  open Monoid′ M₁ renaming (e to e₁; _⨾_ to _⨾₁_; right-unit to ru)
+  open Monoid′ M₂ renaming (e to e₂; _⨾_ to _⨾₂_; left-unit to lu)
+  stat : ∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x
   stat x = trans (lu _) (ru x)
 \end{code}
 If we attempt to do the same in the original setting, the
-formula $∀ x → e₂ *₂ (x *₁ e₁) ≡ x$ does not even typecheck! We have
+formula $∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x$ does not even typecheck! We have
 to resort so different contortions.  For example, if we forget about
 the name $S$, we can instead say
 \begin{code}
 module Try₂ where
   postulate
     M₁ M₂ : Monoid
-  open Monoid M₁ renaming (Id to e₁; _*_ to _*₁_; right-unit to ru; Carrier to Carrier₁)
-  open Monoid M₂ renaming (Id to e₂; _*_ to _*₂_; left-unit to lu;  Carrier to Carrier₂)
+  open Monoid M₁ renaming (Id to e₁; _⨾_ to _⨾₁_; right-unit to ru; Carrier to Carrier₁)
+  open Monoid M₂ renaming (Id to e₂; _⨾_ to _⨾₂_; left-unit to lu;  Carrier to Carrier₂)
   postulate
     eq : Carrier₁ ≡ Carrier₂
   coe : {A B : Set} → A ≡ B → (a : A) → B
   coe refl a = a
-  stat : (x : Carrier₁) → e₂ *₂ (coe eq (x *₁ e₁)) ≡ coe eq x
+  stat : (x : Carrier₁) → e₂ ⨾₂ (coe eq (x ⨾₁ e₁)) ≡ coe eq x
   stat x = trans (lu _) (cong (coe eq) (ru x))
 \end{code}
 which is not nearly as nice. NB: this isn't a problem specific to Agda,
@@ -315,11 +315,11 @@ In the Agda standard library, another variation is used. Here we present
 a simplified version, as the actual version (correctly!) takes advantage
 of the fact that there is structure on theories as well.
 \begin{code}
-record IsMonoid {A : Set} (_*_ : A → A → A) (e : A) : Set where
+record IsMonoid {A : Set} (_⨾_ : A → A → A) (e : A) : Set where
   field
-    left-unit : ∀ x → e * x ≡ x
-    right-unit : ∀ x → x * e ≡ x
-    assoc : ∀ x y z → (x * y) * z ≡ x * (y * z)
+    left-unit : ∀ x → e ⨾ x ≡ x
+    right-unit : ∀ x → x ⨾ e ≡ x
+    assoc : ∀ x y z → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
 \end{code}
 
 This could be written as
@@ -335,7 +335,7 @@ to the labelled-sum form, i.e. an algebraic data type:
 module Closed where
   data CTerm : Set where
     e : CTerm
-    _*_ : CTerm → CTerm → CTerm
+    _⨾_ : CTerm → CTerm → CTerm
 \end{code}
 
 Naturally, for \AgdaRecord{Monoid}, this is not particularly interesting,
@@ -348,17 +348,17 @@ a generic (decidable) equality on the syntax.
 \begin{code}
   _⟦_⟧ : (A : Monoid) → CTerm → Monoid.Carrier A
   A ⟦ e ⟧ = Monoid.Id A
-  A ⟦ x * y ⟧ = let _++_ = Monoid._*_ A in (A ⟦ x ⟧) ++ (A ⟦ y ⟧)
+  A ⟦ x ⨾ y ⟧ = let _++_ = Monoid._⨾_ A in (A ⟦ x ⟧) ++ (A ⟦ y ⟧)
 
   length : CTerm → ℕ
   length e = 1
-  length (x * y) = 1 + length x + length y
+  length (x ⨾ y) = 1 + length x + length y
 
   _≈CT_ : Rel CTerm lzero
   e ≈CT e = ⊤
-  e ≈CT (b * b₁) = ⊥
-  (a * a₁) ≈CT e = ⊥
-  (a * a₁) ≈CT (b * b₁) = a ≈CT b × a₁ ≈CT b₁
+  e ≈CT (b ⨾ b₁) = ⊥
+  (a ⨾ a₁) ≈CT e = ⊥
+  (a ⨾ a₁) ≈CT (b ⨾ b₁) = a ≈CT b × a₁ ≈CT b₁
 \end{code}
 
 Of course, much more useful is a type that may contain
@@ -370,7 +370,7 @@ module Open where
   data OTerm (V : DecSetoid lzero lzero) : Set where
     v : DecSetoid.Carrier V → OTerm V
     e : OTerm V
-    _*_ : OTerm V → OTerm V → OTerm V
+    _⨾_ : OTerm V → OTerm V → OTerm V
 \end{code}
 The overall code remains straightforward, but we can illustrate the
 interpreter to see the kind of adjustment needed. The attentive
@@ -379,17 +379,17 @@ for the algebra of open terms over the language of monoids.
 \begin{code}
   module Interpret {V : DecSetoid lzero lzero} (A : Monoid) where
     open DecSetoid V renaming (Carrier to c)
-    open Monoid A renaming (Carrier to a; Id to zero; _*_ to _*₀_)
+    open Monoid A renaming (Carrier to a; Id to zero; _⨾_ to _⨾₀_)
     open OTerm
     ⟦_⟧_ : OTerm V → (c → a) → a
     ⟦ v x ⟧ σ = σ x
     ⟦ e ⟧ σ = zero
-    ⟦ t * t₁ ⟧ σ = (⟦ t ⟧ σ) *₀ (⟦ t₁ ⟧ σ)
+    ⟦ t ⨾ t₁ ⟧ σ = (⟦ t ⟧ σ) ⨾₀ (⟦ t₁ ⟧ σ)
 
     length : OTerm V → ℕ
     length (v _) = 1
     length e = 1
-    length (x * y) = 1 + length x + length y
+    length (x ⨾ y) = 1 + length x + length y
 \end{code}
 We can use such open terms as part of a generic language of
 \emph{formulas}, so that we can then reify the syntax of the
@@ -408,10 +408,10 @@ But we can go further and look at the
 \AgdaRecord{OTerm}.
 \begin{code}
     induction : (P : OTerm V → Set) → (∀ (x : c) → P (v x)) → P e
-      → (∀ x y → P (x * y)) → ∀ (y : OTerm V) → P y
+      → (∀ x y → P (x ⨾ y)) → ∀ (y : OTerm V) → P y
     induction P vars zer pr (v x)    = vars x
     induction P vars zer pr e        = zer
-    induction P vars zer pr (t * t₁) = pr t t₁
+    induction P vars zer pr (t ⨾ t₁) = pr t t₁
 \end{code}
 
 For simplicity, let's fix $V$ to be characters.
@@ -424,9 +424,9 @@ For simplicity, let's fix $V$ to be characters.
     OT = OTerm CharSetoid
 
     left-unit-term : Formula
-    left-unit-term = e * v 'x' ≃ v 'x'
+    left-unit-term = e ⨾ v 'x' ≃ v 'x'
     assoc-term : Formula
-    assoc-term = v 'x' * (v 'y' * v 'z') ≃ (v 'x' * v 'y') * v 'z'
+    assoc-term = v 'x' ⨾ (v 'y' ⨾ v 'z') ≃ (v 'x' ⨾ v 'y') ⨾ v 'z'
 \end{code}
 
 The ``obvious'' idea is then to filter the formulas, and only
@@ -451,21 +451,21 @@ make it complete (left to another day, as that is not easy).
     simp : OT → OT
     simp (v x) = v x
     simp e = e
-    simp (e * y) = simp y
-    simp (v x * y) = v x * simp y
-    simp (x@(_ * _) * v y) = simp x * v y
-    simp (x@(_ * _) * e) = simp x
-    simp (x@(_ * _) * y@(_ * _)) = simp x * simp y
+    simp (e ⨾ y) = simp y
+    simp (v x ⨾ y) = v x ⨾ simp y
+    simp (x@(_ ⨾ _) ⨾ v y) = simp x ⨾ v y
+    simp (x@(_ ⨾ _) ⨾ e) = simp x
+    simp (x@(_ ⨾ _) ⨾ y@(_ ⨾ _)) = simp x ⨾ simp y
 
-    _++_ = Monoid._*_ B
+    _++_ = Monoid._⨾_ B
     coherence : ∀ x σ → ⟦ x ⟧ σ ≡ ⟦ simp x ⟧ σ
     coherence (v x) σ = refl
     coherence e σ = refl
-    coherence (v x * x₁) σ = cong (λ z → (σ x) ++ z) (coherence x₁ σ)
-    coherence (e * x₁) σ = trans (Monoid.left-unit B _) (coherence x₁ σ)
-    coherence (x@(_ * _) * v x₁) σ = cong (λ z → z ++ σ x₁) (coherence x σ)
-    coherence (x@(_ * _) * e) σ = trans (Monoid.right-unit B _) (coherence x σ)
-    coherence (x@(_ * _) * y@(_ * _)) σ = cong₂ _++_ (coherence x σ) (coherence y σ)
+    coherence (v x ⨾ x₁) σ = cong (λ z → (σ x) ++ z) (coherence x₁ σ)
+    coherence (e ⨾ x₁) σ = trans (Monoid.left-unit B _) (coherence x₁ σ)
+    coherence (x@(_ ⨾ _) ⨾ v x₁) σ = cong (λ z → z ++ σ x₁) (coherence x σ)
+    coherence (x@(_ ⨾ _) ⨾ e) σ = trans (Monoid.right-unit B _) (coherence x σ)
+    coherence (x@(_ ⨾ _) ⨾ y@(_ ⨾ _)) σ = cong₂ _++_ (coherence x σ) (coherence y σ)
 \end{code}
 
 In Agda, like in many other languages, we can also be abstract
@@ -476,7 +476,7 @@ module Tagless where
     a = Monoid.Carrier A
     field
       e : rep a
-      _*_ : rep a → rep a → rep a
+      _⨾_ : rep a → rep a → rep a
 \end{code}
 
 We can further choose to internalize the proofs too, as well as add
