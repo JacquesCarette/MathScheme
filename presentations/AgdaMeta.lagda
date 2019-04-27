@@ -105,10 +105,10 @@ with the structure, do not obscure things. For this purpose,
 record Squag : Set₁ where
   constructor sq
   field
-    s : Set₀
-    _⨾_ : s → s → s
-    idempotent : ∀ x → x ⨾ x ≡ x
-    commutative : ∀ x y → x ⨾ y ≡ y ⨾ x
+    Carrier       : Set₀
+    _⨾_           : Carrier → Carrier → Carrier
+    idempotent    : ∀ x → x ⨾ x ≡ x
+    commutative   : ∀ x y → x ⨾ y ≡ y ⨾ x
     antiAbsorbent : ∀ x y → x ⨾ (x ⨾ y) ≡ y
 \end{code}
 
