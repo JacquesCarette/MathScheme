@@ -496,3 +496,50 @@ work with these.
 From here, one can continue and define a \AgdaType{Code} type that
 simulates \textsf{metaocaml}'s, and from there to put all things together
 to generate a \textbf{partial evaluator} for the term language.
+
+
+----
+----
+Slightly realated investigation.
+
+\begin{code}
+-- The follwing may be easier to state not as “𝒮.Carrier ≈ ℳ.Carrier ≈ 𝟙 → C ≈ 𝟙”
+-- but as “SquagOn C → MonoidOn C → C ≈ 𝟙”
+--
+module on-vs-has where 
+
+  open import Function.Inverse using () renaming (_↔_ to _≅_)
+
+  data 𝟙 : Set where ★ : 𝟙
+
+  trivial-intersection : ∀ (C : Set) (S : Squag) (M : Monoid)
+                           (let module 𝒮 = Squag S)
+                           (let module ℳ = Monoid M)                         
+                         → 𝒮.Carrier ≡ ℳ.Carrier → ℳ.Carrier ≡ C
+                         → C ≅ 𝟙
+  trivial-intersection .(Monoid.Carrier q)
+    (sq .(Monoid.Carrier q) _⨾_ idempotent commutative antiAbsorbent)
+    q refl refl =
+      let
+        𝒾 = Monoid.Id q
+
+        all-Id : ∀ (x : Monoid.Carrier q) → Monoid.Id q ≡ x
+        all-Id x = begin
+                     𝒾
+                   ≡⟨ sym (antiAbsorbent _ _ )  ⟩
+                     x ⨾ (x ⨾ 𝒾)
+                   ≡⟨ cong (x ⨾_) {!Oh! The Squag ⨾ and Monoid ⨾ may be completely different. Neato. !} ⟩
+                     x ⨾ x
+                   ≡⟨ idempotent _  ⟩
+                     x
+                   ∎
+      in
+      record { to = record { _⟨$⟩_ = λ _ → ★ ; cong = λ _ → refl  }
+                         ; from = record { _⟨$⟩_ = λ _ → Monoid.Id q ; cong = λ _ → refl }
+                         ; inverse-of = record { left-inverse-of = all-Id
+                                               ; right-inverse-of = λ{ ★ → refl}
+                                               }
+                         }
+\end{code}
+
+
