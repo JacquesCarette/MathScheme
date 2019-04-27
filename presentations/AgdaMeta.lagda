@@ -33,9 +33,9 @@ Our primary example will be Monoid:
 record Monoid : Set₁ where
   constructor mon
   field
-    m : Set₀
-    e : m
-    _*_ : m → m → m
+    Carrier : Set₀
+    e : Carrier
+    _*_ : Carrier → Carrier → Carrier
     left-unit : ∀ x → e * x ≡ x
     right-unit : ∀ x → x * e ≡ x
     assoc : ∀ x y z → (x * y) * z ≡ x * (y * z)
@@ -115,12 +115,12 @@ record Hom (A B : Monoid) : Set₁ where
   module a = Monoid A
   module b = Monoid B
   field
-    f : a.m → b.m
+    f : a.Carrier → b.Carrier
     pres-e : f a.e ≡ b.e
     pres-* : ∀ x y → f (x a.* y) ≡ (f x) b.* (f y)
 
 infixr 20 _$_
-_$_ : {A B : Monoid} → Hom A B → (Monoid.m A → Monoid.m B)
+_$_ : {A B : Monoid} → Hom A B → (Monoid.Carrier A → Monoid.Carrier B)
 H $ x = Hom.f H x
 \end{code}
 
@@ -179,7 +179,7 @@ record Isomorphism (A B : Monoid) : Set₁ where
   open Hom
   field
     A⇒B : Hom A B
-    g : m B → m A
+    g : Carrier B → Carrier A
     f∘g≡id : (f A⇒B ∘ g) ∼ id
     g∘f≡id : (g ∘ f A⇒B) ∼ id
 
@@ -210,8 +210,8 @@ the same value.
 record Kernel {A B : Monoid} (F : Hom A B) : Set₁ where
   open Monoid
   field
-    x : m A
-    y : m A
+    x : Carrier A
+    y : Carrier A
     cond : F $ x ≡ F $ y
 \end{code}
 \AgdaRecord{Kernel} is essentially generic, and can be derived
@@ -295,13 +295,13 @@ the name $S$, we can instead say
 module Try₂ where
   postulate
     M₁ M₂ : Monoid
-  open Monoid M₁ renaming (e to e₁; _*_ to _*₁_; right-unit to ru; m to m₁)
-  open Monoid M₂ renaming (e to e₂; _*_ to _*₂_; left-unit to lu; m to m₂)
+  open Monoid M₁ renaming (e to e₁; _*_ to _*₁_; right-unit to ru; Carrier to Carrier₁)
+  open Monoid M₂ renaming (e to e₂; _*_ to _*₂_; left-unit to lu;  Carrier to Carrier₂)
   postulate
-    eq : m₁ ≡ m₂
+    eq : Carrier₁ ≡ Carrier₂
   coe : {A B : Set} → A ≡ B → (a : A) → B
   coe refl a = a
-  stat : (x : m₁) → e₂ *₂ (coe eq (x *₁ e₁)) ≡ coe eq x
+  stat : (x : Carrier₁) → e₂ *₂ (coe eq (x *₁ e₁)) ≡ coe eq x
   stat x = trans (lu _) (cong (coe eq) (ru x))
 \end{code}
 which is not nearly as nice. NB: this isn't a problem specific to Agda,
@@ -346,7 +346,7 @@ such as mapping a closed term from its syntax tree to its
 interpretation in that monoid, a generic length function, and
 a generic (decidable) equality on the syntax.
 \begin{code}
-  _⟦_⟧ : (A : Monoid) → CTerm → Monoid.m A
+  _⟦_⟧ : (A : Monoid) → CTerm → Monoid.Carrier A
   A ⟦ e ⟧ = Monoid.e A
   A ⟦ x * y ⟧ = let _++_ = Monoid._*_ A in (A ⟦ x ⟧) ++ (A ⟦ y ⟧)
 
@@ -379,7 +379,7 @@ for the algebra of open terms over the language of monoids.
 \begin{code}
   module Interpret {V : DecSetoid lzero lzero} (A : Monoid) where
     open DecSetoid V renaming (Carrier to c)
-    open Monoid A renaming (m to a; e to zero; _*_ to _*₀_)
+    open Monoid A renaming (Carrier to a; e to zero; _*_ to _*₀_)
     open OTerm
     ⟦_⟧_ : OTerm V → (c → a) → a
     ⟦ v x ⟧ σ = σ x
@@ -473,7 +473,7 @@ over representations, much like in ``finally tagless':
 \begin{code}
 module Tagless where
   record Symantics (rep : Set₀ → Set₀) (A : Monoid) : Set₁ where
-    a = Monoid.m A
+    a = Monoid.Carrier A
     field
       e : rep a
       _*_ : rep a → rep a → rep a
