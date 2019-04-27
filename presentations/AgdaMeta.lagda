@@ -603,12 +603,15 @@ In Agda, like in many other languages, we can also be abstract
 over representations, much like in ``finally tagless':
 \begin{code}
 module Tagless where
-  record Symantics (rep : Set₀ → Set₀) (A : Monoid) : Set₁ where
-    a = Monoid.Carrier A
+
+  record Symantics (rep : Set → Set) (A : Monoid) : Set₁ where
+    open Monoid A using (Carrier)
     field
-      e : rep a
-      _⨾_ : rep a → rep a → rep a
+      Id  : rep Carrier
+      _⨾_ : rep Carrier → rep Carrier → rep Carrier
 \end{code}
+
+\fbox{\textbf{MA: Briefly mention benefit of this approach. }}
 
 We can further choose to internalize the proofs too, as well as add
 a generic lifting operator -- though that will only really work for
@@ -620,13 +623,13 @@ From here, one can continue and define a \AgdaType{Code} type that
 simulates \textsf{metaocaml}'s, and from there to put all things together
 to generate a \textbf{partial evaluator} for the term language.
 
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
-----
-----
 Slightly realated investigation.
 
 \begin{spec}
--- The follwing may be easier to state not as “𝒮.Carrier ≈ ℳ.Carrier ≈ 𝟙 → C ≈ 𝟙”
+-- The following may be easier to state not as “𝒮.Carrier ≈ ℳ.Carrier ≈ 𝟙 → C ≈ 𝟙”
 -- but as “SquagOn C → MonoidOn C → C ≈ 𝟙”
 --
 module on-vs-has where 
