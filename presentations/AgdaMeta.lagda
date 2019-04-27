@@ -205,8 +205,22 @@ this is going to be pointwise:
 _∼_ : {A B : Set} (f g : A → B) → Set
 f ∼ g = ∀ a → f a ≡ g a
 
+record Hom-Equality {A B : Monoid} (F G : Hom A B) : Set where
+  field
+    equal : Hom.mor F ∼ Hom.mor G
+
+{- 
+The astute Agda code may instead suggest the following terse definition.
+
 Hom-Equality : ∀ {A B : Monoid} (F G : Hom A B) → Set
 Hom-Equality F G = Hom.mor F ∼ Hom.mor G
+
+However, we utilise a “record” presentation as it generalises to other
+derived constructs and thus makes the subsequent derivatives below appear
+mechanically derivable. That is, we want to make it as clear as possible
+that these could be automatically dervied --simplifications like this
+could then be add ons.
+-}
 \end{code}
 
 Other similar notions can also be defined. A minimalist version
