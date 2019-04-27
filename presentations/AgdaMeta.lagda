@@ -392,18 +392,24 @@ Here what we want to do is along the lines of
 \begin{pseudocode}
 derive MonoidOn = hoist sorts
 \end{pseudocode}
+
 In the Agda standard library, another variation is used. Here we present
 a simplified version, as the actual version (correctly!) takes advantage
 of the fact that there is structure on theories as well.
+
+\fbox{\textbf{MA: Does target audiance know what “structure on theories” means; perhaps explain it.}}
+
 \begin{code}
-record IsMonoid {A : Set} (_⨾_ : A → A → A) (e : A) : Set where
+record IsMonoid {Carrier : Set}
+                (_⨾_ : Carrier → Carrier → Carrier)
+                (Id : Carrier) : Set where
   field
-    left-unit : ∀ x → e ⨾ x ≡ x
-    right-unit : ∀ x → x ⨾ e ≡ x
-    assoc : ∀ x y z → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
+    left-unit  : ∀ {x} → Id ⨾ x ≡ x
+    right-unit : ∀ {x} → x ⨾ Id ≡ x
+    assoc      : ∀ {x y z} → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
 \end{code}
 
-This could be written as
+This could be written as:
 \begin{pseudocode}
 derive IsMonoid = hoist-implicit sorts $
   hoist-expanded operations ''Monoid
@@ -414,32 +420,49 @@ we can shift from the labelled-product form of the Signature record
 to the labelled-sum form, i.e. an algebraic data type:
 \begin{code}
 module Closed where
+
   data CTerm : Set where
-    e : CTerm
+    Id  : CTerm
     _⨾_ : CTerm → CTerm → CTerm
 \end{code}
 
 Naturally, for \AgdaRecord{Monoid}, this is not particularly interesting,
 unlike for \AgdaRecord{SemiRing} (say).
+\fbox{\textbf{MA: Squag was mentoned for a reason? }}
 
 Nevertheless, we can still usefully write some generic functions,
 such as mapping a closed term from its syntax tree to its
 interpretation in that monoid, a generic length function, and
 a generic (decidable) equality on the syntax.
 \begin{code}
-  _⟦_⟧ : (A : Monoid) → CTerm → Monoid.Carrier A
-  A ⟦ e ⟧ = Monoid.Id A
-  A ⟦ x ⨾ y ⟧ = let _++_ = Monoid._⨾_ A in (A ⟦ x ⟧) ++ (A ⟦ y ⟧)
+  infix 999 _⟦_⟧
+  
+  _⟦_⟧ : (ℳ : Monoid) → CTerm → Monoid.Carrier ℳ
+  ℳ ⟦ Id ⟧    = Monoid.Id ℳ
+  ℳ ⟦ x ⨾ y ⟧ = ℳ ⟦ x ⟧ ⨾₁ ℳ ⟦ y ⟧ where open Monoid₁ ℳ
+
+  -- Ground terms can only be formed using Id and composition;
+  -- whence any interpretation is semantically equivalent to Id.
+  boring-semantics : ∀ (ℳ : Monoid) (t : CTerm) → ℳ ⟦ t ⟧ ≡ Monoid.Id ℳ
+  boring-semantics ℳ Id = refl
+  boring-semantics ℳ (l ⨾ r) = let open Monoid₁ ℳ in
+     begin
+       ℳ ⟦ l ⨾ r ⟧
+     ≡⟨ refl  ⟩
+       ℳ ⟦ l ⟧ ⨾₁ ℳ ⟦ r ⟧
+     ≡⟨ cong₂ _⨾₁_ (boring-semantics ℳ l) (boring-semantics ℳ r)  ⟩
+       Id₁ ⨾₁ Id₁
+     ≡⟨ left-unit₁  ⟩
+       Id₁
+     ∎
 
   length : CTerm → ℕ
-  length e = 1
+  length Id      = 1
   length (x ⨾ y) = 1 + length x + length y
 
-  _≈CT_ : Rel CTerm lzero
-  e ≈CT e = ⊤
-  e ≈CT (b ⨾ b₁) = ⊥
-  (a ⨾ a₁) ≈CT e = ⊥
-  (a ⨾ a₁) ≈CT (b ⨾ b₁) = a ≈CT b × a₁ ≈CT b₁
+  data _≈_ : CTerm → CTerm → Set where
+    ≈-base : Id ≈ Id
+    ≈-step : ∀ {a a′ b b′} → a ≈ a′ → b ≈ b′ → (a ⨾ b) ≈ (a′ ⨾ b′)
 \end{code}
 
 Of course, much more useful is a type that may contain
@@ -448,28 +471,31 @@ equality of our syntax trees, we'll insist that our variables
 come from a \emph{decidable setoid}.
 \begin{code}
 module Open where
-  data OTerm (V : DecSetoid lzero lzero) : Set where
-    v : DecSetoid.Carrier V → OTerm V
-    e : OTerm V
-    _⨾_ : OTerm V → OTerm V → OTerm V
+
+  data OTerm (𝒱 : DecSetoid lzero lzero) : Set where
+    Var : DecSetoid.Carrier 𝒱 → OTerm 𝒱
+    Id  : OTerm 𝒱
+    _⨾_ : OTerm 𝒱 → OTerm 𝒱 → OTerm 𝒱
 \end{code}
 The overall code remains straightforward, but we can illustrate the
 interpreter to see the kind of adjustment needed. The attentive
 reader will recognize this as a non-trivial \textsf{catamorphism}
 for the algebra of open terms over the language of monoids.
 \begin{code}
-  module Interpret {V : DecSetoid lzero lzero} (A : Monoid) where
-    open DecSetoid V renaming (Carrier to c)
-    open Monoid A renaming (Carrier to a; Id to zero; _⨾_ to _⨾₀_)
+  module Interpret {𝒱 : DecSetoid lzero lzero} (A : Monoid) where
+  
+    open DecSetoid 𝒱 renaming (Carrier to V)
+    open Monoid₁ A
     open OTerm
-    ⟦_⟧_ : OTerm V → (c → a) → a
-    ⟦ v x ⟧ σ = σ x
-    ⟦ e ⟧ σ = zero
-    ⟦ t ⨾ t₁ ⟧ σ = (⟦ t ⟧ σ) ⨾₀ (⟦ t₁ ⟧ σ)
+    
+    ⟦_⟧_ : OTerm 𝒱 → (V → Carrier₁) → Carrier₁
+    ⟦ Var x ⟧ σ = σ x
+    ⟦ Id    ⟧ σ = Id₁
+    ⟦ l ⨾ r ⟧ σ = (⟦ l ⟧ σ) ⨾₁ (⟦ r ⟧ σ)
 
-    length : OTerm V → ℕ
-    length (v _) = 1
-    length e = 1
+    length : OTerm 𝒱 → ℕ
+    length (Var _) = 1
+    length Id      = 1
     length (x ⨾ y) = 1 + length x + length y
 \end{code}
 We can use such open terms as part of a generic language of
@@ -477,37 +503,50 @@ We can use such open terms as part of a generic language of
 equations too.
 \begin{code}
     infix 5 _≃_
+    
     data Formula : Set where
-      _≃_ : OTerm V → OTerm V → Formula
-    lhs : Formula → OTerm V
-    lhs (a ≃ _) = a
-    rhs : Formula → OTerm V
-    rhs (_ ≃ b) = b
+      _≃_ : OTerm 𝒱 → OTerm 𝒱 → Formula
+      
+    lhs : Formula → OTerm 𝒱
+    lhs (l ≃ _) = l
+    
+    rhs : Formula → OTerm 𝒱
+    rhs (_ ≃ r) = r
 \end{code}
 But we can go further and look at the
 (dependently typed!) induction principle associated to
 \AgdaRecord{OTerm}.
 \begin{code}
-    induction : (P : OTerm V → Set) → (∀ (x : c) → P (v x)) → P e
-      → (∀ x y → P (x ⨾ y)) → ∀ (y : OTerm V) → P y
-    induction P vars zer pr (v x)    = vars x
-    induction P vars zer pr e        = zer
-    induction P vars zer pr (t ⨾ t₁) = pr t t₁
+    induction : (P : OTerm 𝒱 → Set)
+              {- Base Cases -}
+              → (∀ x → P (Var x))
+              → P Id
+              {- Inductive step -}
+              → (∀ x y → P (x ⨾ y))
+              {- Conclusion -}
+              → ∀ (y : OTerm 𝒱) → P y
+    induction P vars empty ind (Var x) = vars x
+    induction P vars empty ind Id      = empty
+    induction P vars empty ind (l ⨾ r) = ind l r
 \end{code}
 
-For simplicity, let's fix $V$ to be characters.
+For simplicity, let's fix $𝒱$ to be characters.
 \begin{code}
   module Example (B : Monoid) where
+  
     import Data.Char as C
+    
     CharSetoid : DecSetoid lzero lzero
     CharSetoid = StrictTotalOrder.decSetoid C.strictTotalOrder
-    open Interpret {CharSetoid} B
+    
+    open Interpret {CharSetoid} B    
     OT = OTerm CharSetoid
 
     left-unit-term : Formula
-    left-unit-term = e ⨾ v 'x' ≃ v 'x'
+    left-unit-term = Id ⨾ Var 'x' ≃ Var 'x'
+    
     assoc-term : Formula
-    assoc-term = v 'x' ⨾ (v 'y' ⨾ v 'z') ≃ (v 'x' ⨾ v 'y') ⨾ v 'z'
+    assoc-term = Var 'x' ⨾ (Var 'y' ⨾ Var 'z') ≃ (Var 'x' ⨾ Var 'y') ⨾ Var 'z'
 \end{code}
 
 The ``obvious'' idea is then to filter the formulas, and only
@@ -516,11 +555,15 @@ things from left-to-right, this gives:
 \begin{code}
     reduces : Formula → Set
     reduces F = length (lhs F) > length (rhs F)
+\end{code}
 
-    left-unit-reduces : reduces left-unit-term
+\fbox{\textbf{MA: Perhaps mention that this is essentially how Isabelle/Coq/etc do simpl rewriting? }}
+
+\begin{code}
+    left-unit-reduces : reduces left-unit-term  -- ≈ “2 ≤ 3”
     left-unit-reduces = s≤s (s≤s z≤n)
 
-    not-assoc-reduces : ¬ (reduces assoc-term)
+    not-assoc-reduces : ¬ (reduces assoc-term)  -- ≈ “6 ≰ 5”
     not-assoc-reduces = λ { (s≤s (s≤s (s≤s (s≤s (s≤s ())))))}
 \end{code}
 Those proofs are ugly, but automatic. In any case, what they
@@ -528,25 +571,32 @@ really allow is to induce a rewriting which preserves meaning
 and terminating. It is incomplete!  We need to be smarter to
 make it complete (left to another day, as that is not easy).
 
+\fbox{\textbf{MA: Not at all clear how these proofs are “automatic”! }}
+Moreover, unclear what goal they accomplish? Why are they interesting?
+
+Let's now turn to forming canonical forms, or forms as simple as possible.
 \begin{code}
     simp : OT → OT
-    simp (v x) = v x
-    simp e = e
-    simp (e ⨾ y) = simp y
-    simp (v x ⨾ y) = v x ⨾ simp y
-    simp (x@(_ ⨾ _) ⨾ v y) = simp x ⨾ v y
-    simp (x@(_ ⨾ _) ⨾ e) = simp x
+    simp (Var x)                 = Var x
+    simp Id                      = Id
+    simp (Id ⨾ y)                = simp y          {- Identity law -}
+    simp (Var x ⨾ y)             = Var x ⨾ simp y
+    simp (x@(_ ⨾ _) ⨾ Var y)     = simp x ⨾ Var y
+    simp (x@(_ ⨾ _) ⨾ Id)        = simp x           {- Identity law -}
     simp (x@(_ ⨾ _) ⨾ y@(_ ⨾ _)) = simp x ⨾ simp y
-
-    _++_ = Monoid._⨾_ B
+\end{code}
+Such simplification does not destory semantics:
+\begin{code}
+    open Monoid₂ B
+    
     coherence : ∀ x σ → ⟦ x ⟧ σ ≡ ⟦ simp x ⟧ σ
-    coherence (v x) σ = refl
-    coherence e σ = refl
-    coherence (v x ⨾ x₁) σ = cong (λ z → (σ x) ++ z) (coherence x₁ σ)
-    coherence (e ⨾ x₁) σ = trans (Monoid.left-unit B) (coherence x₁ σ)
-    coherence (x@(_ ⨾ _) ⨾ v x₁) σ = cong (λ z → z ++ σ x₁) (coherence x σ)
-    coherence (x@(_ ⨾ _) ⨾ e) σ = trans (Monoid.right-unit B) (coherence x σ)
-    coherence (x@(_ ⨾ _) ⨾ y@(_ ⨾ _)) σ = cong₂ _++_ (coherence x σ) (coherence y σ)
+    coherence (Var x) σ                 = refl
+    coherence Id σ                      = refl
+    coherence (Var x ⨾ x₁) σ            = cong (λ z → (σ x) ⨾₂ z) (coherence x₁ σ)
+    coherence (Id ⨾ x₁) σ               = trans left-unit₂ (coherence x₁ σ)
+    coherence (x@(_ ⨾ _) ⨾ Var x₁) σ    = cong (λ z → z ⨾₂ σ x₁) (coherence x σ)
+    coherence (x@(_ ⨾ _) ⨾ Id) σ        = trans right-unit₂ (coherence x σ)
+    coherence (x@(_ ⨾ _) ⨾ y@(_ ⨾ _)) σ = cong₂ _⨾₂_ (coherence x σ) (coherence y σ)
 \end{code}
 
 In Agda, like in many other languages, we can also be abstract
