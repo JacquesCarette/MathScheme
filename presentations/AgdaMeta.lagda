@@ -62,14 +62,15 @@ fit.  Specifically, we'll look closely at
 we have
 \begin{itemize}
 \item a single carrier set (1-sorted)
+  --for which we will uniformly refer to as “Carrier”.
 \item we declare finitely many symbols, denoting operations,
 each with arity $≥ 0$
 \item axioms of the form
-\[ ∀ x y z. term ≡ term \]
+  \[ ∀ x y z \;\bullet\; lhs-term ≡ rhs-term \]
 \end{itemize}
-Naturally, each one of these can be generalized, but each such
+Naturally, each one of these can be generalized, but each
 generalization brings in non-trivial difficulties that obscure
-the great usefullness of the common core.
+the utility of the common core.
 
 For later convenience, let us call each kind of definition
 \textbf{sorts}, \textbf{operations} and \textbf{equations}
@@ -83,14 +84,14 @@ Algebra}.
 Our motto here:
 
 \begin{centering}
-\Large Make easy things easy
+\Large “Make easy things easy!”
 \end{centering}
 
 A lot of CS research focuses on the other end of the spectrum,
-perhaps aptly phrased as \emph{Make hard things feasible}. Our aim
+perhaps aptly phrased as \emph{“make hard things feasible”}. Our aim
 is to create tools for humans to \emph{automate drudgery} so that
 they may spend more time on aspects where creativity and insight
-are actually needed.
+are actually needed. (•̀ᴗ•́)و
 
 Let us proceed to see many examples of information that can be
 derived automatically or with very little user intervention.
