@@ -358,33 +358,34 @@ and prove.  For example, something like
 \textit{Given two monoid structures on the same carrier set $S$,
 show that $∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x$}.
 \begin{code}
-module Try₁ where
-  postulate
-    S : Set
-    M₁ M₂ : MonoidOn S
-  open MonoidOn M₁ renaming (Id to e₁; _⨾_ to _⨾₁_; right-unit to ru)
-  open MonoidOn M₂ renaming (Id to e₂; _⨾_ to _⨾₂_; left-unit to lu)
-  stat : ∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x
-  stat x = trans lu ru
+module EasilyFormulated (S : Set) (A B : MonoidOn S) where
+
+  -- C.f., Monoid₁, Monoid₂, Monoid₃, …
+  open MonoidOn A renaming (Id to Id₁; _⨾_ to _⨾₁_; right-unit to right-unit₁)
+  open MonoidOn B renaming (Id to Id₂; _⨾_ to _⨾₂_; left-unit to left-unit₂)
+  
+  claim : ∀ x → Id₂ ⨾₂ (x ⨾₁ Id₁) ≡ x
+  claim x = trans left-unit₂ right-unit₁
 \end{code}
 If we attempt to do the same in the original setting, the
 formula $∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x$ does not even typecheck! We have
 to resort so different contortions.  For example, if we forget about
-the name $S$, we can instead say
+the name $S$, we can instead say:
 \begin{code}
-module Try₂ where
-  postulate
-    M₁ M₂ : Monoid
-  open Monoid M₁ renaming (Id to e₁; _⨾_ to _⨾₁_; right-unit to ru; Carrier to Carrier₁)
-  open Monoid M₂ renaming (Id to e₂; _⨾_ to _⨾₂_; left-unit to lu;  Carrier to Carrier₂)
-  postulate
-    eq : Carrier₁ ≡ Carrier₂
-  coe : {A B : Set} → A ≡ B → (a : A) → B
-  coe refl a = a
-  stat : (x : Carrier₁) → e₂ ⨾₂ (coe eq (x ⨾₁ e₁)) ≡ coe eq x
-  stat x = trans (lu) (cong (coe eq) (ru))
+module AkwardFormulation
+  (A B : Monoid) (ceq : Monoid.Carrier A ≡ Monoid.Carrier B)
+  where
+  
+  open Monoid₁ A
+  open Monoid₂ B
+  
+  coe : Carrier₁ → Carrier₂
+  coe = subst id ceq
+  
+  claim : (x : Carrier₁) → Id₂ ⨾₂ coe (x ⨾₁ Id₁) ≡ coe x
+  claim x = trans left-unit₂ (cong coe right-unit₁)
 \end{code}
-which is not nearly as nice. NB: this isn't a problem specific to Agda,
+This is not nearly as nice. NB: This isn't a problem specific to Agda,
 it is also present in Lean as well. It is a ``feature'' of MLTT.
 
 Here what we want to do is along the lines of
