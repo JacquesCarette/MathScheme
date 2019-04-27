@@ -8,6 +8,11 @@ prototypes (one in ocaml, the other in emacs lisp & common lisp)
 that automates this, but they are both syntactically awkward and
 thus not as well suited for clear communication.
 
+(
+ Proposal: https://github.com/alhassy/next-700-module-systems-proposal
+ Demo: https://www.youtube.com/watch?v=NYOOF9xKBz8&feature=youtu.be
+)
+
 \AgdaHide{
 \begin{code}
 module AgdaMeta where
@@ -33,19 +38,21 @@ Our primary example will be Monoid:
 record Monoid : Set₁ where
   constructor mon
   field
-    Carrier : Set₀
-    Id : Carrier
-    _⨾_ : Carrier → Carrier → Carrier
-    left-unit : ∀ x → Id ⨾ x ≡ x
+    Carrier    : Set₀
+    Id         : Carrier
+    _⨾_        : Carrier → Carrier → Carrier
+    left-unit  : ∀ x → Id ⨾ x ≡ x
     right-unit : ∀ x → x ⨾ Id ≡ x
-    assoc : ∀ x y z → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
+    assoc      : ∀ x y z → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
 \end{code}
 
-A Monoid is over a type, has a distinguished point in that type
+A Monoid has a type, along with a distinguished point in that type
 and a (total) binary operation over that type. There are also three
-axioms: that the point is a left and right unit for the operation,
+axioms: That the point is a left and right unit for the operation,
 and that the operation is associative. Note that we choose to use
 propositional equality for the axioms.
+
+( Alternatively: A monoid is a structure “over” a type. )
 
 In general, we will here consider particular kinds of \emph{theories},
 for which we know how to manipulate definitions. These are not
