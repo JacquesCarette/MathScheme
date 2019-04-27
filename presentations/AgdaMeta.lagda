@@ -78,7 +78,8 @@ axioms: That the point is a left and right unit for the operation,
 and that the operation is associative. Note that we choose to use
 propositional equality for the axioms.
 
-( Alternatively: A monoid is a structure “over” a type. )
+( Alternatively: A monoid is a structure “over” a type.
+  We will return to this alternative approach later. )
 
 In general, we will here consider particular kinds of \emph{theories},
 for which we know how to manipulate definitions. These are not
@@ -334,17 +335,20 @@ Make-Cartesian-Product A B =
 The original definition of \AgdaRecord{Monoid} is not the only
 way to arrange things. For those familiar with Haskell typeclasses
 or Coq's canonical structures, it might also make sense to
-priviledge the carrier as follows:
+privilege the carrier as follows:
 
 \begin{code}
-record Monoid′ (A : Set₀) : Set₀ where
+record MonoidOn (Carrier : Set₀) : Set₀ where
   field
-    e : A
-    _⨾_ : A → A → A
-    left-unit : ∀ x → e ⨾ x ≡ x
-    right-unit : ∀ x → x ⨾ e ≡ x
-    assoc : ∀ x y z → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
+    Id         : Carrier
+    _⨾_        : Carrier → Carrier → Carrier
+    left-unit  : ∀ {x} → Id ⨾ x ≡ x
+    right-unit : ∀ {x} → x ⨾ Id ≡ x
+    assoc      : ∀ {x y z} → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
 \end{code}
+
+\fbox{\textbf{MA: Using name “MonoidOn” instead.}}
+If anything, it's more suggestive than Monoid′.
 
 There are definite advantages for doing this. First, we don't need
 to bump up the universe level, because now our monoid no longer
@@ -357,11 +361,11 @@ show that $∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x$}.
 module Try₁ where
   postulate
     S : Set
-    M₁ M₂ : Monoid′ S
-  open Monoid′ M₁ renaming (e to e₁; _⨾_ to _⨾₁_; right-unit to ru)
-  open Monoid′ M₂ renaming (e to e₂; _⨾_ to _⨾₂_; left-unit to lu)
+    M₁ M₂ : MonoidOn S
+  open MonoidOn M₁ renaming (Id to e₁; _⨾_ to _⨾₁_; right-unit to ru)
+  open MonoidOn M₂ renaming (Id to e₂; _⨾_ to _⨾₂_; left-unit to lu)
   stat : ∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x
-  stat x = trans (lu _) (ru x)
+  stat x = trans lu ru
 \end{code}
 If we attempt to do the same in the original setting, the
 formula $∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x$ does not even typecheck! We have
@@ -385,7 +389,7 @@ it is also present in Lean as well. It is a ``feature'' of MLTT.
 
 Here what we want to do is along the lines of
 \begin{pseudocode}
-derive Monoid′ = hoist sorts
+derive MonoidOn = hoist sorts
 \end{pseudocode}
 In the Agda standard library, another variation is used. Here we present
 a simplified version, as the actual version (correctly!) takes advantage
