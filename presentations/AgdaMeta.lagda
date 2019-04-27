@@ -36,14 +36,13 @@ open ≡-Reasoning
 Our primary example will be Monoid:
 \begin{code}
 record Monoid : Set₁ where
-  constructor mon
   field
     Carrier    : Set₀
     Id         : Carrier
     _⨾_        : Carrier → Carrier → Carrier
-    left-unit  : ∀ x → Id ⨾ x ≡ x
-    right-unit : ∀ x → x ⨾ Id ≡ x
-    assoc      : ∀ x y z → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
+    left-unit  : ∀ {x} → Id ⨾ x ≡ x
+    right-unit : ∀ {x} → x ⨾ Id ≡ x
+    assoc      : ∀ {x y z} → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
 
 -- Sometimes we need to produce phrases involving multiple monoids;
 -- we thus introduce the following decorations.
@@ -139,6 +138,8 @@ record Squag : Set₁ where
     antiAbsorbent : ∀ x y → x ⨾ (x ⨾ y) ≡ y
 \end{code}
 
+\fbox{\textbf{MA: You mention Squag but everything below is about Monoid!? }}
+
 We now turn to some mechanically derivable notions
 --for which there is sadly no machine support, yet, in Agda.
 \begin{code}
@@ -209,6 +210,8 @@ record Hom-Equality {A B : Monoid} (F G : Hom A B) : Set where
   field
     equal : Hom.mor F ∼ Hom.mor G
 
+_≋_ = Hom-Equality
+
 {- 
 The astute Agda code may instead suggest the following terse definition.
 
@@ -247,6 +250,11 @@ record Isomorphism (A B : Monoid) : Set₁ where
     }
 \end{code}
 
+\fbox{\textbf{MA: In general this is not true?}}
+If a structure preserving operation has an inverse, the inverse may not be structure
+preserving, yeah? If so, then this particular presentation does not appear amicable
+to mechanical derivation.
+
 From that, it is useful to create abbreviations for
 endomorphisms and automorphisms:
 \begin{code}
@@ -262,10 +270,10 @@ homorphism, which is the set of pairs of points that map to
 the same value.
 \begin{code}
 record Kernel {A B : Monoid} (F : Hom A B) : Set₁ where
-  open Monoid
+  open Monoid A
   field
-    x : Carrier A
-    y : Carrier A
+    x    : Carrier
+    y    : Carrier
     cond : F $ x ≡ F $ y
 \end{code}
 \AgdaRecord{Kernel} is essentially generic, and can be derived
@@ -280,33 +288,47 @@ classical setting, to form quotients.
 Cartesian products also exist generically.
 \begin{code}
 record _×M_ (A B : Monoid) : Set₂ where
-   constructor prod
    field
+     -- There is an object:
      ProdM : Monoid
+     
+     -- Along with two maps to the orginal arguments:
      Proj1 : Hom ProdM A
      Proj2 : Hom ProdM B
+     
+     {-- Such that any other two maps to the orginal arguments
+     -- necessairly factor through some unique mapping called ⟨_,_⟩.
+     ⟨_,_⟩ : ∀{M : Monoid} (l : Hom M A) (r : Hom M B) → Hom M ProdM
+     factor₁ : ∀{M : Monoid} {l : Hom M A} {r : Hom M B} → Hom.mor l ∼ (Hom.mor Proj1 ∘ Hom.mor ⟨ l , r ⟩)
+     factor₂ : ∀{M : Monoid} {l : Hom M A} {r : Hom M B} → Hom.mor r ∼ (Hom.mor Proj2 ∘ Hom.mor ⟨ l , r ⟩)
 
-Cartesian-Product : (A : Monoid) → (B : Monoid) → A ×M B
-Cartesian-Product
-  (mon m e _⨾_ left-unit right-unit assoc)
-  (mon m₁ e₁ _⨾₁_ left-unit₁ right-unit₁ assoc₁) =
-   prod product (record { mor = proj₁ ; pres-e = refl ; pres-⨾ = pres-⨾ })
-                (record { mor = proj₂ ; pres-e = refl ; pres-⨾ = pres-⨾₁ })
-     where
-       e₂ = (e , e₁)
-       _⨾₂_ = λ {(a , b) (c , d) → (a ⨾ c , b ⨾₁ d)}
-       left-unit₂ : ∀ x → e₂ ⨾₂ x ≡ x
-       left-unit₂ (a , b) = cong₂ _,_ (left-unit a) (left-unit₁ b)
-       right-unit₂ : ∀ x → x ⨾₂ e₂ ≡ x
-       right-unit₂ (a , b) = cong₂ _,_ (right-unit a) (right-unit₁ b)
-       assoc₂ : ∀ x y z → (x ⨾₂ y) ⨾₂ z ≡ x ⨾₂ (y ⨾₂ z)
-       assoc₂ (a , b) (c , d) (m , n) = cong₂ _,_ (assoc a c m) (assoc₁ b d n)
-       product = (mon (m × m₁) e₂ _⨾₂_  left-unit₂ right-unit₂ assoc₂)
+     For now, we ignore these since they're not of much interest to the task at hand.
+     -}
+\end{code}
 
-       pres-⨾ : ∀ x y → proj₁ (x ⨾₂ y) ≡ (proj₁ x) ⨾ (proj₁ y)
-       pres-⨾ (a , b) (c , d) = refl
-       pres-⨾₁ : ∀ x y → proj₂ (x ⨾₂ y) ≡ (proj₂ x) ⨾₁ (proj₂ y)
-       pres-⨾₁ (a , b) (c , d) = refl
+Above we desribed what a cartesian produced “looks like”
+--what constitutes such a constrution. Now we turn to actually
+forming an instance of such a construction.
+
+\begin{code}
+Make-Cartesian-Product : (A : Monoid) → (B : Monoid) → A ×M B
+Make-Cartesian-Product A B =
+  let
+    open Monoid₁ A
+    open Monoid₂ B
+  in
+  record
+  { ProdM = record
+              { Carrier    = Carrier₁ × Carrier₂
+              ; Id         = Id₁ , Id₂
+              ; _⨾_        = zip _⨾₁_ _⨾₂_
+              ; left-unit  = cong₂ _,_ left-unit₁ left-unit₂
+              ; right-unit = cong₂ _,_ right-unit₁ right-unit₂
+              ; assoc      = cong₂ _,_ assoc₁ assoc₂
+              }
+  ; Proj1 = record { mor = proj₁ ; pres-e = refl ; pres-⨾ = λ _ _ → refl }
+  ; Proj2 = record { mor = proj₂ ; pres-e = refl ; pres-⨾ = λ _ _ → refl }
+  }
 \end{code}
 
 The original definition of \AgdaRecord{Monoid} is not the only
@@ -356,7 +378,7 @@ module Try₂ where
   coe : {A B : Set} → A ≡ B → (a : A) → B
   coe refl a = a
   stat : (x : Carrier₁) → e₂ ⨾₂ (coe eq (x ⨾₁ e₁)) ≡ coe eq x
-  stat x = trans (lu _) (cong (coe eq) (ru x))
+  stat x = trans (lu) (cong (coe eq) (ru))
 \end{code}
 which is not nearly as nice. NB: this isn't a problem specific to Agda,
 it is also present in Lean as well. It is a ``feature'' of MLTT.
@@ -516,9 +538,9 @@ make it complete (left to another day, as that is not easy).
     coherence (v x) σ = refl
     coherence e σ = refl
     coherence (v x ⨾ x₁) σ = cong (λ z → (σ x) ++ z) (coherence x₁ σ)
-    coherence (e ⨾ x₁) σ = trans (Monoid.left-unit B _) (coherence x₁ σ)
+    coherence (e ⨾ x₁) σ = trans (Monoid.left-unit B) (coherence x₁ σ)
     coherence (x@(_ ⨾ _) ⨾ v x₁) σ = cong (λ z → z ++ σ x₁) (coherence x σ)
-    coherence (x@(_ ⨾ _) ⨾ e) σ = trans (Monoid.right-unit B _) (coherence x σ)
+    coherence (x@(_ ⨾ _) ⨾ e) σ = trans (Monoid.right-unit B) (coherence x σ)
     coherence (x@(_ ⨾ _) ⨾ y@(_ ⨾ _)) σ = cong₂ _++_ (coherence x σ) (coherence y σ)
 \end{code}
 
@@ -548,7 +570,7 @@ to generate a \textbf{partial evaluator} for the term language.
 ----
 Slightly realated investigation.
 
-\begin{code}
+\begin{spec}
 -- The follwing may be easier to state not as “𝒮.Carrier ≈ ℳ.Carrier ≈ 𝟙 → C ≈ 𝟙”
 -- but as “SquagOn C → MonoidOn C → C ≈ 𝟙”
 --
@@ -586,6 +608,6 @@ module on-vs-has where
                                                ; right-inverse-of = λ{ ★ → refl}
                                                }
                          }
-\end{code}
+\end{spec}
 
 
