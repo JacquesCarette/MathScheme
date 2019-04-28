@@ -88,7 +88,13 @@
 
 \lstset{language=metaocaml,basicstyle=\small}
 
-\title[Metaprog Agda]{Metaprogramming Agda}
+\usepackage{latex/agda}
+\usepackage{catchfilebetweentags}
+
+%% Unicode stuff
+\DeclareUnicodeCharacter {10814}{\ensuremath{\fatsemi}}
+
+\title[Metaprogramming Agda]{Metaprogramming Agda}
 \author[Carette, Al-hassy, Sharoda, Kahl]
   {\Large Jacques Carette, Musa Al-hassy, Yasmine Sharoda, Wolfram Kahl}
 \institute[McMaster]{McMaster University}
@@ -105,7 +111,20 @@
 
 \begin{frame}
 \frametitle{The Problem}
-Monoid and all the derived stuff
+\begin{columns}
+  \hspace*{-2cm}
+  \begin{column}{0.5\textwidth} 
+    {\tiny \ExecuteMetaData[latex/AgdaMeta.tex]{theory} }
+    {\tiny \ExecuteMetaData[latex/AgdaMeta.tex]{sig} }
+  \end{column}
+  \hspace*{-2cm}
+  \begin{column}{0.5\textwidth}
+    {\tiny \ExecuteMetaData[latex/AgdaMeta.tex]{hom}}
+    {\vspace*{\fill}}
+  \end{column}
+\end{columns}
+
+
 \end{frame}
 
 \begin{frame}[t,fragile]

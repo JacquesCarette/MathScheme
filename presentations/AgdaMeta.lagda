@@ -34,21 +34,30 @@ open ≡-Reasoning
 }
 
 Our primary example will be Monoid:
+%<*theory>
 \begin{code}
 record Monoid : Set₁ where
   field
+    -- a type
     Carrier    : Set₀
+
+    -- some operations
     Id         : Carrier
     _⨾_        : Carrier → Carrier → Carrier
-    left-unit  : ∀ {x} → Id ⨾ x ≡ x
-    right-unit : ∀ {x} → x ⨾ Id ≡ x
+
+    -- some equations
+    left-unit  : ∀ {x}     → Id ⨾ x ≡ x
+    right-unit : ∀ {x}     → x ⨾ Id ≡ x
     assoc      : ∀ {x y z} → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
+\end{code}
+%</theory>
 
--- Sometimes we need to produce phrases involving multiple monoids;
--- we thus introduce the following decorations.
---
--- It would be nice if we could “generate” such tediousness.
+Sometimes we need to produce phrases involving multiple monoids;
+we thus introduce the following decorations.
 
+It would be nice if we could “generate” such tediousness.
+
+\begin{code}
 module Monoid₁ (M : Monoid) where
   open Monoid M public renaming
     ( Carrier    to Carrier₁
@@ -68,7 +77,7 @@ module Monoid₂ (M : Monoid) where
     ; right-unit to right-unit₂
     ; assoc      to assoc₂
     )
-
+\end{code}
 -- Monoid₃, Monoid₄, etc, …
 \end{code}
 
@@ -151,23 +160,27 @@ First, there is a general notion of homomorphism between
 theories: A mapping from the carrier of one theory to
 the other, that \emph{preserves} each of the operations. It is
 customary to shorten the name to $\AgdaRecord{Hom}$.
+%<*hom>
 \begin{code}
 record Hom (A B : Monoid) : Set₁ where
   open Monoid₁ A; open Monoid₂ B
   field
-    mor    : Carrier₁ → Carrier₂
-    pres-e : mor Id₁ ≡ Id₂
-    pres-⨾ : ∀ x y → mor (x ⨾₁ y) ≡ (mor x) ⨾₂ (mor y)
+    mor     : Carrier₁ → Carrier₂
+    pres-Id : mor Id₁ ≡ Id₂
+    pres-⨾  : ∀ x y → mor (x ⨾₁ y) ≡ (mor x) ⨾₂ (mor y)
 
 -- “Apply” a homomorphism onto an element
 infixr 20 _$_
-_$_ : {A B : Monoid} → Hom A B → (Monoid.Carrier A → Monoid.Carrier B)
-F $ x = Hom.mor F x
+_$_ : {A B : Monoid} → Hom A B →
+      (Monoid.Carrier A → Monoid.Carrier B)
+_$_ = Hom.mor
 \end{code}
+%</hom>
 
 The above makes fundamental use of what is often called
 (in the Universal Algebra literature) the \emph{signature}
 of the theory:
+%<*sig>
 \begin{code}
 record Signature : Set₁ where
   field
@@ -175,6 +188,7 @@ record Signature : Set₁ where
     Id      : Carrier
     _⨾_     : Carrier → Carrier → Carrier
 \end{code}
+%</sig>
 Of course, in a dependently-typed setting, all records, including Monoid itself, are
 also called signatures, which can unfortunately lead to
 confusion. What is important to notice here is that it ought to
@@ -213,7 +227,7 @@ record Hom-Equality {A B : Monoid} (F G : Hom A B) : Set where
 
 _≋_ = Hom-Equality
 
-{- 
+{-
 The astute Agda code may instead suggest the following terse definition.
 
 Hom-Equality : ∀ {A B : Monoid} (F G : Hom A B) → Set
@@ -244,7 +258,7 @@ record Isomorphism (A B : Monoid) : Set₁ where
   inv-is-Hom : Hom B A
   inv-is-Hom = record
     { mor = g
-    ; pres-e = trans (sym (cong g (pres-e A⇒B))) (g∘f≡id (Id A))
+    ; pres-Id = trans (sym (cong g (pres-Id A⇒B))) (g∘f≡id (Id A))
     ; pres-⨾ = λ x y →  trans (cong g (sym (cong₂ (_⨾_ B) (f∘g≡id x) (f∘g≡id y))))
                (trans (cong g (sym (pres-⨾ A⇒B (g x) (g y))))
                (g∘f≡id _))
@@ -292,11 +306,11 @@ record _×M_ (A B : Monoid) : Set₂ where
    field
      -- There is an object:
      ProdM : Monoid
-     
+
      -- Along with two maps to the orginal arguments:
      Proj1 : Hom ProdM A
      Proj2 : Hom ProdM B
-     
+
      {-- Such that any other two maps to the orginal arguments
      -- necessairly factor through some unique mapping called ⟨_,_⟩.
      ⟨_,_⟩ : ∀{M : Monoid} (l : Hom M A) (r : Hom M B) → Hom M ProdM
@@ -327,8 +341,8 @@ Make-Cartesian-Product A B =
               ; right-unit = cong₂ _,_ right-unit₁ right-unit₂
               ; assoc      = cong₂ _,_ assoc₁ assoc₂
               }
-  ; Proj1 = record { mor = proj₁ ; pres-e = refl ; pres-⨾ = λ _ _ → refl }
-  ; Proj2 = record { mor = proj₂ ; pres-e = refl ; pres-⨾ = λ _ _ → refl }
+  ; Proj1 = record { mor = proj₁ ; pres-Id = refl ; pres-⨾ = λ _ _ → refl }
+  ; Proj2 = record { mor = proj₂ ; pres-Id = refl ; pres-⨾ = λ _ _ → refl }
   }
 \end{code}
 
@@ -363,7 +377,7 @@ module EasilyFormulated (S : Set) (A B : MonoidOn S) where
   -- C.f., Monoid₁, Monoid₂, Monoid₃, …
   open MonoidOn A renaming (Id to Id₁; _⨾_ to _⨾₁_; right-unit to right-unit₁)
   open MonoidOn B renaming (Id to Id₂; _⨾_ to _⨾₂_; left-unit to left-unit₂)
-  
+
   claim : ∀ x → Id₂ ⨾₂ (x ⨾₁ Id₁) ≡ x
   claim x = trans left-unit₂ right-unit₁
 \end{code}
@@ -375,13 +389,13 @@ the name $S$, we can instead say:
 module AkwardFormulation
   (A B : Monoid) (ceq : Monoid.Carrier A ≡ Monoid.Carrier B)
   where
-  
+
   open Monoid₁ A
   open Monoid₂ B
-  
+
   coe : Carrier₁ → Carrier₂
   coe = subst id ceq
-  
+
   claim : (x : Carrier₁) → Id₂ ⨾₂ coe (x ⨾₁ Id₁) ≡ coe x
   claim x = trans left-unit₂ (cong coe right-unit₁)
 \end{code}
@@ -436,7 +450,7 @@ interpretation in that monoid, a generic length function, and
 a generic (decidable) equality on the syntax.
 \begin{code}
   infix 999 _⟦_⟧
-  
+
   _⟦_⟧ : (ℳ : Monoid) → CTerm → Monoid.Carrier ℳ
   ℳ ⟦ Id ⟧    = Monoid.Id ℳ
   ℳ ⟦ x ⨾ y ⟧ = ℳ ⟦ x ⟧ ⨾₁ ℳ ⟦ y ⟧ where open Monoid₁ ℳ
@@ -483,11 +497,11 @@ reader will recognize this as a non-trivial \textsf{catamorphism}
 for the algebra of open terms over the language of monoids.
 \begin{code}
   module Interpret {𝒱 : DecSetoid lzero lzero} (A : Monoid) where
-  
+
     open DecSetoid 𝒱 renaming (Carrier to V)
     open Monoid₁ A
     open OTerm
-    
+
     ⟦_⟧_ : OTerm 𝒱 → (V → Carrier₁) → Carrier₁
     ⟦ Var x ⟧ σ = σ x
     ⟦ Id    ⟧ σ = Id₁
@@ -503,13 +517,13 @@ We can use such open terms as part of a generic language of
 equations too.
 \begin{code}
     infix 5 _≃_
-    
+
     data Formula : Set where
       _≃_ : OTerm 𝒱 → OTerm 𝒱 → Formula
-      
+
     lhs : Formula → OTerm 𝒱
     lhs (l ≃ _) = l
-    
+
     rhs : Formula → OTerm 𝒱
     rhs (_ ≃ r) = r
 \end{code}
@@ -533,18 +547,18 @@ But we can go further and look at the
 For simplicity, let's fix $𝒱$ to be characters.
 \begin{code}
   module Example (B : Monoid) where
-  
+
     import Data.Char as C
-    
+
     CharSetoid : DecSetoid lzero lzero
     CharSetoid = StrictTotalOrder.decSetoid C.strictTotalOrder
-    
-    open Interpret {CharSetoid} B    
+
+    open Interpret {CharSetoid} B
     OT = OTerm CharSetoid
 
     left-unit-term : Formula
     left-unit-term = Id ⨾ Var 'x' ≃ Var 'x'
-    
+
     assoc-term : Formula
     assoc-term = Var 'x' ⨾ (Var 'y' ⨾ Var 'z') ≃ (Var 'x' ⨾ Var 'y') ⨾ Var 'z'
 \end{code}
@@ -588,7 +602,7 @@ Let's now turn to forming canonical forms, or forms as simple as possible.
 Such simplification does not destory semantics:
 \begin{code}
     open Monoid₂ B
-    
+
     coherence : ∀ x σ → ⟦ x ⟧ σ ≡ ⟦ simp x ⟧ σ
     coherence (Var x) σ                 = refl
     coherence Id σ                      = refl
@@ -632,7 +646,7 @@ Slightly realated investigation.
 -- The following may be easier to state not as “𝒮.Carrier ≈ ℳ.Carrier ≈ 𝟙 → C ≈ 𝟙”
 -- but as “SquagOn C → MonoidOn C → C ≈ 𝟙”
 --
-module on-vs-has where 
+module on-vs-has where
 
   open import Function.Inverse using () renaming (_↔_ to _≅_)
 
@@ -640,7 +654,7 @@ module on-vs-has where
 
   trivial-intersection : ∀ (C : Set) (S : Squag) (M : Monoid)
                            (let module 𝒮 = Squag S)
-                           (let module ℳ = Monoid M)                         
+                           (let module ℳ = Monoid M)
                          → 𝒮.Carrier ≡ ℳ.Carrier → ℳ.Carrier ≡ C
                          → C ≅ 𝟙
   trivial-intersection .(Monoid.Carrier q)
@@ -667,5 +681,3 @@ module on-vs-has where
                                                }
                          }
 \end{spec}
-
-
