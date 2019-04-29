@@ -49,7 +49,7 @@ record Monoid : Set₁ where
     -- some equations
     left-unit  : ∀ {x}     → Id ⨾ x ≡ x
     right-unit : ∀ {x}     → x ⨾ Id ≡ x
-    assoc      : ∀ {x y z} → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
+    assoc : ∀ {x y z} → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
 \end{code}
 %</theory>
 
@@ -163,6 +163,21 @@ First, there is a general notion of homomorphism between
 theories: A mapping from the carrier of one theory to
 the other, that \emph{preserves} each of the operations. It is
 customary to shorten the name to $\AgdaRecord{Hom}$.
+
+A first version might look like
+%<*hom1>
+\begin{code}
+record Hom′ (A B : Monoid) : Set₁ where
+  open Monoid A renaming
+    (Carrier to Carrier₁; Id to Id₁; _⨾_ to _⨾₁_)
+  open Monoid B renaming
+    (Carrier to Carrier₂; Id to Id₂; _⨾_ to _⨾₂_)
+  field
+    mor     : Carrier₁ → Carrier₂
+    pres-Id : mor Id₁ ≡ Id₂
+    pres-⨾  : ∀ x y → mor (x ⨾₁ y) ≡ (mor x) ⨾₂ (mor y)
+\end{code}
+%</hom1>
 %<*hom>
 \begin{code}
 record Hom (A B : Monoid) : Set₁ where
@@ -171,14 +186,17 @@ record Hom (A B : Monoid) : Set₁ where
     mor     : Carrier₁ → Carrier₂
     pres-Id : mor Id₁ ≡ Id₂
     pres-⨾  : ∀ x y → mor (x ⨾₁ y) ≡ (mor x) ⨾₂ (mor y)
-
+\end{code}
+%</hom>
+%<*applyhom>
+\begin{code}
 -- “Apply” a homomorphism onto an element
 infixr 20 _$_
 _$_ : {A B : Monoid} → Hom A B →
       (Monoid.Carrier A → Monoid.Carrier B)
 _$_ = Hom.mor
 \end{code}
-%</hom>
+%</applyhom>
 
 The above makes fundamental use of what is often called
 (in the Universal Algebra literature) the \emph{signature}
@@ -262,10 +280,10 @@ Other similar notions can also be defined. A minimalist version
 of \emph{isomorphism} requires a (forward) homomorphism
 between two monoids, and a mere inverse function. This is because
 one can then prove that such a function is necessarily a homomorphism.
+%<*iso>
 \begin{code}
 record Isomorphism (A B : Monoid) : Set₁ where
-  open Monoid
-  open Hom
+  open Monoid; open Hom
   field
     A⇒B : Hom A B
     g : Carrier B → Carrier A
@@ -277,11 +295,10 @@ record Isomorphism (A B : Monoid) : Set₁ where
     { mor = g
     ; pres-Id = trans (sym (cong g (pres-Id A⇒B))) (g∘f≡id (Id A))
     ; pres-⨾ = λ x y →  trans (cong g (sym (cong₂ (_⨾_ B) (f∘g≡id x) (f∘g≡id y))))
-               (trans (cong g (sym (pres-⨾ A⇒B (g x) (g y))))
-               (g∘f≡id _))
+               (trans (cong g (sym (pres-⨾ A⇒B (g x) (g y)))) (g∘f≡id _))
     }
 \end{code}
-
+%</iso>
 \fbox{\textbf{MA: In general this is not true?}}
 {\textbf{JC to MA: take a close look at the proof, which can be cleaned up, and
 you'll that it is generic. Each line just needs n-ary cong and preservation for
@@ -292,6 +309,7 @@ to mechanical derivation.
 
 From that, it is useful to create abbreviations for
 endomorphisms and automorphisms:
+%<*Endo>
 \begin{code}
 Endomorphism : Monoid → Set₁
 Endomorphism A = Hom A A
@@ -299,6 +317,7 @@ Endomorphism A = Hom A A
 Automorphism : Monoid → Set₁
 Automorphism A = Isomorphism A A
 \end{code}
+%</Endo>
 
 Another generic concept is that of \AgdaRecord{Kernel} of a
 homorphism, which is the set of pairs of points that map to
