@@ -390,9 +390,6 @@ record MonoidOn (Carrier : Set₀) : Set₀ where
 \end{code}
 %</monoid-on>
 
-\fbox{\textbf{MA: Using name “MonoidOn” instead.}}
-If anything, it's more suggestive than Monoid′.
-
 There are definite advantages for doing this. First, we don't need
 to bump up the universe level, because now our monoid no longer
 \emph{contains} a type, rather it is \emph{parametrized} by a type.
