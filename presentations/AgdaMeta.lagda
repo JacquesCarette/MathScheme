@@ -477,6 +477,7 @@ Nevertheless, we can still usefully write some generic functions,
 such as mapping a closed term from its syntax tree to its
 interpretation in that monoid, a generic length function, and
 a generic (decidable) equality on the syntax.
+%<*sem1>
 \begin{code}
   infix 999 _⟦_⟧
 
@@ -484,6 +485,7 @@ a generic (decidable) equality on the syntax.
   ℳ ⟦ Id ⟧    = Monoid.Id ℳ
   ℳ ⟦ x ⨾ y ⟧ = ℳ ⟦ x ⟧ ⨾₁ ℳ ⟦ y ⟧ where open Monoid₁ ℳ
 \end{code}
+%</sem1>
 Ground terms can only be formed using Id and composition;
 whence any interpretation is semantically equivalent to Id.
 \begin{code}
@@ -500,6 +502,7 @@ whence any interpretation is semantically equivalent to Id.
 
 But there are nevertheless some useful programs that can be written on the raw
 trees:
+%<*useful>
 \begin{code}
   length : CTerm → ℕ
   length Id      = 1
@@ -509,6 +512,7 @@ trees:
     ≈-Id : Id ≈ Id
     ≈-⨾ : ∀ {a a′ b b′} → a ≈ a′ → b ≈ b′ → (a ⨾ b) ≈ (a′ ⨾ b′)
 \end{code}
+%</useful>
 
 Of course, much more useful is a type that may contain
 \emph{free variables}, i.e. open terms.  As we'd like to maintain decidable
