@@ -29,6 +29,7 @@ open import Data.Nat using (ℕ; _+_; _>_; s≤s; z≤n)
 open import Data.Unit using (⊤)
 open import Data.Empty using (⊥)
 
+
 open ≡-Reasoning
 \end{code}
 }
@@ -210,6 +211,19 @@ derive Hom foo = apply
 \end{pseudocode}
 
 \fbox{\textbf{MA: This syntax requires some explanation. }}
+
+\fbox{\textbf{YS: The syntax for "derive Hom foo" assume we have the following:
+1. A language on the declarations level: - classify declarations as sorts, operations or axioms - define operations like map and preserve
+2. A language that uses the one above to generate useful constructions, like signature and homomorphisms
+In this case, I don't see why we have two a derive function that take Hom or Signature as arguments. My suggestion:
+hom foo = apply
+  { input f1 f2 : foo 
+    sorts |-> map
+    operations |-> preserve 
+  }
+Then, the function hom would be triggered by calling
+derive hom foo 
+}}
 
 For example, we can look at what equality of two
 homomorphisms could be. So we compute the ``signature''
@@ -546,11 +560,12 @@ But we can go further and look at the
 
 For simplicity, let's fix $𝒱$ to be characters.
 \begin{code}
+
   module Example (B : Monoid) where
 
-    import Data.Char as C
+    import Data.Char as C 
 
-    CharSetoid : DecSetoid lzero lzero
+    CharSetoid : DecSetoid lzero lzero 
     CharSetoid = StrictTotalOrder.decSetoid C.strictTotalOrder
 
     open Interpret {CharSetoid} B
@@ -561,6 +576,7 @@ For simplicity, let's fix $𝒱$ to be characters.
 
     assoc-term : Formula
     assoc-term = Var 'x' ⨾ (Var 'y' ⨾ Var 'z') ≃ (Var 'x' ⨾ Var 'y') ⨾ Var 'z'
+
 \end{code}
 
 The ``obvious'' idea is then to filter the formulas, and only
@@ -598,6 +614,7 @@ Let's now turn to forming canonical forms, or forms as simple as possible.
     simp (x@(_ ⨾ _) ⨾ Var y)     = simp x ⨾ Var y
     simp (x@(_ ⨾ _) ⨾ Id)        = simp x           {- Identity law -}
     simp (x@(_ ⨾ _) ⨾ y@(_ ⨾ _)) = simp x ⨾ simp y
+
 \end{code}
 Such simplification does not destory semantics:
 \begin{code}
