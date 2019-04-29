@@ -247,8 +247,8 @@ The astute Agda code may instead suggest the following terse definition.
 
 %<*hom-eq2>
 \begin{code}
-Hom-Equality : ∀ {A B : Monoid} (F G : Hom A B) → Set
-Hom-Equality F G = Hom.mor F ∼ Hom.mor G
+Hom-Equality′ : ∀ {A B : Monoid} (F G : Hom A B) → Set
+Hom-Equality′ F G = Hom.mor F ∼ Hom.mor G
 \end{code}
 %</hom-eq2>
 
@@ -303,6 +303,7 @@ Automorphism A = Isomorphism A A
 Another generic concept is that of \AgdaRecord{Kernel} of a
 homorphism, which is the set of pairs of points that map to
 the same value.
+%<*kernel>
 \begin{code}
 record Kernel {A B : Monoid} (F : Hom A B) : Set₁ where
   open Monoid A
@@ -311,6 +312,7 @@ record Kernel {A B : Monoid} (F : Hom A B) : Set₁ where
     y    : Carrier
     cond : F $ x ≡ F $ y
 \end{code}
+%</kernel>
 \AgdaRecord{Kernel} is essentially generic, and can be derived
 as a template -- unlike previous definitions, which really do need
 simple but ``real'' programs to be run on the representations.
@@ -321,6 +323,7 @@ a congruence, which means that this can be used, at least in a
 classical setting, to form quotients.
 
 Cartesian products also exist generically.
+%<*product>
 \begin{code}
 record _×M_ (A B : Monoid) : Set₂ where
    field
@@ -330,21 +333,25 @@ record _×M_ (A B : Monoid) : Set₂ where
      -- Along with two maps to the orginal arguments:
      Proj1 : Hom ProdM A
      Proj2 : Hom ProdM B
-
-     {-- Such that any other two maps to the orginal arguments
-     -- necessairly factor through some unique mapping called ⟨_,_⟩.
+\end{code}
+%</product>
+Such that any other two maps to the orginal arguments
+necessarily factor through some unique mapping called ⟨_,_⟩.
+\begin{code}
+record IsProduct{A B : Monoid} (C : A ×M B) : Set₂ where
+   open _×M_ C
+   field
      ⟨_,_⟩ : ∀{M : Monoid} (l : Hom M A) (r : Hom M B) → Hom M ProdM
      factor₁ : ∀{M : Monoid} {l : Hom M A} {r : Hom M B} → Hom.mor l ∼ (Hom.mor Proj1 ∘ Hom.mor ⟨ l , r ⟩)
      factor₂ : ∀{M : Monoid} {l : Hom M A} {r : Hom M B} → Hom.mor r ∼ (Hom.mor Proj2 ∘ Hom.mor ⟨ l , r ⟩)
-
-     For now, we ignore these since they're not of much interest to the task at hand.
-     -}
 \end{code}
+For now, we ignore these since they're not of much interest to the task at hand.
 
 Above we desribed what a cartesian produced “looks like”
 --what constitutes such a constrution. Now we turn to actually
 forming an instance of such a construction.
 
+%<*make-prod>
 \begin{code}
 Make-Cartesian-Product : (A : Monoid) → (B : Monoid) → A ×M B
 Make-Cartesian-Product A B =
@@ -365,12 +372,13 @@ Make-Cartesian-Product A B =
   ; Proj2 = record { mor = proj₂ ; pres-Id = refl ; pres-⨾ = λ _ _ → refl }
   }
 \end{code}
-
+%</make-prod>
 The original definition of \AgdaRecord{Monoid} is not the only
 way to arrange things. For those familiar with Haskell typeclasses
 or Coq's canonical structures, it might also make sense to
 privilege the carrier as follows:
 
+%<*monoid-on>
 \begin{code}
 record MonoidOn (Carrier : Set₀) : Set₀ where
   field
@@ -380,6 +388,7 @@ record MonoidOn (Carrier : Set₀) : Set₀ where
     right-unit : ∀ {x} → x ⨾ Id ≡ x
     assoc      : ∀ {x y z} → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
 \end{code}
+%</monoid-on>
 
 \fbox{\textbf{MA: Using name “MonoidOn” instead.}}
 If anything, it's more suggestive than Monoid′.
