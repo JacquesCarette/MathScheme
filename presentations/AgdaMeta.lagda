@@ -390,6 +390,11 @@ record MonoidOn (Carrier : Set₀) : Set₀ where
 \end{code}
 %</monoid-on>
 
+Here what we want to do is along the lines of
+\begin{pseudocode}
+derive MonoidOn = hoist sorts
+\end{pseudocode}
+
 There are definite advantages for doing this. First, we don't need
 to bump up the universe level, because now our monoid no longer
 \emph{contains} a type, rather it is \emph{parametrized} by a type.
@@ -397,6 +402,7 @@ Second, certain mathematical statements are much simpler to state
 and prove.  For example, something like
 \textit{Given two monoid structures on the same carrier set $S$,
 show that $∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x$}.
+%<*easily-formulated>
 \begin{code}
 module EasilyFormulated (S : Set) (A B : MonoidOn S) where
 
@@ -407,38 +413,33 @@ module EasilyFormulated (S : Set) (A B : MonoidOn S) where
   claim : ∀ x → Id₂ ⨾₂ (x ⨾₁ Id₁) ≡ x
   claim x = trans left-unit₂ right-unit₁
 \end{code}
+%</easily-formulated>
 If we attempt to do the same in the original setting, the
 formula $∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x$ does not even typecheck! We have
 to resort so different contortions.  For example, if we forget about
 the name $S$, we can instead say:
+%<*awkward-formulation>
 \begin{code}
 module AkwardFormulation
-  (A B : Monoid) (ceq : Monoid.Carrier A ≡ Monoid.Carrier B)
-  where
-
+  (A B : Monoid) (ceq : Monoid.Carrier A ≡ Monoid.Carrier B) where
   open Monoid₁ A
   open Monoid₂ B
 
   coe : Carrier₁ → Carrier₂
   coe = subst id ceq
 
-  claim : (x : Carrier₁) → Id₂ ⨾₂ coe (x ⨾₁ Id₁) ≡ coe x
+  claim : ∀ x → Id₂ ⨾₂ coe (x ⨾₁ Id₁) ≡ coe x
   claim x = trans left-unit₂ (cong coe right-unit₁)
 \end{code}
+%</awkward-formulation>
 This is not nearly as nice. NB: This isn't a problem specific to Agda,
 it is also present in Lean as well. It is a ``feature'' of MLTT.
-
-Here what we want to do is along the lines of
-\begin{pseudocode}
-derive MonoidOn = hoist sorts
-\end{pseudocode}
 
 In the Agda standard library, another variation is used. Here we present
 a simplified version, as the actual version (correctly!) takes advantage
 of the fact that there is structure on theories as well.
 
-\fbox{\textbf{MA: Does target audiance know what “structure on theories” means; perhaps explain it.}}
-
+%<*IsMonoid>
 \begin{code}
 record IsMonoid {Carrier : Set}
                 (_⨾_ : Carrier → Carrier → Carrier)
@@ -448,6 +449,7 @@ record IsMonoid {Carrier : Set}
     right-unit : ∀ {x} → x ⨾ Id ≡ x
     assoc      : ∀ {x y z} → (x ⨾ y) ⨾ z ≡ x ⨾ (y ⨾ z)
 \end{code}
+%</IsMonoid>
 
 This could be written as:
 \begin{pseudocode}
@@ -458,6 +460,7 @@ derive IsMonoid = hoist-implicit sorts $
 Going back to representing the ``language'' associated to a theory,
 we can shift from the labelled-product form of the Signature record
 to the labelled-sum form, i.e. an algebraic data type:
+%<*closed>
 \begin{code}
 module Closed where
 
@@ -465,10 +468,10 @@ module Closed where
     Id  : CTerm
     _⨾_ : CTerm → CTerm → CTerm
 \end{code}
+%</closed>
 
 Naturally, for \AgdaRecord{Monoid}, this is not particularly interesting,
 unlike for \AgdaRecord{SemiRing} (say).
-\fbox{\textbf{MA: Squag was mentoned for a reason? }}
 
 Nevertheless, we can still usefully write some generic functions,
 such as mapping a closed term from its syntax tree to its
@@ -480,29 +483,31 @@ a generic (decidable) equality on the syntax.
   _⟦_⟧ : (ℳ : Monoid) → CTerm → Monoid.Carrier ℳ
   ℳ ⟦ Id ⟧    = Monoid.Id ℳ
   ℳ ⟦ x ⨾ y ⟧ = ℳ ⟦ x ⟧ ⨾₁ ℳ ⟦ y ⟧ where open Monoid₁ ℳ
-
-  -- Ground terms can only be formed using Id and composition;
-  -- whence any interpretation is semantically equivalent to Id.
+\end{code}
+Ground terms can only be formed using Id and composition;
+whence any interpretation is semantically equivalent to Id.
+\begin{code}
   boring-semantics : ∀ (ℳ : Monoid) (t : CTerm) → ℳ ⟦ t ⟧ ≡ Monoid.Id ℳ
   boring-semantics ℳ Id = refl
   boring-semantics ℳ (l ⨾ r) = let open Monoid₁ ℳ in
      begin
-       ℳ ⟦ l ⨾ r ⟧
-     ≡⟨ refl  ⟩
-       ℳ ⟦ l ⟧ ⨾₁ ℳ ⟦ r ⟧
-     ≡⟨ cong₂ _⨾₁_ (boring-semantics ℳ l) (boring-semantics ℳ r)  ⟩
-       Id₁ ⨾₁ Id₁
-     ≡⟨ left-unit₁  ⟩
+       ℳ ⟦ l ⨾ r ⟧          ≡⟨ refl  ⟩
+       ℳ ⟦ l ⟧ ⨾₁ ℳ ⟦ r ⟧  ≡⟨ cong₂ _⨾₁_ (boring-semantics ℳ l) (boring-semantics ℳ r)  ⟩
+       Id₁ ⨾₁ Id₁           ≡⟨ left-unit₁  ⟩
        Id₁
      ∎
+\end{code}
 
+But there are nevertheless some useful programs that can be written on the raw
+trees:
+\begin{code}
   length : CTerm → ℕ
   length Id      = 1
   length (x ⨾ y) = 1 + length x + length y
 
   data _≈_ : CTerm → CTerm → Set where
-    ≈-base : Id ≈ Id
-    ≈-step : ∀ {a a′ b b′} → a ≈ a′ → b ≈ b′ → (a ⨾ b) ≈ (a′ ⨾ b′)
+    ≈-Id : Id ≈ Id
+    ≈-⨾ : ∀ {a a′ b b′} → a ≈ a′ → b ≈ b′ → (a ⨾ b) ≈ (a′ ⨾ b′)
 \end{code}
 
 Of course, much more useful is a type that may contain
