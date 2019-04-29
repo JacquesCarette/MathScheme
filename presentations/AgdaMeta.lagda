@@ -231,7 +231,7 @@ of \AgdaRecord{Hom} and insist that each field be
 appropritely related.  In particular, for functions,
 this is going to be pointwise:
 
-%<*hom-eq1>
+%<*homEq1>
 \begin{code}
 _∼_ : {A B : Set} (f g : A → B) → Set
 f ∼ g = ∀ a → f a ≡ g a
@@ -242,15 +242,15 @@ record Hom-Equality {A B : Monoid} (F G : Hom A B) : Set where
 
 _≋_ = Hom-Equality
 \end{code}
-%</hom-eq1>
+%</homEq1>
 The astute Agda code may instead suggest the following terse definition.
 
-%<*hom-eq2>
+%<*homEq2>
 \begin{code}
 Hom-Equality′ : ∀ {A B : Monoid} (F G : Hom A B) → Set
 Hom-Equality′ F G = Hom.mor F ∼ Hom.mor G
 \end{code}
-%</hom-eq2>
+%</homEq2>
 
 However, we use a “record” presentation as it generalises to other
 derived constructs and thus makes the subsequent derivatives below appear

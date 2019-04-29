@@ -95,6 +95,7 @@
 
 %% Unicode stuff
 \DeclareUnicodeCharacter {10814}{\ensuremath{\fatsemi}}
+\DeclareUnicodeCharacter {8779}{\ensuremath{\approxeq}} 
 
 \title[Metaprogramming Agda]{Metaprogramming Agda}
 \author[Carette, Al-hassy, Sharoda, Kahl]
@@ -116,15 +117,20 @@
 \edcomm{JC}{Introduce Monoid, then hand-built homomorphism,
 then uniformity renamings, signature, uniform homomorphism
 as well as pseudo-code for all of this.}
+What information can be generated from this presentation?
 \begin{columns}
   \hspace*{-2cm}
   \begin{column}{0.5\textwidth} 
     {\tiny \ExecuteMetaData[latex/AgdaMeta.tex]{theory} }
-    {\tiny \ExecuteMetaData[latex/AgdaMeta.tex]{sig} }
   \end{column}
   \hspace*{-2cm}
   \begin{column}{0.5\textwidth}
-    {\tiny \ExecuteMetaData[latex/AgdaMeta.tex]{hom}}
+  	\only<1>{}
+  	\only<2>{\tiny \ExecuteMetaData[latex/AgdaMeta.tex]{hom}}
+    \only<3>{\tiny \ExecuteMetaData[latex/AgdaMeta.tex]{renaming}}
+    \only<4>{\tiny \ExecuteMetaData[latex/AgdaMeta.tex]{sig} }
+    \only<5>{\tiny \ExecuteMetaData[latex/AgdaMeta.tex]{homEq1}} 
+    \only<5>{\tiny \ExecuteMetaData[latex/AgdaMeta.tex]{homEq2} }
     {\vspace*{\fill}}
   \end{column}
 \end{columns}
