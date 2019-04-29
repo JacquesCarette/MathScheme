@@ -39,7 +39,7 @@ Our primary example will be Monoid:
 \begin{code}
 record Monoid : Set₁ where
   field
-    -- a type
+    -- a type or sort
     Carrier    : Set₀
 
     -- some operations
@@ -58,6 +58,7 @@ we thus introduce the following decorations.
 
 It would be nice if we could “generate” such tediousness.
 
+%<*renaming>
 \begin{code}
 module Monoid₁ (M : Monoid) where
   open Monoid M public renaming
@@ -79,6 +80,7 @@ module Monoid₂ (M : Monoid) where
     ; assoc      to assoc₂
     )
 \end{code}
+%</renaming>
 -- Monoid₃, Monoid₄, etc, …
 \end{code}
 
@@ -210,19 +212,17 @@ derive Hom foo = apply
   } (filter (not equations) foo)
 \end{pseudocode}
 
-\fbox{\textbf{MA: This syntax requires some explanation. }}
-
 \fbox{\textbf{YS: The syntax for "derive Hom foo" assume we have the following:
 1. A language on the declarations level: - classify declarations as sorts, operations or axioms - define operations like map and preserve
 2. A language that uses the one above to generate useful constructions, like signature and homomorphisms
 In this case, I don't see why we have two a derive function that take Hom or Signature as arguments. My suggestion:
 hom foo = apply
-  { input f1 f2 : foo 
+  { input f1 f2 : foo
     sorts |-> map
-    operations |-> preserve 
+    operations |-> preserve
   }
 Then, the function hom would be triggered by calling
-derive hom foo 
+derive hom foo
 }}
 
 For example, we can look at what equality of two
@@ -231,6 +231,7 @@ of \AgdaRecord{Hom} and insist that each field be
 appropritely related.  In particular, for functions,
 this is going to be pointwise:
 
+%<*hom-eq1>
 \begin{code}
 _∼_ : {A B : Set} (f g : A → B) → Set
 f ∼ g = ∀ a → f a ≡ g a
@@ -240,20 +241,22 @@ record Hom-Equality {A B : Monoid} (F G : Hom A B) : Set where
     equal : Hom.mor F ∼ Hom.mor G
 
 _≋_ = Hom-Equality
-
-{-
+\end{code}
+%</hom-eq1>
 The astute Agda code may instead suggest the following terse definition.
 
+%<*hom-eq2>
+\begin{code}
 Hom-Equality : ∀ {A B : Monoid} (F G : Hom A B) → Set
 Hom-Equality F G = Hom.mor F ∼ Hom.mor G
+\end{code}
+%</hom-eq2>
 
-However, we utilise a “record” presentation as it generalises to other
+However, we use a “record” presentation as it generalises to other
 derived constructs and thus makes the subsequent derivatives below appear
 mechanically derivable. That is, we want to make it as clear as possible
 that these could be automatically dervied --simplifications like this
 could then be add ons.
--}
-\end{code}
 
 Other similar notions can also be defined. A minimalist version
 of \emph{isomorphism} requires a (forward) homomorphism
@@ -280,6 +283,9 @@ record Isomorphism (A B : Monoid) : Set₁ where
 \end{code}
 
 \fbox{\textbf{MA: In general this is not true?}}
+{\textbf{JC to MA: take a close look at the proof, which can be cleaned up, and
+you'll that it is generic. Each line just needs n-ary cong and preservation for
+validity}
 If a structure preserving operation has an inverse, the inverse may not be structure
 preserving, yeah? If so, then this particular presentation does not appear amicable
 to mechanical derivation.
@@ -563,9 +569,9 @@ For simplicity, let's fix $𝒱$ to be characters.
 
   module Example (B : Monoid) where
 
-    import Data.Char as C 
+    import Data.Char as C
 
-    CharSetoid : DecSetoid lzero lzero 
+    CharSetoid : DecSetoid lzero lzero
     CharSetoid = StrictTotalOrder.decSetoid C.strictTotalOrder
 
     open Interpret {CharSetoid} B

@@ -11,6 +11,7 @@
 
 \usepackage{tikz}
 \usepackage{listings}
+\usepackage{edcomms}
 
 \usepackage{color}
 \usepackage{stmaryrd,bbm,mathtools}
@@ -111,6 +112,9 @@
 
 \begin{frame}
 \frametitle{The Problem}
+\edcomm{JC}{Introduce Monoid, then hand-built homomorphism,
+then uniformity renamings, signature, uniform homomorphism
+as well as pseudo-code for all of this.}
 \begin{columns}
   \hspace*{-2cm}
   \begin{column}{0.5\textwidth} 
@@ -123,75 +127,19 @@
     {\vspace*{\fill}}
   \end{column}
 \end{columns}
-
-
 \end{frame}
 
 \begin{frame}[t,fragile]
-\frametitle{(Presentations of) Algebraic Theories}
-\lstset{language=mathscheme,basicstyle=\small}
-\begin{onlyenv}<1->
-\begin{lstlisting}
-Monoid := Theory { 
-  U : type;
-  * : (U, U) -> U;
-  e : U;
-  axiom rightIdentity_*_e : forall x:U. x*e = x;
-  axiom leftIdentity_*_e : forall x:U. e*x = x;
-  axiom associative_* : forall x,y,z:U. (x*y)*z=x*(y*z)}
-\end{lstlisting}
-\end{onlyenv}
-\begin{onlyenv}<2>
-\begin{lstlisting}
-CommutativeMonoid := Theory { 
-  U : type;
-  * : (U, U) -> U;
-  e : U;
-  axiom rightIdentity_*_e : forall x:U. x*e = x;
-  axiom leftIdentity_*_e : forall x:U. e*x = x;
-  axiom associative_* : forall x,y,z:U. (x*y)*z=x*(y*z)
-  axiom commutative_* : forall x,y,z:U. x*y=y*x}
-\end{lstlisting}
-\end{onlyenv}
-\begin{onlyenv}<3>
-\begin{lstlisting}
-AdditiveMonoid := Theory { 
-  U : type;
-  + : (U, U) -> U;
-  0 : U;
-  axiom rightIdentity_+_0 : forall x:U. x+0 = x;
-  axiom leftIdentity_+_0 : forall x:U. 0+x = x;
-  axiom associative_+ : forall x,y,z:U. (x+y)+z=x+(y+z) }
-\end{lstlisting}
-\end{onlyenv}
-\begin{onlyenv}<4>
-\begin{lstlisting}
-AdditiveCommutativeMonoid := Theory { 
-  U : type;
-  + : (U, U) -> U;
-  0 : U;
-  axiom rightIdentity_+_0 : forall x:U. x+0 = x;
-  axiom leftIdentity_+_0 : forall x:U. 0+x = x;
-  axiom associative_+ : forall x,y,z:U. (x+y)+z=x+(y+z)
-  axiom commutative_+ : forall x,y,z:U. x+y=y+x}
-\end{lstlisting}
-\end{onlyenv}
-\end{frame}
-
-\begin{frame}[t,fragile]
-\frametitle{Pseudo-Combinators for (presentations of) theories}
-Following Burstall \& Goguen (OBJ); Kapur, Musser, Stepanov (Tecton)\\ \vspace*{5mm}
+\frametitle{Combinators for (presentations of) theories}
 Extension:
 \begin{lstlisting}
 CommutativeMonoid := Monoid extended by {
   axiom commutative_* : forall x,y,z:U. x*y=y*x}
 \end{lstlisting}
-\pause
 Renaming:
 \begin{lstlisting}
 AdditiveMonoid := Monoid[ * |-> +, e |-> 0 ]
 \end{lstlisting}
-\pause
 Combination:
 \begin{lstlisting}
 AdditiveCommutativeMonoid := 
@@ -238,15 +186,6 @@ Dioid := combine Semiring, IdempotentAdditiveMagma over AdditiveMagma
 Ring := combine Rng, Semiring over SemiRng
 CommutativeRing := combine Ring, CommutativeMagma over Magma
 BooleanRing := combine CommutativeRing, IdempotentMagma over Magma
-NoZeroDivisors := Ringoid0Sig extended by {
-  axiom onlyZeroDivisor_*_0: forall x:U.
-    ((exists b:U. x*b = 0) and (exists b:U. b*x = 0)) implies (x = 0) }
-Domain := combine Ring, NoZeroDivisors over Ringoid0Sig
-IntegralDomain := combine CommutativeRing, NoZeroDivisors over Ringoid0Sig
-DivisionRing := Ring extended by {
-  axiom divisible : forall x:U. not (x=0) implies 
-    ((exists! y:U. y*x = 1) and (exists! y:U. x*y = 1)) }
-Field := combine DivisionRing, IntegralDomain over Ring
 \end{lstlisting}
 \end{frame}
 
@@ -255,7 +194,137 @@ Field := combine DivisionRing, IntegralDomain over Ring
 \vspace*{-0.8cm}\includegraphics[height=9.5cm]{fragment.pdf}
 \end{frame}
 
-\lstset{language=mathscheme,basicstyle=\scriptsize}
+\lstset{mathescape,basicstyle=\ttfamily\fontsize{2.5pt}{3pt}\selectfont}
+\begin{frame}[fragile,t]
+\begin{multicols}{3} 
+     \begin{minipage}{2.3in}
+\underline{MSL}
+\begin{lstlisting}
+Monoid := Theory {
+ U : type; 
+ * : (U,U) -> U; 
+ e : U; 
+ axiom right_identity_*_e : 
+  forall x : U . (x * e) = x 
+ axiom left_identity_*_e : 
+  forall x : U . (e * x) = x;
+ axiom associativity_* : 
+  forall x,y,z : U . 
+   ((x * y) * z) = (x * (y * z));
+}
+\end{lstlisting}
+\underline{Coq}
+\begin{lstlisting}
+Class Monoid {A : type} 
+ (dot : A -> A -> A)
+ (one : A) : Prop := {
+ dot_assoc : 
+   forall x y z : A, 
+     (dot x (dot y z)) 
+     = dot (dot x y) z
+ unit_left : 
+  forall x, dot one x = x 
+ unit_right : 
+  forall x, dot x one = x 
+}      
+\end{lstlisting}
+Alternative Definition: 
+\begin{lstlisting}
+Record monoid := { 
+ dom : Type; 
+ op : dom -> dom -> dom 
+  where "x * y" := (op x y); 
+ id : dom where "1" := id ;  
+ assoc : forall x y z, x * (y * z) = (x * y) * z; 
+ left_neutral : forall x, 1 * x = x; 
+ right_neutral : forall x, x * 1 = x
+}.
+\end{lstlisting}
+ \end{minipage}
+  
+\begin{minipage}{2.9in}
+\underline{Haskell}
+\begin{lstlisting}
+class Semigroup a => Monoid a where 
+ mempty :: a 
+ mappend :: a -> a -> a 
+ mappend = (<>) 
+ mconcat :: [a] -> a 
+ mconcat = foldr mappend mempty
+\end{lstlisting}
+\underline{Isabelle}
+\begin{lstlisting}
+class semigroup = 
+ fixes mult :: $\alpha$ => $\alpha$ => $\alpha$
+      (infixl $\otimes$ 70) 
+ assumes assoc :: (x $\otimes$ y) $\otimes$ z
+         = x $\otimes$ (y $\otimes$ z)
+class monoidl = semigroup + 
+ fixes neutral :: $\alpha$ ($\textbf{1}$)
+ assumes neutl : $\textbf{1}$ $\otimes$ x = x 
+class monoid = monoidl + 
+ assumes x $\otimes$ $\textbf{1}$ = x
+\end{lstlisting}
+\underline{Lean}
+\begin{lstlisting}
+universe u 
+variables{ $\alpha$ : Type u }
+class monoid ($\alpha$ : Type u) extends
+  semigroup $\alpha$, has_one $\alpha$ := 
+  (one_mul : $\forall$ a : $\alpha$, 1 * a = a)
+  (mul_one : $\forall$ a : $\alpha$, a * 1 = a)
+\end{lstlisting}
+        \end{minipage} 
+        \begin{minipage}{3in}
+\underline{Agda}
+\begin{lstlisting}
+data Monoid (A : Set) 
+  (Eq : Equivalence A) : Set 
+where 
+ monoid : 
+  (z : A)
+  (_+_ : A -> A -> A)
+  (left_Id : LeftIdentity Eq z _+_)
+  (right_Id : RightIdentity Eq z _+_)  
+  (assoc : Associative Eq _+_) -> 
+  Monoid A Eq 
+\end{lstlisting}
+Alternative Definition: 
+\begin{lstlisting}
+record Monoid c $\ell$ : 
+ Set (suc (c $\sqcup$ $\ell$)) where 
+ infixl 7 _$\bullet$_ 
+ infix 4 _$\approx$_ 
+ field 
+  Carrier : Set c 
+  _$\approx$_ : Rel Carrier $\ell$ 
+  _$\bullet$_ : Op$_2$ Carrier 
+  isMonoid : 
+  IsMonoid _$\approx$_ _$\bullet$_ $\epsilon$ 
+\end{lstlisting}
+where
+\begin{lstlisting}
+record IsMonoid ($\bullet$ : Op$_2$) ($\varepsilon$ : A) 
+   : Set (a $\sqcup$ $\ell$) where 
+ field 
+  isSemigroup : IsSemigroup $\bullet$ 
+  identity : Identity $\varepsilon$ $\bullet$ 
+       
+  identity$^l$ : LeftIdentity $\varepsilon$ $\bullet$ 
+  identity$^l$ = proj$_1$ identity 
+        
+  identity$^r$ : RightIdentity $\varepsilon$ $\bullet$ 
+  identity$^r$ = proj$_2$ identity 
+\end{lstlisting}
+       \end{minipage}
+  \end{multicols} 
+\end{frame}
+
+\begin{frame}
+\edcomm{JC}{The rest of the slides may all disappear}
+\edcomm{JC}{Now show hom-eq1 and hom-eq2}
+\end{frame}
+
 \begin{frame}[t,fragile]
 \frametitle{Biform monoids}
 \begin{minipage}{6.6cm}
@@ -478,132 +547,6 @@ end
 Given a structured graph of theories, one can get a (na\"{\i}ve)
 optimizing compiler.
 \end{block}
-\end{frame}
-
-\lstset{mathescape,basicstyle=\ttfamily\fontsize{2.5pt}{3pt}\selectfont}
-\begin{frame}[fragile,t]
-\begin{multicols}{3} 
-     \begin{minipage}{2.3in}
-\underline{MSL}
-\begin{lstlisting}
-Monoid := Theory {
- U : type; 
- * : (U,U) -> U; 
- e : U; 
- axiom right_identity_*_e : 
-  forall x : U . (x * e) = x 
- axiom left_identity_*_e : 
-  forall x : U . (e * x) = x;
- axiom associativity_* : 
-  forall x,y,z : U . 
-   ((x * y) * z) = (x * (y * z));
-}
-\end{lstlisting}
-\underline{Coq}
-\begin{lstlisting}
-Class Monoid {A : type} 
- (dot : A -> A -> A)
- (one : A) : Prop := {
- dot_assoc : 
-   forall x y z : A, 
-     (dot x (dot y z)) 
-     = dot (dot x y) z
- unit_left : 
-  forall x, dot one x = x 
- unit_right : 
-  forall x, dot x one = x 
-}      
-\end{lstlisting}
-Alternative Definition: 
-\begin{lstlisting}
-Record monoid := { 
- dom : Type; 
- op : dom -> dom -> dom 
-  where "x * y" := (op x y); 
- id : dom where "1" := id ;  
- assoc : forall x y z, x * (y * z) = (x * y) * z; 
- left_neutral : forall x, 1 * x = x; 
- right_neutral : forall x, x * 1 = x
-}.
-\end{lstlisting}
- \end{minipage}
-  
-\begin{minipage}{2.9in}
-\underline{Haskell}
-\begin{lstlisting}
-class Semigroup a => Monoid a where 
- mempty :: a 
- mappend :: a -> a -> a 
- mappend = (<>) 
- mconcat :: [a] -> a 
- mconcat = foldr mappend mempty
-\end{lstlisting}
-\underline{Isabelle}
-\begin{lstlisting}
-class semigroup = 
- fixes mult :: $\alpha$ => $\alpha$ => $\alpha$
-      (infixl $\otimes$ 70) 
- assumes assoc :: (x $\otimes$ y) $\otimes$ z
-         = x $\otimes$ (y $\otimes$ z)
-class monoidl = semigroup + 
- fixes neutral :: $\alpha$ ($\textbf{1}$)
- assumes neutl : $\textbf{1}$ $\otimes$ x = x 
-class monoid = monoidl + 
- assumes x $\otimes$ $\textbf{1}$ = x
-\end{lstlisting}
-\underline{Lean}
-\begin{lstlisting}
-universe u 
-variables{ $\alpha$ : Type u }
-class monoid ($\alpha$ : Type u) extends
-  semigroup $\alpha$, has_one $\alpha$ := 
-  (one_mul : $\forall$ a : $\alpha$, 1 * a = a)
-  (mul_one : $\forall$ a : $\alpha$, a * 1 = a)
-\end{lstlisting}
-        \end{minipage} 
-        \begin{minipage}{3in}
-\underline{Agda}
-\begin{lstlisting}
-data Monoid (A : Set) 
-  (Eq : Equivalence A) : Set 
-where 
- monoid : 
-  (z : A)
-  (_+_ : A -> A -> A)
-  (left_Id : LeftIdentity Eq z _+_)
-  (right_Id : RightIdentity Eq z _+_)  
-  (assoc : Associative Eq _+_) -> 
-  Monoid A Eq 
-\end{lstlisting}
-Alternative Definition: 
-\begin{lstlisting}
-record Monoid c $\ell$ : 
- Set (suc (c $\sqcup$ $\ell$)) where 
- infixl 7 _$\bullet$_ 
- infix 4 _$\approx$_ 
- field 
-  Carrier : Set c 
-  _$\approx$_ : Rel Carrier $\ell$ 
-  _$\bullet$_ : Op$_2$ Carrier 
-  isMonoid : 
-  IsMonoid _$\approx$_ _$\bullet$_ $\epsilon$ 
-\end{lstlisting}
-where
-\begin{lstlisting}
-record IsMonoid ($\bullet$ : Op$_2$) ($\varepsilon$ : A) 
-   : Set (a $\sqcup$ $\ell$) where 
- field 
-  isSemigroup : IsSemigroup $\bullet$ 
-  identity : Identity $\varepsilon$ $\bullet$ 
-       
-  identity$^l$ : LeftIdentity $\varepsilon$ $\bullet$ 
-  identity$^l$ = proj$_1$ identity 
-        
-  identity$^r$ : RightIdentity $\varepsilon$ $\bullet$ 
-  identity$^r$ = proj$_2$ identity 
-\end{lstlisting}
-       \end{minipage}
-  \end{multicols} 
 \end{frame}
 
 \begin{frame}
