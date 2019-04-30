@@ -5,6 +5,7 @@
 \usepackage{graphicx}
 \usepackage{eulervm}
 \usepackage{amssymb,amsmath,amscd}
+\usepackage{textgreek}
 %\usepackage{colortbl}
 \usepackage{comment}
 \usepackage{multicol}
@@ -17,6 +18,7 @@
 \usepackage[utf8x]{inputenc}
 \usepackage{MnSymbol}
 \usepackage{stmaryrd,bbm,mathtools}
+\usepackage{mathrsfs}
 
 \usetheme{Boadilla}
 \usecolortheme{crane}
@@ -333,253 +335,79 @@ record IsMonoid ($\bullet$ : Op$_2$) ($\varepsilon$ : A)
 \frametitle{Generating more structures}
 {\tiny
 \onslide<1->{\ExecuteMetaData[latex/AgdaMeta.tex]{iso}}
-\vspace*{-2cm}
+\vspace*{-0.5cm}
 \onslide<2->{\ExecuteMetaData[latex/AgdaMeta.tex]{Endo}}
 }
 \end{frame}
 
 \begin{frame}
 \frametitle{And more}
-\edcomm{JC}{Kernel, product, make-prod}
+{\tiny
+\only<1>{\ExecuteMetaData[latex/AgdaMeta.tex]{kernel}}
+\onslide<2->{\ExecuteMetaData[latex/AgdaMeta.tex]{product}}
+\vspace*{-0.5cm}
+\onslide<3->{\ExecuteMetaData[latex/AgdaMeta.tex]{make-prod}}
+}
 \end{frame}
 
 \begin{frame}
 \frametitle{And even more}
-\edcomm{JC}{MonoidOn (and pseudocode), easily-formulated, awkward-formulation}
+{\tiny
+\onslide<1-3>{\ExecuteMetaData[latex/AgdaMeta.tex]{monoid-on}}
+\vspace*{-0.5cm}
+\onslide<2->{\ExecuteMetaData[latex/AgdaMeta.tex]{easilyFormulated}}
+\vspace*{-0.5cm}
+\onslide<3->{\ExecuteMetaData[latex/AgdaMeta.tex]{awkward}}
+}
 \end{frame}
 
 \begin{frame}
 \frametitle{more more}
-\edcomm{JC}{IsMonoid,pseudocode}
+{\tiny {\ExecuteMetaData[latex/AgdaMeta.tex]{IsMonoid}} }
 \end{frame}
 
 \begin{frame}
-\frametitle{On to languages}
-\edcomm{JC}{Closed}
-\end{frame}
-
-\begin{frame}[t,fragile]
-\frametitle{Biform monoids}
-\begin{minipage}{6.6cm}
-\begin{lstlisting}
-Monoid := Theory { 
-  U : type;
-  e : U;
-  * : (U, U) -> U;
-  ax: forall x:U. e*x = x;
-  ax: forall x:U. x*e = x;
-  ax: forall x,y,z:U.(x*y)*z=x*(y*z)}
-\end{lstlisting}
-\end{minipage}
-\begin{minipage}{5.3cm}
-Syntax (term language)
-\begin{lstlisting}[language=mathscheme,basicstyle=\ttfamily\scriptsize\color{red}]
-MonoidTerm := Theory {
-  type MTerm = (data X . 
-    #e : X | 
-    #* : (X, X) -> X)
+\frametitle{On to term algebras: closed}
+{\tiny
+\onslide<1-3>{\ExecuteMetaData[latex/AgdaMeta.tex]{closed}}
+\vspace*{-0.5cm}
+\onslide<2->{\ExecuteMetaData[latex/AgdaMeta.tex]{sem1}}
+\vspace*{-0.5cm}
+\onslide<3->{\ExecuteMetaData[latex/AgdaMeta.tex]{useful}}
 }
-
-
-\end{lstlisting}
-\end{minipage}
-\pause
-Biform Theory: axiomatic + syntactic theory + transformers.\\
-\hspace*{-1cm}
-\begin{columns}[T]
-\begin{column}{7.0cm}
-\begin{visibleenv}<2->
-\begin{lstlisting}
-length :: MTerm -> Nat
-length trm = gfold (+) 1 trm
-\end{lstlisting}
-\end{visibleenv}
-\begin{onlyenv}<3>
-\begin{lstlisting}
-leftSimp  :: MTerm -> MTerm
-leftSimp  = fun (#*(a,b)) when a = #e -> b
-rightSimp :: MTerm -> MTerm
-rightSimp = fun (#*(a,b)) when b = #e -> b
-\end{lstlisting}
-\end{onlyenv}
-\begin{onlyenv}<4->
-\begin{lstlisting}
-simp :: MTerm -> MTerm
-simp t = match t with
- | (#* (a,b)) when a = #e -> b
- | (#* (a,b)) when b = #e -> b
- | _                      -> t
-\end{lstlisting}
-\end{onlyenv}
-\end{column}
-\begin{column}{3.5cm}
-\begin{visibleenv}<5->
-\alert{Generic\\}
-\vspace*{0.9cm}
-\alert{Derived from length reducing axioms}
-\end{visibleenv}
-\end{column}
-\end{columns}
-%\begin{visibleenv}<6->
-%``Homomorphism'' on theory presentations.  Modular?
-%\end{visibleenv}
 \end{frame}
 
-\lstset{language=mathscheme,basicstyle=\scriptsize}
-\begin{frame}[t,fragile]
-\frametitle{Different interpretations of theories
-\footnote{\scriptsize \textit{simplified MetaOCaml for clarity}}
+\begin{frame}
+\frametitle{On to term algebras: open}
+{\tiny
+\onslide<1-3>{\ExecuteMetaData[latex/AgdaMeta.tex]{openTerm}}
+\vspace*{-0.5cm}
+\onslide<2->{\ExecuteMetaData[latex/AgdaMeta.tex]{interpret}}
+\vspace*{-0.5cm}
 }
-\begin{minipage}{6.8cm}
-\begin{lstlisting}
-Monoid := Theory { 
-  U : type;
-  e : U;
-  * : (U, U) -> U;
-  ax: forall x:U. e*x = x;
-  ax: forall x:U. x*e = x;
-  ax: forall x,y,z:U.(x*y)*z=x*(y*z)}
-\end{lstlisting}
-\end{minipage}
-\lstset{language=metaocaml,basicstyle=\scriptsize}
-\begin{minipage}{5.4cm}
-Monoid type, as values
-\begin{lstlisting}
-module type MONOID = sig
-  type n
-  val plus : n -> n -> n
-  val zero : n
-end
-
-\end{lstlisting}
-\end{minipage}
-\vspace*{.3cm}\hspace*{-.3cm}
-\begin{columns}[T]
-\begin{column}{6.0cm}
-\begin{onlyenv}<2-3>
-Monoid type, as code
-\begin{lstlisting}
-module type MONOIDCODE = sig
-  type n
-  type nc = n code
-  val plus : nc -> nc -> nc
-  val zero : nc
-end
-
-\end{lstlisting}
-\end{onlyenv}
-\end{column}
-\begin{column}{5.5cm}
-\begin{onlyenv}<3-3>
-Monoid type, staged
-\begin{lstlisting}
-type x staged = Now of x 
-              | Later of x code
-module type MONOIDSTAGED = sig
-  type n
-  type ns = n staged
-  val plus : ns -> ns -> ns
-  val zero : ns
-end
-\end{lstlisting}
-\end{onlyenv}
-\end{column}
-\end{columns}
+\onslide<3->{Formulas, predicates, quantifiers, etc}
 \end{frame}
 
-\begin{frame}[t,fragile]
-\frametitle{From syntax to code}
-\begin{minipage}{5.4cm}
-\lstset{language=mathscheme,basicstyle=\scriptsize}
-\begin{lstlisting}
-MonoidTerm := Theory {
-  type MTerm = (data X . 
-    #e : X | 
-    #* : (X, X) -> X)
+\begin{frame}
+\frametitle{Induction}
+{\tiny
+\onslide<1>{\ExecuteMetaData[latex/AgdaMeta.tex]{induction}}
 }
-
-
-\end{lstlisting}
-\end{minipage}
-\lstset{language=metaocaml,basicstyle=\scriptsize}
-\begin{minipage}{5.4cm}
-\begin{lstlisting}
-module type MONOIDSTAGED = sig
-  type n
-  type ns = n staged
-  val zero : ns
-  val plus : ns -> ns -> ns
-end
-\end{lstlisting}
-\end{minipage}
-\vspace*{.3cm}\hspace*{-.7cm}
-\begin{columns}[T]
-\begin{column}{5.5cm}
-\begin{visibleenv}<2>
-Equality is ``free''\\
-\lstset{language=mathscheme,basicstyle=\scriptsize}
-\begin{lstlisting}
-simp :: MTerm -> MTerm
-simp t = match t with
- | (#* (a,b)) when a = #e -> b
- | (#* (a,b)) when b = #e -> b
- | _                      -> t
-
-\end{lstlisting}
-\end{visibleenv}
-\end{column}
-\begin{column}{5.8cm}
-\begin{visibleenv}<2>
-Equality is ``now''\\
-\lstset{language=metaocaml,basicstyle=\scriptsize}
-\begin{lstlisting}
-let monoid zero plusN plusL x y = 
-  match x, y with
-  | (Now a), b when a = zero -> b
-  | a, (Now b) when b = one -> a
-  | _  -> lift2 plusN plusL x y
-\end{lstlisting}
-\end{visibleenv}
-\end{column}
-\end{columns}
 \end{frame}
 
-\lstset{language=metaocaml,basicstyle=\scriptsize}
-\begin{frame}[t,fragile]
-\frametitle{Concrete Monoids}
-\begin{minipage}{5.4cm}
-\begin{lstlisting}
-module IntM = struct
-  type n = Int
-  let plus = (+)
-  let zero = 0
-end
-\end{lstlisting}
-\end{minipage}
-\begin{minipage}{5.4cm}
-\begin{lstlisting}
-module IntMC = struct
-  type n = Int
-  type 'a nc = ('a,n) code
-  let plus = .<fun x y -> .~x + .~y>.
-  let zero = .< 0 >.
-end
-\end{lstlisting}
-\end{minipage}
-\vspace*{.3cm}
-\begin{lstlisting}
-module IntMS = struct
-  type n = Int
-  type 'a ns = ('a,n) staged
-  let plus = monoid IntM.zero IntM.plus IntMC.plus
-  let zero = Now IntM.zero
-end
-\end{lstlisting}
-\pause
-\begin{block}{Machinery for free}
-Given a structured graph of theories, one can get a (na\"{\i}ve)
-optimizing compiler.
-\end{block}
+\begin{frame}
+\frametitle{Towards Partial Evaluation}
+{\tiny
+\onslide<1->{\ExecuteMetaData[latex/AgdaMeta.tex]{termAlgebra}}
+\vspace*{-0.5cm}
+\onslide<1->{\ExecuteMetaData[latex/AgdaMeta.tex]{reduces}}
+\vspace*{-0.5cm}
+\begin{overprint}
+\only<1>{}
+\only<2>{\ExecuteMetaData[latex/AgdaMeta.tex]{simplify}}
+\only<3>{\ExecuteMetaData[latex/AgdaMeta.tex]{coherence}}
+\end{overprint}
+}
 \end{frame}
 
 \begin{frame}
@@ -597,14 +425,14 @@ Most of these work for Generalized Algebraic Theories (\`{a} la Cartmell):
 \item predicate for ground terms
 \item ``simplifier'' for open terms (correct but usually incomplete)
 \end{itemize}
-\item \sred{Homomorphism}; homomorphism composition; isomorphism
+\item Homomorphism; homomorphism composition; isomorphism
 \item kernel of homomorphism
 \item Theory of congruence relations over a theory
 \item Induced congruence of a homomorphism 
 \item Interpreter from Term Algebra to any instance of a theory
-\item Partial evaluator
+\item \sred{Partial evaluator}
 \item Sub-theory, Product Theory, Co-product Theory
-\item Internalization (making a record that represents a theory)
+%\item Internalization (making a record that represents a theory)
 \end{itemize}
 \end{frame}
 

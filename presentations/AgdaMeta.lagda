@@ -299,13 +299,6 @@ record Isomorphism (A B : Monoid) : Set₁ where
     }
 \end{code}
 %</iso>
-\fbox{\textbf{MA: In general this is not true?}}
-{\textbf{JC to MA: take a close look at the proof, which can be cleaned up, and
-you'll that it is generic. Each line just needs n-ary cong and preservation for
-validity}
-If a structure preserving operation has an inverse, the inverse may not be structure
-preserving, yeah? If so, then this particular presentation does not appear amicable
-to mechanical derivation.
 
 From that, it is useful to create abbreviations for
 endomorphisms and automorphisms:
@@ -348,7 +341,6 @@ record _×M_ (A B : Monoid) : Set₂ where
    field
      -- There is an object:
      ProdM : Monoid
-
      -- Along with two maps to the orginal arguments:
      Proj1 : Hom ProdM A
      Proj2 : Hom ProdM B
@@ -374,11 +366,7 @@ forming an instance of such a construction.
 \begin{code}
 Make-Cartesian-Product : (A : Monoid) → (B : Monoid) → A ×M B
 Make-Cartesian-Product A B =
-  let
-    open Monoid₁ A
-    open Monoid₂ B
-  in
-  record
+  let open Monoid₁ A ; open Monoid₂ B in record
   { ProdM = record
               { Carrier    = Carrier₁ × Carrier₂
               ; Id         = Id₁ , Id₂
@@ -421,28 +409,25 @@ Second, certain mathematical statements are much simpler to state
 and prove.  For example, something like
 \textit{Given two monoid structures on the same carrier set $S$,
 show that $∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x$}.
-%<*easily-formulated>
+%<*easilyFormulated>
 \begin{code}
 module EasilyFormulated (S : Set) (A B : MonoidOn S) where
-
-  -- C.f., Monoid₁, Monoid₂, Monoid₃, …
   open MonoidOn A renaming (Id to Id₁; _⨾_ to _⨾₁_; right-unit to right-unit₁)
   open MonoidOn B renaming (Id to Id₂; _⨾_ to _⨾₂_; left-unit to left-unit₂)
 
   claim : ∀ x → Id₂ ⨾₂ (x ⨾₁ Id₁) ≡ x
   claim x = trans left-unit₂ right-unit₁
 \end{code}
-%</easily-formulated>
+%</easilyFormulated>
 If we attempt to do the same in the original setting, the
 formula $∀ x → e₂ ⨾₂ (x ⨾₁ e₁) ≡ x$ does not even typecheck! We have
 to resort so different contortions.  For example, if we forget about
 the name $S$, we can instead say:
-%<*awkward-formulation>
+%<*awkward>
 \begin{code}
 module AkwardFormulation
   (A B : Monoid) (ceq : Monoid.Carrier A ≡ Monoid.Carrier B) where
-  open Monoid₁ A
-  open Monoid₂ B
+  open Monoid₁ A; open Monoid₂ B
 
   coe : Carrier₁ → Carrier₂
   coe = subst id ceq
@@ -450,7 +435,7 @@ module AkwardFormulation
   claim : ∀ x → Id₂ ⨾₂ coe (x ⨾₁ Id₁) ≡ coe x
   claim x = trans left-unit₂ (cong coe right-unit₁)
 \end{code}
-%</awkward-formulation>
+%</awkward>
 This is not nearly as nice. NB: This isn't a problem specific to Agda,
 it is also present in Lean as well. It is a ``feature'' of MLTT.
 
@@ -482,7 +467,6 @@ to the labelled-sum form, i.e. an algebraic data type:
 %<*closed>
 \begin{code}
 module Closed where
-
   data CTerm : Set where
     Id  : CTerm
     _⨾_ : CTerm → CTerm → CTerm
@@ -499,7 +483,6 @@ a generic (decidable) equality on the syntax.
 %<*sem1>
 \begin{code}
   infix 999 _⟦_⟧
-
   _⟦_⟧ : (ℳ : Monoid) → CTerm → Monoid.Carrier ℳ
   ℳ ⟦ Id ⟧    = Monoid.Id ℳ
   ℳ ⟦ x ⨾ y ⟧ = ℳ ⟦ x ⟧ ⨾₁ ℳ ⟦ y ⟧ where open Monoid₁ ℳ
@@ -526,7 +509,7 @@ trees:
   length : CTerm → ℕ
   length Id      = 1
   length (x ⨾ y) = 1 + length x + length y
-
+  --
   data _≈_ : CTerm → CTerm → Set where
     ≈-Id : Id ≈ Id
     ≈-⨾ : ∀ {a a′ b b′} → a ≈ a′ → b ≈ b′ → (a ⨾ b) ≈ (a′ ⨾ b′)
@@ -537,97 +520,95 @@ Of course, much more useful is a type that may contain
 \emph{free variables}, i.e. open terms.  As we'd like to maintain decidable
 equality of our syntax trees, we'll insist that our variables
 come from a \emph{decidable setoid}.
+%<*openTerm>
 \begin{code}
 module Open where
-
   data OTerm (𝒱 : DecSetoid lzero lzero) : Set where
     Var : DecSetoid.Carrier 𝒱 → OTerm 𝒱
     Id  : OTerm 𝒱
     _⨾_ : OTerm 𝒱 → OTerm 𝒱 → OTerm 𝒱
 \end{code}
+%</openTerm>
 The overall code remains straightforward, but we can illustrate the
 interpreter to see the kind of adjustment needed. The attentive
 reader will recognize this as a non-trivial \textsf{catamorphism}
 for the algebra of open terms over the language of monoids.
+%<*interpret>
 \begin{code}
   module Interpret {𝒱 : DecSetoid lzero lzero} (A : Monoid) where
-
-    open DecSetoid 𝒱 renaming (Carrier to V)
-    open Monoid₁ A
-    open OTerm
-
+    open DecSetoid 𝒱 renaming (Carrier to V); open Monoid₁ A; open OTerm
+    --
     ⟦_⟧_ : OTerm 𝒱 → (V → Carrier₁) → Carrier₁
     ⟦ Var x ⟧ σ = σ x
     ⟦ Id    ⟧ σ = Id₁
     ⟦ l ⨾ r ⟧ σ = (⟦ l ⟧ σ) ⨾₁ (⟦ r ⟧ σ)
-
+    --
     length : OTerm 𝒱 → ℕ
     length (Var _) = 1
     length Id      = 1
     length (x ⨾ y) = 1 + length x + length y
 \end{code}
+%</interpret>
 We can use such open terms as part of a generic language of
 \emph{formulas}, so that we can then reify the syntax of the
 equations too.
+%<*formula>
 \begin{code}
     infix 5 _≃_
-
     data Formula : Set where
       _≃_ : OTerm 𝒱 → OTerm 𝒱 → Formula
-
+    --
     lhs : Formula → OTerm 𝒱
     lhs (l ≃ _) = l
-
     rhs : Formula → OTerm 𝒱
     rhs (_ ≃ r) = r
 \end{code}
+%</formula>
 But we can go further and look at the
 (dependently typed!) induction principle associated to
 \AgdaRecord{OTerm}.
+%<*induction>
 \begin{code}
     induction : (P : OTerm 𝒱 → Set)
-              {- Base Cases -}
-              → (∀ x → P (Var x))
-              → P Id
-              {- Inductive step -}
-              → (∀ x y → P (x ⨾ y))
-              {- Conclusion -}
-              → ∀ (y : OTerm 𝒱) → P y
+      {- Base Cases -}
+      → (∀ x → P (Var x))
+      → P Id
+      {- Inductive step -}
+      → (∀ x y → P (x ⨾ y))
+      {- Conclusion -}
+      → ∀ (y : OTerm 𝒱) → P y
     induction P vars empty ind (Var x) = vars x
     induction P vars empty ind Id      = empty
     induction P vars empty ind (l ⨾ r) = ind l r
 \end{code}
+%</induction>
 
 For simplicity, let's fix $𝒱$ to be characters.
+%<*termAlgebra>
 \begin{code}
-
   module Example (B : Monoid) where
-
     import Data.Char as C
-
     CharSetoid : DecSetoid lzero lzero
     CharSetoid = StrictTotalOrder.decSetoid C.strictTotalOrder
-
     open Interpret {CharSetoid} B
     OT = OTerm CharSetoid
-
+    --
     left-unit-term : Formula
     left-unit-term = Id ⨾ Var 'x' ≃ Var 'x'
-
     assoc-term : Formula
     assoc-term = Var 'x' ⨾ (Var 'y' ⨾ Var 'z') ≃ (Var 'x' ⨾ Var 'y') ⨾ Var 'z'
-
 \end{code}
+%</termAlgebra>
 
 The ``obvious'' idea is then to filter the formulas, and only
 use the ones that reduce the length when oriented.  If we bias
 things from left-to-right, this gives:
+%<*reduces>
 \begin{code}
     reduces : Formula → Set
     reduces F = length (lhs F) > length (rhs F)
 \end{code}
-
-\fbox{\textbf{MA: Perhaps mention that this is essentially how Isabelle/Coq/etc do simpl rewriting? }}
+%</reduces>
 
 \begin{code}
     left-unit-reduces : reduces left-unit-term  -- ≈ “2 ≤ 3”
@@ -641,10 +622,8 @@ really allow is to induce a rewriting which preserves meaning
 and terminating. It is incomplete!  We need to be smarter to
 make it complete (left to another day, as that is not easy).
 
-\fbox{\textbf{MA: Not at all clear how these proofs are “automatic”! }}
-Moreover, unclear what goal they accomplish? Why are they interesting?
-
 Let's now turn to forming canonical forms, or forms as simple as possible.
+%<*simplify>
 \begin{code}
     simp : OT → OT
     simp (Var x)                 = Var x
@@ -656,10 +635,11 @@ Let's now turn to forming canonical forms, or forms as simple as possible.
     simp (x@(_ ⨾ _) ⨾ y@(_ ⨾ _)) = simp x ⨾ simp y
 
 \end{code}
+%</simplify>
 Such simplification does not destory semantics:
+%<*coherence>
 \begin{code}
     open Monoid₂ B
-
     coherence : ∀ x σ → ⟦ x ⟧ σ ≡ ⟦ simp x ⟧ σ
     coherence (Var x) σ                 = refl
     coherence Id σ                      = refl
@@ -669,20 +649,19 @@ Such simplification does not destory semantics:
     coherence (x@(_ ⨾ _) ⨾ Id) σ        = trans right-unit₂ (coherence x σ)
     coherence (x@(_ ⨾ _) ⨾ y@(_ ⨾ _)) σ = cong₂ _⨾₂_ (coherence x σ) (coherence y σ)
 \end{code}
-
+%</coherence>
 In Agda, like in many other languages, we can also be abstract
 over representations, much like in ``finally tagless':
+%<*finally>
 \begin{code}
 module Tagless where
-
   record Symantics (rep : Set → Set) (A : Monoid) : Set₁ where
     open Monoid A using (Carrier)
     field
       Id  : rep Carrier
       _⨾_ : rep Carrier → rep Carrier → rep Carrier
 \end{code}
-
-\fbox{\textbf{MA: Briefly mention benefit of this approach. }}
+%</finally>
 
 We can further choose to internalize the proofs too, as well as add
 a generic lifting operator -- though that will only really work for
@@ -693,48 +672,3 @@ work with these.
 From here, one can continue and define a \AgdaType{Code} type that
 simulates \textsf{metaocaml}'s, and from there to put all things together
 to generate a \textbf{partial evaluator} for the term language.
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-Slightly realated investigation.
-
-\begin{spec}
--- The following may be easier to state not as “𝒮.Carrier ≈ ℳ.Carrier ≈ 𝟙 → C ≈ 𝟙”
--- but as “SquagOn C → MonoidOn C → C ≈ 𝟙”
---
-module on-vs-has where
-
-  open import Function.Inverse using () renaming (_↔_ to _≅_)
-
-  data 𝟙 : Set where ★ : 𝟙
-
-  trivial-intersection : ∀ (C : Set) (S : Squag) (M : Monoid)
-                           (let module 𝒮 = Squag S)
-                           (let module ℳ = Monoid M)
-                         → 𝒮.Carrier ≡ ℳ.Carrier → ℳ.Carrier ≡ C
-                         → C ≅ 𝟙
-  trivial-intersection .(Monoid.Carrier q)
-    (sq .(Monoid.Carrier q) _⨾_ idempotent commutative antiAbsorbent)
-    q refl refl =
-      let
-        𝒾 = Monoid.Id q
-
-        all-Id : ∀ (x : Monoid.Carrier q) → Monoid.Id q ≡ x
-        all-Id x = begin
-                     𝒾
-                   ≡⟨ sym (antiAbsorbent _ _ )  ⟩
-                     x ⨾ (x ⨾ 𝒾)
-                   ≡⟨ cong (x ⨾_) {!Oh! The Squag ⨾ and Monoid ⨾ may be completely different. Neato. !} ⟩
-                     x ⨾ x
-                   ≡⟨ idempotent _  ⟩
-                     x
-                   ∎
-      in
-      record { to = record { _⟨$⟩_ = λ _ → ★ ; cong = λ _ → refl  }
-                         ; from = record { _⟨$⟩_ = λ _ → Monoid.Id q ; cong = λ _ → refl }
-                         ; inverse-of = record { left-inverse-of = all-Id
-                                               ; right-inverse-of = λ{ ★ → refl}
-                                               }
-                         }
-\end{spec}
