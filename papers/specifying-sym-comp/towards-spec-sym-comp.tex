@@ -170,22 +170,23 @@ And the paper ends with a short conclusion in section~\ref{sec:conclusion}.
 
 \subsection{Definedness, Equality, and Quasi-Equality}
 
-Let $e$ be a mathematical expression and $D$ be a domain of
-mathematical values.  We say \emph{$e$ is defined in $D$} if $e$
+Let $e$ be an expression and $D$ be a domain of
+values.  We say \emph{$e$ is defined in $D$} if $e$
 denotes a member of $D$.  When $e$ is defined in $D$, the \emph{value
-  of $e$ in $D$} is the element in $D$ that $e$ denotes.  When $e$ is
+of $e$ in $D$} is the element in $D$ that $e$ denotes.  When $e$ is
 undefined in $D$ (i.e., $e$ does not denote a member of $D$), the
 value of $e$ in $D$ is undefined.  Two expressions $e$ and $e'$ are
 \emph{equal in $D$}, written $e =_D e'$, if they are both defined in
 $D$ and they have the same values in $D$ and are \emph{quasi-equal in
-  $D$}, written $e \simeq_D e'$, if either $e =_D e'$ or $e$ and $e'$
-are both undefined in $D$.
+$D$}, written $e \simeq_D e'$, if either $e =_D e'$ or $e$ and $e'$
+are both undefined in $D$. When $D$ is a domain of interest to mathematicians
+then we will call $a$ a \emph{mathematical expression}.
 
 \subsection{${\rm CTT}_{\rm qe}$ and ${\rm CTT}_{\rm uqe}$}
 
 {\churchqe}~\cite{Farmer18} is a version of Church's type theory with
 a built-in \emph{global reflection infrastructure} with global
-quotation and evaluation operators that is well-suited for reasoning
+quotation and evaluation operators geared towards reasoning
 about the interplay of syntax and semantics and, in particular, for
 specifying, defining, applying, and reasoning about SBMAs.  The syntax
 and semantics of {\churchqe} is presented in~\cite{Farmer18}.  A proof
@@ -200,16 +201,15 @@ QE~\cite{CaretteFarmerLaskowski18}.
 built-in support for partial functions and undefinedness based on the
 traditional approach to undefinedness~\cite{Farmer04}.  It is
 well-suited for specifying SBMAs that manipulate expressions that may
-be undefined.  Its syntax and semantics are presented
-in~\cite{Farmer17}.  A proof system for {\churchuqe} is not given
-in~\cite{Farmer17}, but a proof system can be straightforwardly
-derived by merging the proof systems for {\churchqe}~\cite{Farmer18}
+be undefined.  Its syntax and semantics are presented in~\cite{Farmer17}.  A
+proof system for {\churchuqe} is not given there, but can be straightforwardly
+derived by merging those for {\churchqe}~\cite{Farmer18}
 and {\qzerou}~\cite{Farmer08a}.
 
 The global reflection infrastructure of {\churchuqe} (and {\churchqe})
-consists of three components.  The first component is an inductive
-type $\epsilon$ of \emph{syntactic values}.  A syntactic value
-typically represents the syntax tree of an eval-free expression of
+consists of three components.  The first is an inductive
+type $\epsilon$ of \emph{syntactic values}: these
+typically represent the syntax tree of an eval-free expression of
 {\churchuqe}.  Each expression of type $\epsilon$ denotes a syntactic
 value.  Thus reasoning about the syntactic structure of expressions
 can be performed by reasoning about syntactic values via the
@@ -218,7 +218,7 @@ expressions of type $\epsilon$.  The second component is a
 $\textbf{A}_\alpha$ is an eval-free expression (of some type
 $\alpha$), then $\synbrack{\textbf{A}_\alpha}$ is an expression of
 type $\epsilon$ that denotes the syntactic value that represents the
-syntax tree of $\textbf{A}_\alpha$.  And the third component is an
+syntax tree of $\textbf{A}_\alpha$.  Finally the third component is an
 \emph{evaluation operator} $\sembrack{\cdot}_\alpha$ such that, if
 $\textbf{E}_\epsilon$ is an expression of type $\epsilon$, then
 $\sembrack{\textbf{E}_\epsilon}_\alpha$ denotes the value of type
@@ -230,12 +230,11 @@ holds in {\churchuqe} (and {\churchqe}).
 
 The reflection infrastructure is \emph{global} since it can be used to
 reason about the entire set of eval-free expressions of {\churchuqe}.
-This is in contrast to \emph{local reflection infrastructures} that
-are constructed by defining an inductive type of syntactic values only
-for the expressions of the logic that are relevant to a particular
-problem.  See~\cite{Farmer18} for discussion about the difference
-between local and global reflection infrastructures and the design
-challenges that stand in the way of developing a global reflection
+This is in contrast to \emph{local reflection} which constructs an
+inductive type of syntactic values only for the expressions of the logic that
+are relevant to a particular problem.  See~\cite{Farmer18} for discussion about
+the difference between local and global reflection infrastructures and the
+design challenges that stand in the way of developing a global reflection
 infrastructure within a logic.
 
 The type $\epsilon$ includes syntax values for all eval-free
@@ -264,10 +263,10 @@ details.
 
 Here is a seemingly simple mathematical task: Factor (over $\NN$)
 the number~$12$.  One might expect the answer $12 = 2^2 * 3$ ---
-but this is not actually the answer one gets in many systems!  This is
-because, in any system with built-in beta-reduction (including all
+but this is not actually the answer one gets in many systems!  The reason
+is that in any system with built-in beta-reduction (including all
 computer algebra systems as well as theorem provers based on dependent
-type theory), the answer is simplified to $12 = 12$, which is
+type theory), the answer is immediately evaluate to $12 = 12$, which is
 certainly not very informative.
 
 \subsection{Problem}
@@ -275,7 +274,7 @@ certainly not very informative.
 So why is $2^2 * 3$ not an answer? Because it involves a mixture of
 \emph{syntax} and \emph{semantics}. A better answer would be
 $\synbrack{2^2 * 3}$ (the quotation of $2^2 * 3$) that would
-then make it clear that $*$ \emph{represents} multiplication
+make it clear that $*$ \emph{represents} multiplication
 rather than \emph{being} multiplication. In other words, this is about
 intension and extension: we want to be able to both represent
 operations and perform operations. In Maple, one talks about
@@ -398,6 +397,16 @@ algebra systems are very good at manipulating lists%
   and Mathematica were well acquainted with Macsyma which was
   implemented in Lisp.}, and thus this output \emph{composes} well
 with other system features.
+
+It is worth noting that none of the reasons for the \emph{correctness}
+of this representation is clearly visible: once the integers are
+partitioned into negative, zero and positive, and only positive
+natural numbers are subject to ``prime factorization'', their structure
+as a \emph{Free Commutative Monoid} on infinitely many generators (the primes)
+comes out. And so it is natural that \emph{Multisets} (also called Bags)
+are the natural representation. The list-with-multiplicities makes that
+clear, while in some sense the more human-friendly syntactic representation
+$s * p_0^{e_0} * p_1^{e_1} * \cdots * p_k^{e_k}$ obscures that.
 
 Nevertheless, the main lesson is that a simple mathematical task, such
 as factoring the number $12$, which seems like a question about simple
