@@ -24,6 +24,7 @@
 \newcommand{\QQ}{\ensuremath{\mathbb{Q}}}
 \newcommand{\NN}{\ensuremath{\mathbb{N}}}
 \newcommand{\RR}{\ensuremath{\mathbb{R}}}
+\newcommand{\CC}{\ensuremath{\mathbb{C}}}
 \newcommand{\NRE}{\ensuremath{\mname{normRatExpr}}}
 \newcommand{\NRF}{\ensuremath{\mname{normRatFun}}}
 \newcommand{\funQ}[1]{\ensuremath{\LambdaApp x : \QQ \mdot #1}}
@@ -529,8 +530,8 @@ polynomial normal form and there is no irreducible polynomial $s \in
 \QQ[x]$ of degree $\ge 2$ that divides both $p$ and $q$.  One should
 note that this definition of quasinormal form depends on the field
 $\QQ$ because, for example, the polynomial $x^2 - 2$ is irreducible in
-$\QQ$ but not in $\RR$ (since $x^2 - 2 =_{\RR[x]} (x - \sqrt{2})(x +
-\sqrt{2})$.)
+$\QQ$ but not in $\overline{\QQ}$ or $\RR$ (since $x^2 - 2 =_{\RR[x]} (x -
+\sqrt{2})(x + \sqrt{2})$.)
 
 \bsp We can then normalize a rational function by quasinormalizing its
 body.  So the specification of $\NRF$ is that, for all $(\funQ{r}) \in
@@ -541,13 +542,12 @@ and (B) is the semantic component.\esp
 
 \subsection{Specification in ${\rm CTT}_{\rm uqe}$}
 
-We specify {\NRE} and {\NRF} in a theory of {\churchuqe} using again
+We specify {\NRE} and {\NRF} in a theory of {\churchuqe} again using
 {\churchuqe}'s reflection infrastructure.  A complete development of
-$T$ would be long and tedious, so we will only sketch the development
-of $T$.
+$T$ would be long and tedious, thus we only sketch it.
 
 The first step is to define a theory $T_0 = (L_0,\Gamma_0)$ that
-axiomatizes $\QQ$, the field of rational numbers.  $L_0$ contains a
+axiomatizes the field $\QQ$;  $L_0$ contains a
 base type $q$ and constants $0_q$, $1_q$, $+_{q \tarrow q \tarrow q}$,
 $*_{q \tarrow q \tarrow q}$, $-_{q \tarrow q}$, and
 $\phantom{}^{{-1}_{q \tarrow q}}$ representing the standard elements
@@ -587,8 +587,8 @@ the following constants  using the machinery of $T_1$:
     representing the subtype of $\epsilon$ that denotes the set of
     expressions of type $q \tarrow q$ that are rational functions in
     $x_q$ (i.e., the expressions of the form $(\LambdaApp x_q \mdot
-    \textbf{R}_q)$ where $\textbf{R}_q$ is an expression having the
-    form of a rational expression in $x_q$).  So, for example,
+    \textbf{R}_q)$ where $\textbf{R}_q$ has the
+    form of a rational expression in $x_q$).  For example
     $\mname{RatFun}_{\epsilon \tarrow o} \, \synbrack{\LambdaApp x_q
       \mdot x_q/x_q}$ is valid in $T_2$.
 
@@ -598,9 +598,9 @@ the following constants  using the machinery of $T_1$:
     So, for example, \[\mname{val-in-}f_{\epsilon \tarrow f} \,
     \synbrack{x_q +_{q \tarrow q \tarrow q} 1_q} = X_f +_{f \tarrow f
       \tarrow f} 1_f\] and $(\mname{val-in-}f_{\epsilon \tarrow f} \,
-    \synbrack{1_q/0_q})\IsUndefApp$ are valid in $T_2$.  Notice that
-    the function is partial on the subtype $\mname{RatExpr}_{\epsilon
-      \tarrow o}$ since an expression like $1_q/0_q$ does not denote a
+    \synbrack{1_q/0_q})\IsUndefApp$ are valid in $T_2$. 
+    $\mname{val-in-}f_{\epsilon \tarrow f}$ is partial on is domain
+    since an expression like $1_q/0_q$ does not denote a
     member of $f$. \esp
 
   \item \bsp $\mname{Norm}_{\epsilon \tarrow o}$ is the predicate
@@ -624,7 +624,9 @@ the following constants  using the machinery of $T_1$:
     function that maps each member of $\epsilon$ denoting an
     expression of the form $(\LambdaApp x_\alpha \mdot
     \textbf{B}_\beta)$ to the member of $\epsilon$ that denotes
-    $\textbf{B}_\beta$ and is undefined on the rest of $\epsilon$.
+    $\synbrack{\textbf{B}_\beta}$ and is undefined on the rest of $\epsilon$.
+    Note that there is no \emph{scope extrusion} here as, in syntax
+    expressions, the $x_{\alpha}$ is visible.
 
 \ee
 
@@ -633,11 +635,9 @@ which $L$ has two additional constants $\mname{normRatExpr}_{\epsilon
   \tarrow \epsilon}$ and $\mname{normRatFun}_{\epsilon \tarrow
   \epsilon}$ and $\Gamma$ has two additional axioms
 $\mname{specNormRatExpr}_o$ and $\mname{specNormRatFun}_o$ that
-specify $\mname{normRatExpr}_{\epsilon \tarrow \epsilon}$ and
-$\mname{normRatFun}_{\epsilon \tarrow
-  \epsilon}$. $\mname{specNormRatExpr}_o$ is the formula
+specify them.  $\mname{specNormRatExpr}_o$ is the formula
 \esp
-\begin{align}\setcounter{equation}{0}
+\begin{align}\label{specNormRatExpr}\setcounter{equation}{0}
 &
 \ForallApp u_\epsilon \mdot\\
 & \hspace*{2ex}
@@ -661,7 +661,7 @@ represent a rational expression in $x_q$, then the output is
 undefined.
 
 $\mname{specNormRatFun}_o$ is the formula
-\begin{align}\setcounter{equation}{0}
+\begin{align}\label{specNormRatFun}\setcounter{equation}{0}
 &
 \ForallApp u_\epsilon \mdot\\
 & \hspace*{2ex}
@@ -758,10 +758,10 @@ derivative of $f : \RR \tarrow \RR$ is very difficult to do using only
 the definition of a derivative.  It is a great deal easier to compute
 derivatives using an algorithm that repeatedly applies symbolic
 differentiation rules.  For example, \[\frac{d}{dx}\mname{sin}(x^2 +
-x) = \mname{cos}(x^2 + x)(2x + 1)\] by applying the chain, sine, sum,
+x) = (2x+1)\mname{cos}(x^2 + x)\] by applying the chain, sine, sum,
 power, and variable differentiation rules, and so the derivative of
 \[\LambdaApp x : \RR \mdot \mname{sin}(x^2 + x)\] is \[\LambdaApp x :
-\RR \mdot \mname{cos}(x^2 + x)(2x + 1).\] Notice that the symbolic
+\RR \mdot (2x+1)\mname{cos}(x^2 + x).\] Notice that the symbolic
 differentiation algorithm is applied to expressions (e.g.,
 $\mname{sin}(x^2 + x)$) that have a designated free variable (e.g.,
 $x$) and not to the function $\LambdaApp x : \RR \mdot
@@ -778,10 +778,12 @@ The domain of $f$ is $D_f = \set{x \in \RR \mid x < -1 \text{ or } x >
 nonpositive real numbers.  Since $f'$ is undefined wherever $f$ is
 undefined, the domain $D_{f'}$ of $f'$ must be a subset of $D_f$.  But
 the domain of $g$ is $D_g = \set{x \in \RR \mid x \not= -1 \text{ and
-  } x \not= 1}$ which is clearly a superset of $D_f$.  Hence symbolic
-differentiation does not reliably produce derivatives.
+} x \not= 1}$ which is clearly a superset of $D_f$. Over $\CC$ there
+are even more egregious examples where infinitely many singularities
+are ``forgotten''.  Hence symbolic differentiation does not reliably produce
+derivatives.
 
-\subsection{Solution}
+\subsection{A solution}
 
 Let {\Lang} be the language of expressions of type $\RR$ built from
 $x$, the rational numbers, and operators for the following functions:
@@ -863,15 +865,26 @@ $\mname{DiffExpr}_{\epsilon \tarrow o}$, then the output is undefined.
 
 \subsection{Discussion}
 
-We have seen that symbolic differentiation alone does not always
-produce the derivative of a function.  This is because symbolic
-differentiation does include an analysis of where a function is
-differentiable.  A specification of a symbolic differentiation
-algorithm must include both a specification of what the algorithm does
-syntactically and where the output of the algorithm is semantically
-correct.  Even though many symbolic differentiation engines found on
-the Web work purely syntactically, correct results can only be
-guaranteed with a differentiability analysis.
+Merely applying the rules of symbolic differentition does not
+always produce the derivative of  function. The problem is that
+symbolic differentition does not actually analyze the regions of
+differentiability of a function. A specification of differentiation
+as a symbolic algorithm, to merit the name of \emph{differentiation},
+must not just perform rewrite rules on the syntactic expression, but
+also compute the corresponding validity region. This is mistake common
+to essentially all symbolic differentiation engines that we have been
+able to find.
+
+A better solution then is to have syntactic representations of functions have
+an explicit syntactic component marking their \emph{domain of definition},
+so that a symbolic differentiation algorithm would be forced to produce
+such a domain on output as well.
+
+In other words, we should regard the ``specification''
+$f = \LambdaApp x : \RR \mdot \mname{ln}(x^2 - 1)$ itself as incorrect,
+and replace it instead with
+$f = \LambdaApp x : \set{y \in \RR \mid y < -1 \text{ or } y > 1}
+\mdot \mname{ln}(x^2 - 1)$.
 
 \section{Related Work}\label{sec:related-work}
 
