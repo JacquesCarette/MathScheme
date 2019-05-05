@@ -120,26 +120,24 @@ reasoning about syntax, undefinedness, quotation and evaluation.
 \section{Introduction}
 
 Many mathematical tasks are performed by executing an algorithm that
-manipulates mathematical expressions in a mathematically meaningful
-way.  For instance, children learn to do addition, subtraction,
-multiplication, and division by executing algorithms that manipulate
+manipulates expressions (syntax) in a ``meaningful'' way.  For instance,
+children learn to perform arithmetic by executing algorithms that manipulate
 strings of digits that represent numbers.  A \emph{syntax-based
-  mathematical algorithm (SBMA)} is an algorithm of this kind that
-performs a mathematical task by manipulating the syntactic structure
-of certain mathematical expressions.  SBMAs are commonplace in
-mathematics, and so it is no surprise that they are standard
-components of computer algebra systems.
+mathematical algorithm (SBMA)} is such an algorithm, that performs a
+mathematical task by manipulating the syntactic structure of certain
+expressions.  SBMAs are commonplace in mathematics, and so it is no surprise
+that they are standard components of computer algebra systems.
 
 SBMAs involve an interplay of syntax and semantics.  The
 \emph{computational behavior} of an SBMA is the relationship between
-its input and output expressions, while the \emph{mathematical
-  meaning} of an SBMA is the relationship between the mathematical
-meanings of its input and output expressions.  Understanding what a
-SBMA does requires understanding how its computational behavior
-affects its mathematical meaning.
+its input and output expressions, while the \emph{mathematical meaning} of an
+SBMA is the relationship between the \emph{meaning}\footnote{denotation} of its
+input and output expressions.  Understanding what a SBMA does requires
+understanding how its computational behavior is related to its mathematical
+meaning.
 
 A complete specification of an SBMA is often much more complex than
-one might expect.  This is because (1) manipulating syntax is complex
+one might expect.  This is because (1)~manipulating syntax is complex
 in itself, (2)~the interplay of syntax and semantics can be difficult
 to disentangle, and (3)~seemingly benign syntactic
 manipulations can generate undefined expressions.  An SBMA
@@ -147,25 +145,25 @@ specification has both a syntactic component and a semantic component,
 but these components can be intertwined.  Usually the more they are
 separated, the easier it is to understand the specification.
 
-As a result of the inherent complexity of SBMA specifications, SBMAs
-can be tricky to implement in mathematical software systems.  Dealing
-with the semantic component is usually the bigger challenge for
-computer algebra systems, while the syntactic component is usually the
-bigger obstacle for proof assistants.
+This inherent complexity of SBMA specifications makes SBMAs
+tricky to implement correctly.  Dealing with the semantic component is usually
+the bigger challenge for computer algebra systems as they excel in the
+realm of computation but have weak reasoning facilities, while the syntactic
+component is usually the bigger obstacle for proof assistants, often due
+to partiality issues.
 
 In this paper, we examine four representative examples of SBMAs,
 present their specifications, and show how their specifications can be
-written in {\churchuqe}~\cite{Farmer17}, a formal logic that is well
-suited for expressing the interplay of syntax and semantics.  The
-paper is organized as follows.  Section~\ref{sec:background} presents
-background information about semantic notions and {\churchuqe}.
+written in {\churchuqe}~\cite{Farmer17}, a formal logic designed to make
+expressing the interplay of syntax and semantics easier than in traditional
+logics.  The paper is organized as follows.  Section~\ref{sec:background}
+presents background information about semantic notions and {\churchuqe}.
 Section~\ref{sec:factoring} discusses the issues concerning SBMAs for
 factoring integers. Normalizing rational expressions and functions is
 examined in section~\ref{sec:rational}.  Symbolic differentiation
 algorithms are considered in section~\ref{sec:diff}.
 Section~\ref{sec:related-work} give as brief overview of related work.
-And the paper ends with a short conclusion in
-section~\ref{sec:conclusion}.
+And the paper ends with a short conclusion in section~\ref{sec:conclusion}.
 
 
 \section{Background}\label{sec:background}
