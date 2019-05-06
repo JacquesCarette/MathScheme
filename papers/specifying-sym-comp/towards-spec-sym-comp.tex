@@ -132,7 +132,7 @@ that they are standard components of computer algebra systems.
 SBMAs involve an interplay of syntax and semantics.  The
 \emph{computational behavior} of an SBMA is the relationship between
 its input and output expressions, while the \emph{mathematical meaning} of an
-SBMA is the relationship between the \emph{meaning}\footnote{denotation} of its
+SBMA is the relationship between the \emph{meaning}\footnote{I.e., denotation.} of its
 input and output expressions.  Understanding what a SBMA does requires
 understanding how its computational behavior is related to its mathematical
 meaning.
@@ -153,35 +153,36 @@ realm of computation but have weak reasoning facilities, while the syntactic
 component is usually the bigger obstacle for proof assistants, often due
 to partiality issues.
 
-In this paper, we examine four representative examples of SBMAs,
+\bsp In this paper, we examine four representative examples of SBMAs,
 present their specifications, and show how their specifications can be
-written in {\churchuqe}~\cite{Farmer17}, a formal logic designed to make
-expressing the interplay of syntax and semantics easier than in traditional
-logics.  The paper is organized as follows.  Section~\ref{sec:background}
-presents background information about semantic notions and {\churchuqe}.
-Section~\ref{sec:factoring} discusses the issues concerning SBMAs for
-factoring integers. Normalizing rational expressions and functions is
-examined in section~\ref{sec:rational}.  Symbolic differentiation
-algorithms are considered in section~\ref{sec:diff}.
-Section~\ref{sec:related-work} give as brief overview of related work.
-And the paper ends with a short conclusion in section~\ref{sec:conclusion}.
-
+written in {\churchuqe}~\cite{Farmer17}, a formal logic designed to
+make expressing the interplay of syntax and semantics easier than in
+traditional logics.  The paper is organized as follows.
+Section~\ref{sec:background} presents background information about
+semantic notions and {\churchuqe}.  Section~\ref{sec:factoring}
+discusses the issues concerning SBMAs for factoring
+integers. Normalizing rational expressions and functions is examined
+in section~\ref{sec:rational}.  Symbolic differentiation algorithms
+are considered in section~\ref{sec:diff}.
+Section~\ref{sec:related-work} gives a brief overview of related work.
+And the paper ends with a short conclusion in
+section~\ref{sec:conclusion}.  \esp
 
 \section{Background}\label{sec:background}
 
 \subsection{Definedness, Equality, and Quasi-Equality}
 
-Let $e$ be an expression and $D$ be a domain of
-values.  We say \emph{$e$ is defined in $D$} if $e$
-denotes a member of $D$.  When $e$ is defined in $D$, the \emph{value
-of $e$ in $D$} is the element in $D$ that $e$ denotes.  When $e$ is
-undefined in $D$ (i.e., $e$ does not denote a member of $D$), the
-value of $e$ in $D$ is undefined.  Two expressions $e$ and $e'$ are
-\emph{equal in $D$}, written $e =_D e'$, if they are both defined in
-$D$ and they have the same values in $D$ and are \emph{quasi-equal in
-$D$}, written $e \simeq_D e'$, if either $e =_D e'$ or $e$ and $e'$
-are both undefined in $D$. When $D$ is a domain of interest to mathematicians
-then we will call $a$ a \emph{mathematical expression}.
+Let $e$ be an expression and $D$ be a domain of values.  We say
+\emph{$e$ is defined in $D$} if $e$ denotes a member of $D$.  When $e$
+is defined in $D$, the \emph{value of $e$ in $D$} is the element in
+$D$ that $e$ denotes.  When $e$ is undefined in $D$ (i.e., $e$ does
+not denote a member of $D$), the value of $e$ in $D$ is undefined.
+Two expressions $e$ and $e'$ are \emph{equal in $D$}, written $e =_D
+e'$, if they are both defined in $D$ and they have the same values in
+$D$ and are \emph{quasi-equal in $D$}, written $e \simeq_D e'$, if
+either $e =_D e'$ or $e$ and $e'$ are both undefined in $D$. When $D$
+is a domain of interest to mathematicians, we will call $e$ a
+\emph{mathematical expression}.
 
 \subsection{${\rm CTT}_{\rm qe}$ and ${\rm CTT}_{\rm uqe}$}
 
@@ -219,7 +220,7 @@ expressions of type $\epsilon$.  The second component is a
 $\textbf{A}_\alpha$ is an eval-free expression (of some type
 $\alpha$), then $\synbrack{\textbf{A}_\alpha}$ is an expression of
 type $\epsilon$ that denotes the syntactic value that represents the
-syntax tree of $\textbf{A}_\alpha$.  Finally the third component is an
+syntax tree of $\textbf{A}_\alpha$.  Finally, the third component is an
 \emph{evaluation operator} $\sembrack{\cdot}_\alpha$ such that, if
 $\textbf{E}_\epsilon$ is an expression of type $\epsilon$, then
 $\sembrack{\textbf{E}_\epsilon}_\alpha$ denotes the value of type
@@ -865,9 +866,9 @@ $\mname{DiffExpr}_{\epsilon \tarrow o}$, then the output is undefined.
 
 \subsection{Discussion}
 
-Merely applying the rules of symbolic differentition does not
+Merely applying the rules of symbolic differentiation does not
 always produce the derivative of  function. The problem is that
-symbolic differentition does not actually analyze the regions of
+symbolic differentiation does not actually analyze the regions of
 differentiability of a function. A specification of differentiation
 as a symbolic algorithm, to merit the name of \emph{differentiation},
 must not just perform rewrite rules on the syntactic expression, but
@@ -971,6 +972,11 @@ checked in HOL Light QE.  As a small startup example, we have defined
 a symbolic differentiation algorithm for polynomials and proved its
 mathematical meaning from its definition in~\cite[subsections 4.4 and
   9.3]{Farmer18}.
+
+\section*{Acknowledgments} 
+
+This research was supported by NSERC.  The authors would like to thank
+the referees for their comments and suggestions.
 
 \bibliography{imps}
 \bibliographystyle{splncs04}
