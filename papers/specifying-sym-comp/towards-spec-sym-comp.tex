@@ -425,8 +425,8 @@ again with the factorization of polynomials.
 
 Let $\QQ$ be the field of rational numbers, $\QQ[x]$ be the ring of
 polynomials in $x$ over~$\QQ$, and $\QQ(x)$ be the field of fractions
-of $\QQ[x]$.  We may assume that $\QQ \subseteq \QQ[x] \subseteq
-\QQ(x)$.  
+of $\QQ[x]$.  We may assume that \mbox{$\QQ \subseteq \QQ[x] \subseteq
+\QQ(x)$}.  
 
 The language $\Langre$ of $\QQ(x)$ is the set of expressions built from
 the symbols $x, 0, 1, +, *, -, \phantom{}^{-1}$, elements of $\QQ$,
@@ -531,8 +531,8 @@ polynomial normal form and there is no irreducible polynomial $s \in
 \QQ[x]$ of degree $\ge 2$ that divides both $p$ and $q$.  One should
 note that this definition of quasinormal form depends on the field
 $\QQ$ because, for example, the polynomial $x^2 - 2$ is irreducible in
-$\QQ$ but not in $\overline{\QQ}$ or $\RR$ (since $x^2 - 2 =_{\RR[x]} (x -
-\sqrt{2})(x + \sqrt{2})$.)
+$\QQ$ but not in $\overline{\QQ}$ (the algebraic closure of $\QQ$) or
+$\RR$ (since $x^2 - 2 =_{\RR[x]} (x - \sqrt{2})(x + \sqrt{2})$.)
 
 \bsp We can then normalize a rational function by quasinormalizing its
 body.  So the specification of $\NRF$ is that, for all $(\funQ{r}) \in
@@ -626,7 +626,7 @@ the following constants  using the machinery of $T_1$:
     expression of the form $(\LambdaApp x_\alpha \mdot
     \textbf{B}_\beta)$ to the member of $\epsilon$ that denotes
     $\synbrack{\textbf{B}_\beta}$ and is undefined on the rest of $\epsilon$.
-    Note that there is no \emph{scope extrusion} here as, in syntax
+    Note that there is no \emph{scope extrusion} here as, in syntactic
     expressions, the $x_{\alpha}$ is visible.
 
 \ee
@@ -712,7 +712,7 @@ $\frac{x^4-1}{x^2-1}$ to $x^2+1$ and then evaluate the result at $x =
 1$, we get the value 2.  But, if we evaluate $\frac{x^4-1}{x^2-1}$ at
 $x = 1$ without normalizing it, we get an error message due to
 division by 0.  Hence, if a rational expression $r$ is interpreted as
-a function, then it is not valid to normalize it, but computer algebra
+a function, then it is not valid to normalize it, but a computer algebra
 system lets the user do exactly that since there is no distinction
 made between $r$ as a rational expression and $r$ as representing a
 rational function, as we have already mentioned.
