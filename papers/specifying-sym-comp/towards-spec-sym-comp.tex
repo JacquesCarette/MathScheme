@@ -182,7 +182,7 @@ are nevertheless rather difficult to formalize properly.
 
 To be able to formally display the issues involved, it is convenient
 to first be specific about definedness, equality, quasi-equality,
-and logcs that can deal with syntax and semantics directly.
+and logics that can deal with syntax and semantics directly.
 
 \subsection{Definedness, Equality, and Quasi-Equality}
 
@@ -873,10 +873,11 @@ output is also a member of $\mname{DiffExpr}_{\epsilon \tarrow o}$
 (the syntactic component). (\mbox{4--6})~say that, if the input is a
 member of $\mname{DiffExpr}_{\epsilon \tarrow o}$ and, for all real
 numbers $a$, if the function $f$ represented by $u_e$ is
-differentiable at $a$, then $f$ equals the function represented by
-$\mname{diff}_{\epsilon \tarrow \epsilon} \, u_e$ at $a$ (the semantic
-component).  And (7) says that, if the input is not a member of
-$\mname{DiffExpr}_{\epsilon \tarrow o}$, then the output is undefined.
+differentiable at $a$, then the derivative of $f$ at $a$ equals the
+function represented by $\mname{diff}_{\epsilon \tarrow \epsilon} \,
+u_e$ at $a$ (the semantic component).  And (7) says that, if the input
+is not a member of $\mname{DiffExpr}_{\epsilon \tarrow o}$, then the
+output is undefined.
 
 \subsection{Discussion}
 
@@ -886,7 +887,7 @@ symbolic differentiation does not actually analyze the regions of
 differentiability of a function. A specification of differentiation
 as a symbolic algorithm, to merit the name of \emph{differentiation},
 must not just perform rewrite rules on the syntactic expression, but
-also compute the corresponding validity region. This is mistake common
+also compute the corresponding validity region. This is a mistake common
 to essentially all symbolic differentiation engines that we have been
 able to find.
 
@@ -906,7 +907,7 @@ $f = \LambdaApp x : \set{y \in \RR \mid y < -1 \text{ or } y > 1}
 The literature on the formal specification of symbolic computation
 algorithms is fairly modest; it includes the
 papers~\cite{DunstanEtAl98,Khan14,KhanSchreiner12,LimongelliTemperini92}.
-One of first systems to implement SBMAs in a formal setting is
+One of the first systems to implement SBMAs in a formal setting is
 MATHPERT~\cite{Beeson89} (later called MathXpert), the mathematics
 education system developed by Michael Beeson.  Another system in which
 SBMAs are formally implemented is the computer algebra system built on
@@ -927,11 +928,11 @@ truth, reasoning in lambda calculus about syntax, and undefinedness
 related to {\churchqe} and {\churchuqe}.  For work on developing
 infrastructures in proof assistants for global reflection,
 see~\cite{AnandEtAl18,BoyerMoore81,BuchbergerEtAl06,Christiansen:2014,ebner2017metaprogramming,MelhamEtAl13,VanDerWaltSwierstra12},
-which covers, amongst others, the recent work in Coq, Agda and Lean in this
-direction. Note that this infrastructure is all quite recent, and has not
-yet been used to deal with the kinds of examples in this paper --- thus
-we do not yet know how \emph{adequate} these features are for the task.
-\esp
+which covers, amongst others, the recent work in Agda, Coq, Idris, and
+Lean in this direction. Note that this infrastructure is all quite
+recent, and has not yet been used to deal with the kinds of examples
+in this paper --- thus we do not yet know how \emph{adequate} these
+features are for the task.  \esp
 
 \iffalse
 
