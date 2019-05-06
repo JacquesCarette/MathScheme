@@ -280,9 +280,9 @@ details.
 Here is a seemingly simple mathematical task: Factor (over $\NN$)
 the number~$12$.  One might expect the answer $12 = 2^2 * 3$ ---
 but this is not actually the answer one gets in many systems!  The reason
-is that in any system with built-in beta-reduction (including all
+is, that in any system with built-in beta-reduction (including all
 computer algebra systems as well as theorem provers based on dependent
-type theory), the answer is immediately evaluate to $12 = 12$, which is
+type theory), the answer is immediately evaluated to \mbox{$12 = 12$}, which is
 certainly not very informative.
 
 \subsection{Problem}
@@ -418,8 +418,8 @@ It is worth noting that none of the reasons for the \emph{correctness}
 of this representation is clearly visible: once the integers are
 partitioned into negative, zero and positive, and only positive
 natural numbers are subject to ``prime factorization'', their structure
-as a \emph{Free Commutative Monoid} on infinitely many generators (the primes)
-comes out. And so it is natural that \emph{Multisets} (also called Bags)
+as a \emph{free commutative monoid} on infinitely many generators (the primes)
+comes out. And so it is natural that \emph{multisets} (also called \emph{bags})
 are the natural representation. The list-with-multiplicities makes that
 clear, while in some sense the more human-friendly syntactic representation
 $s * p_0^{e_0} * p_1^{e_1} * \cdots * p_k^{e_k}$ obscures that.
