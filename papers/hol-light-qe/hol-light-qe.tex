@@ -22,18 +22,20 @@
 \newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
 \newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
 
-\title{{\HLQE}\thanks{Published in: J.~Avigad and A. Mahboubi, eds.,
-    \emph{Interactive Theorem Proving}, Vol.~10895, pp.~215--234,
-    Springer, 2018.  This research was supported by NSERC.}}
+\title{{\bf HOL Light QE}\thanks{Preliminary version published in:
+    J.~Avigad and A. Mahboubi, eds., \emph{Interactive Theorem
+      Proving}, Vol.~10895, pp.~215--234, Springer, 2018.  This
+    research was supported by NSERC.}}
 
-\author{Jacques Carette, William M. Farmer, and Patrick Laskowski}
+\author{Arian Aryafar, Jacques Carette, William M. Farmer,\\ Patrick
+  Laskowski, and Dylan Melville}
 
 \institute{%
 Computing and Software, McMaster University, Canada\\
 %\email{\{carette,wmfarmer,laskowsp\}@mcmaster.ca}\\
 \url{http://www.cas.mcmaster.ca/~carette}\\
 \url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
-20 August 2018
+17 July 2019
 }
 
 \pagestyle{headings}
@@ -364,7 +366,9 @@ $\synbrack{\textbf{A}_\alpha} = \sE(\textbf{A}_\alpha)$ is valid in
   {\churchqe}.
 \end{thm}
 
-\begin{cor}$\synbrack{\textbf{A}_\alpha} = \synbrack{\textbf{B}_\alpha}$ iff $\textbf{A}_\alpha$ and $\textbf{B}_\alpha$ are identical expressions.
+\begin{cor}$\synbrack{\textbf{A}_\alpha} = \synbrack{\textbf{B}_\alpha}$ is valid in
+  {\churchqe} iff $\textbf{A}_\alpha$ and $\textbf{B}_\alpha$ are
+  identical expressions.
 \end{cor}
 
 \begin{thm}[Law of Disquotation] \label{thm:sem-disquotation}
@@ -601,7 +605,7 @@ value of $\textbf{B}_\beta$ depends on the value of
 $\textbf{x}_\alpha$.  Clearly, if $\textbf{B}_\beta$ is eval-free,
 ``$\textbf{x}_\alpha$ is effective in $\textbf{B}_\beta$'' implies
 ``$\textbf{x}_\alpha$ is free in $\textbf{B}_\beta$''.  However,
-``$\textbf{x}_\alpha$ is effective in ${B}_\beta$'' is a refinement of
+``$\textbf{x}_\alpha$ is effective in $\textbf{B}_\beta$'' is a refinement of
 ``$\textbf{x}_\alpha$ is free in $\textbf{B}_\beta$'' on eval-free
 expressions since $\textbf{x}_\alpha$ is free in $\textbf{x}_\alpha =
 \textbf{x}_\alpha$, but $\textbf{x}_\alpha$ is not effective in
@@ -643,8 +647,8 @@ following two forms:
   \item $\Neg
     \mname{IS-EFFECTIVE-IN}(\textbf{x}_\alpha,\textbf{B}_\beta)$.
 
-  \item $\mname{is-free-in}_{\epsilon \tarrow \epsilon \tarrow o} \,
-    \synbrack{\textbf{x}_\alpha} \, \synbrack{\textbf{B}_\beta}$.
+  \item $\Neg(\mname{is-free-in}_{\epsilon \tarrow \epsilon \tarrow o}
+    \, \synbrack{\textbf{x}_\alpha} \, \synbrack{\textbf{B}_\beta})$.
 
 \ee
 
