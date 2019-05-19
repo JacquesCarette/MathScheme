@@ -35,7 +35,7 @@ Computing and Software, McMaster University, Canada\\
 %\email{\{carette,wmfarmer,laskowsp\}@mcmaster.ca}\\
 \url{http://www.cas.mcmaster.ca/~carette}\\
 \url{http://imps.mcmaster.ca/wmfarmer}\\[1.5ex]
-17 July 2019
+18 July 2019
 }
 
 \pagestyle{headings}
@@ -421,7 +421,7 @@ verbose expression
 (\mname{app}_{\epsilon \tarrow \epsilon \tarrow \epsilon}
 \synbrack{\wedge_{o \tarrow o \tarrow o}} \, \synbrack{\textbf{A}_o})
 \, \textbf{B}_\epsilon).\] $\synbrack{\Neg(\textbf{A}_o \And
-  \commabrack{\textbf{B}_\epsilon})}$ represents the the syntax tree
+  \commabrack{\textbf{B}_\epsilon})}$ represents the syntax tree
 of a negated conjunction in which the part of the tree corresponding
 to the second conjunct is replaced by the syntax tree represented by
 $\textbf{B}_\epsilon$.  If $\textbf{B}_\epsilon$ is a quotation
@@ -729,18 +729,24 @@ $\epsilon$ can be straightforwardly defined.
 The first and second stages have been completed; both stages involved
 modifying the kernel of {\HL}.  The third stage is sufficiently
 complete to enable our examples in section~\ref{sec:examples} to work
-well, and did not involve any further changes to the {\HL} kernel.  We
+well and did not involve any further changes to the {\HL} kernel.  We
 do expect that adding further examples, which is ongoing, will require
 additional machinery but no changes to the kernel.
 
-The {\HLQE} system was developed by the third author under the
-supervision of the first two authors on an undergraduate NSERC USRA
-research project at McMaster University and is available at
+The {\HLQE} system is being developed at McMaster University and is available at
 \[\mbox{\url{https://github.com/JacquesCarette/hol-light-qe}}.\]
+Under the supervision of the second and third authors, the core of the
+system was developed by the fourth author and the system was later
+extended and improved by the first and fifth authors.  The fourth and
+fifth authors did their work on undergraduate NSERC USRA research
+projects.
+
+\iffalse
 It should be further remarked that our fork, from late April 2017, is not fully
 up-to-date with respect to {\HL}. In particular, this means that it is best to
 compile it with \textsc{OCaml 4.03.0} and \textsc{camlp5 6.16},
 both available from \textsc{opam}.
+\fi
 
 To run {\HLQE}, execute the following commands in the {\HLQE}
 top-level directory named \texttt{hol-light-qe}:
@@ -752,8 +758,7 @@ top-level directory named \texttt{hol-light-qe}:
 4) opam config env
 5) cd hol-light-qe
 6) make
-7) run ocaml via                                                                
-     ocaml -I `camlp5 -where` camlp5o.cma                                        
+7) ocaml -I `camlp5 -where` camlp5o.cma                                        
 8) #use "hol.ml";;
    #use "Constructions/epsilon.ml";;
    #use "Constructions/pseudoquotation.ml";;
@@ -811,7 +816,7 @@ $\sembrack{\textbf{A}_\epsilon}_{{\bf B}_\beta}$
 
 Tables~\ref{tab:types} and~\ref{tab:expressions} illustrate how the
 {\churchqe} types and expressions are mapped to the {\HOL} types and
-terms, respectively.  The {\HOL} types and terms are written in the
+terms, respectively.  The {\HOL} types and terms are written in 
 the internal representation employed in {\HLQE}.  The type
 \texttt{epsilon} and the term constructors \texttt{Quote} and
 \texttt{Eval} are additions to {\HL} explained below.  Since
@@ -902,20 +907,19 @@ representation of an evaluation \texttt{Eval(t,ty)} is $\texttt{eval
 
 The proof system for {\churchqe} is obtained by extending {\qzero}'s
 with additional axioms B1--B13 (see~\ref{subsec:cttqe-proof-system}).
-Since {\qzero} and
-{\HL} are both complete (with respect to the semantics of Henkin-style
-general models), {\HL} includes the reasoning capabilities of the proof
-system for {\qzero} but not the reasoning capabilities
-embodied in the B1--B13 axioms, which must be
-implemented in {\HLQE} as follows.
-First, the logical constants defined by
-Axioms B1--B4, B5, and B7 are defined in {\HLQE} as {\HOL} functions.
-Second, the no junk (B6) and no confusion (B4) requirements for
-$\epsilon$ are automatic consequences of defining \texttt{epsilon} as
-an inductive type.  Third, Axiom B9 is implemented directly
-in the {\HL} code for substitution.  Fourth, the remaining axioms, B8
-and B10--B13 are implemented by new rules of inference in as
-shown in Table~\ref{tab:axioms}.
+Since {\qzero} and {\HL} are both complete (with respect to the
+semantics of Henkin-style general models), {\HL} includes the
+reasoning capabilities of the proof system for {\qzero} but not the
+reasoning capabilities embodied in the B1--B13 axioms, which must be
+implemented in {\HLQE} as follows.  First, the logical constants
+defined by Axioms B1--B4, B5, and B7 are defined in {\HLQE} as {\HOL}
+functions.  Second, the no junk (B6) and no confusion (B4)
+requirements for $\epsilon$ are automatic consequences of defining
+\texttt{epsilon} as an inductive type.  Third, Axiom B9 is implemented
+directly in the {\HL} code for substitution.  Fourth, Axiom B11.1 is
+subsumed by the the BETA rule in {\HL}.  Fifth, the remaining axioms
+--- B8, B10, B11.2, B12, and B13 --- are implemented by new rules of
+inference in as shown in Table~\ref{tab:axioms}.
 
 %\vspace{-2mm}
 \begin{table}
@@ -927,14 +931,12 @@ B8 (Properties of Quotation)                     & \texttt{LAW\_OF\_QUO}\\
 B10 (Properties of Evaluation)                   & \texttt{}\\
 B10.1                                            & \texttt{VAR\_DISQUO}\\
 B10.2                                            & \texttt{CONST\_DISQUO}\\
-B10.3                                            & \texttt{APP\_SPLIT}\\
-B10.4                                            & \texttt{ABS\_SPLIT}\\
-B10.5                                            & \texttt{QUOTABLE}\\
-B11 (Beta-Reduction for Evaluations)             & \texttt{}\\
-B11.1                                            & \texttt{BETA\_EVAL}\\
-B11.2                                            & \texttt{BETA\_REVAL}\\
-B12 (``Not Free In'' means ``Not Effective In'') & \texttt{NOT\_FREE\_OR\_EFFECTIVE\_IN}\\
-B13 (Beta-Reduction for Function Abstractions)  & \texttt{NEITHER\_EFFECTIVE}\\
+B10.3                                            & \texttt{APP\_DISQUO}\\
+B10.4                                            & \texttt{ABS\_DISQUO}\\
+B10.5                                            & \texttt{QUO\_DISQUO}\\
+B11.2 (Beta-Reduction for Evaluations)           & \texttt{BETA\_REDUCE\_EVAL}\\
+B12 (``Not Free In'' means ``Not Effective In'') & \texttt{NOT\_FREE\_NOT\_EFFECTIVE\_IN}\\
+B13 (Beta-Reduction for Function Abstractions)   & \texttt{BETA\_REDUCE\_ABS}\\
 \hline
 \end{tabular}
 \ec
@@ -957,9 +959,14 @@ beta-reduction  rules) does in {\churchqe}.  The main changes are:
     effective in \texttt{t}, (3) \texttt{s} is eval-free and
     \texttt{x} is not free in \texttt{s}, or (4) there is a theorem
     that says \texttt{x} is not effective in \texttt{s}.  Otherwise,
-    if \texttt{s} or \texttt{t} is not eval-free, the substitution
-    fails and if \texttt{s} and \texttt{t} are eval-free, the variable
-    \texttt{x} is renamed and the substitution is continued.
+    if \texttt{s} or \texttt{t} is not eval-free, (5) the function
+    abstraction application \texttt{Comb(Abs(x,Abs(y,s)),t)} is
+    returned and if \texttt{s} and \texttt{t} are eval-free, (6) the
+    variable \texttt{x} is renamed and the substitution is continued.
+    When (5) happens, this part of the substitution is finished and
+    the user can possibly continue it by applying
+    \texttt{BETA\_REDUCE\_ABS}, the rule of inference corresponding to
+    Axiom B13.
 
   \item A substitution of a term \texttt{t} for a variable \texttt{x}
     in a quotation \texttt{Quote(e,ty)} where \texttt{e} does not
@@ -975,8 +982,8 @@ beta-reduction  rules) does in {\churchqe}.  The main changes are:
     \texttt{Comb(Abs(x,Eval(e,ty)),t)} otherwise.  (1) is valid by
     Axiom B11.1.  When (2) happens, this part of the substitution is
     finished and the user can possibly continue it by applying
-    \texttt{BETA\_REVAL}, the rule of inference corresponding to Axiom
-    B11.2.
+    \texttt{BETA\_REDUCE\_EVAL}, the rule of inference corresponding
+    to Axiom B11.2.
 
 \ee
 
@@ -1055,15 +1062,38 @@ cannot be expressed in {\HOL} as a single formula.  However, LEM can
 be formalized in {\churchqe} as the universal statement
 \[\ForallApp x_\epsilon \mdot 
 \mname{is-expr}_{\epsilon \tarrow o}^{o} \, x_\epsilon \Implies
-\sembrack{x_\epsilon}_o \Or \Neg \sembrack{x_\epsilon}_o.\] An
-instance of LEM may be written in {\HLQE} as
+\sembrack{x_\epsilon}_o \Or \Neg \sembrack{x_\epsilon}_o.\] This
+{\churchqe}-formula is expressed in {\HLQE} as the formula
 \begin{lstlisting}
-`!x:epsilon. isExprType (x:epsilon) (TyBase "bool")
-   ==> ((eval x to bool) \/ ~(eval x to bool))`
+!x:epsilon. isExprType (x:epsilon) (TyBase "bool")
+   ==> ((eval x to bool) \/ ~(eval x to bool))
 \end{lstlisting}
-that is readily proved.  Instances of this are obtained by applying
-\texttt{INST} followed by \texttt{BETA\_REVAL}, the second
-beta-reduction rule for evaluations.
+that is named \texttt{lem} which is easily proved in {\HLQE}.  
+
+Proving a formula in {\HLQE} of the form \verb+t \/ ~t+ from
+\texttt{lem}, where \texttt{t} is a term in {\HLQE} of type
+\texttt{bool}, involves the following steps:
+
+\be
+
+  \item Instantiate \texttt{lem} with \texttt{Q\_ t \_Q}.
+
+  \item Show \texttt{isExprType Q\_ t \_Q (TyBase "bool")}.
+
+  \item Apply \texttt{BETA\_REDUCE\_EVAL} to substitute \texttt{Q\_ t
+    \_Q} within the evaluations.
+
+  \item Use the laws of disquotation in {\HLQE} ---
+    \texttt{VAR\_DISQUO}, \texttt{CONST\_DISQUO},
+    \texttt{APP\_DISQUO}, \texttt{ABS\_DISQUO}, and
+    \texttt{QUO\_DISQUO} --- to reduce each \[\texttt{eval Q\_ t \_Q to
+      bool}\] to \texttt{t}.
+
+\ee
+
+The definition and proof of \texttt{lem} and the proofs of some
+instances of LEM obtained from \texttt{lem} are found in the file
+\texttt{Constructions/LEM\_Example.ml}.
 
 \subsection{Induction Schema}
 
@@ -1333,7 +1363,7 @@ This research was supported by NSERC.  The authors would like to thank
 the referees for their comments and suggestions.
 
 \bibliography{imps}
-\bibliographystyle{splncs04}
+\bibliographystyle{plain}
 
 %%\setcounter{tocdepth}{1}
 %%\listoftodos
