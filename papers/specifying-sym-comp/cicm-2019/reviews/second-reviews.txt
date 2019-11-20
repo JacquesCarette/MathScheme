@@ -1,0 +1,128 @@
+----------------------- REVIEW 1 ---------------------
+PAPER: 39
+TITLE: Towards Specifying Symbolic Computation
+AUTHORS: William Farmer and Jacques Carette
+
+Overall evaluation: 0 (borderline paper)
+Review can be made public: yes
+
+----------- Overall evaluation -----------
+# Summary
+
+This paper describes a new way to specify symbolic computation algorithms.
+The difficulty here is that such algorithms are often based on perform syntax manipulation and are therefore not functions in the sense of the underlying logic.
+For example, a factorization algorithms that maps, e.g., 12 to 2*2*3 is semantically just the identity function; moreover, it may map equal inputs to different outputs, e.g., by being undefined for a complex expression that is provably equal to 12.
+
+Especially, when working with large and optimized computer algebra systems, it can be very difficult to spell what exactly these algorithms are supposed to do.
+A compelling example presented by the authors is the normalization of rational expressions (where x/x should normalize to 1) vs. that of rational functions (where lambda x.x/x is not equal to lambda x.1).
+
+The authors content (correctly) that the high road to tackling this difficulty is to use a language in which both syntax and semantics are available so that the semantic value 12 can be distinguished from the syntactic expressions "12" and "2*2*3".
+This work follows up on previous papers by the authors (including at CICM), where such a language was developed.
+This language features a type e of syntax trees, which can be constructed using a quotation operator "-", and an evaluation operator [-] maps a syntax tree to its value.
+This allows writing formulas like forall x:e. [x]=[factor(x)], which expresses that the factoring algorithm (of type e->e) preserves the semantics of its argument.
+
+The present application was already sketched in these previous papers. Thus, the contribution of the present paper should consist in filling in all the details.
+Three case studies are presented: factoring integers, normalizing rational functions and expressions, symbolic differentiation of real functions.
+All case studies follow the same structure of stating the task, discussing the problem, and presenting the specification in the authors' language.
+
+# Evaluation
+
+I am worried that the results are a little thin.
+The authors cite an implementation of their language, but it seems it can't even parse the specifications.
+Consequently, the case studies are done on paper only, which is disappointing nowadays.
+Even worse, the case studies aren't actually done at all - they are only sketched in this paper with many interesting details omitted, and these sketches appear to be the entirety of the work carried out by the authors.
+
+This criticism is severe because I was unable to fill in the details myself.
+Even if it is possible, I'm not sure how elegant the specifications would be - if they are inherently hard to understand, their value in making computer algebra systems more sound would be quite limited.
+See (*) below for details.
+
+Nonetheless, I'm inclined to recommend acceptance of this paper due to the high relevance of the problem and my confidence that this is a good direction of research.
+However, I insist that the authors spell out the grammar for their language and provide an appendix/online version with the complete source files written in that grammar.
+It's not critical if there is an implementation that can parse and check these source files.
+But it is critical to see what the specifications would look like in detail in order to evaluate the approach advocated by the authors.
+At least one such fully worked out specification (which should involve variable binding) should be provided before a formal decision of acceptance is made.
+
+# Details
+
+Consider the example of rational expressions/functions.
+Section 4 says "RatExpr is the predicate representing [...] the set of expressions [...] that have the form of rational expressions in x."
+But the definition of this predicate is not given.
+It's not clear to me if it is definable at all. It seems that would require an inductive data type like in Coq, but induction is never mentioned.
+Alternatively, one could specify the meaning with axioms, but that could quickly become awkward.
+
+I would also expect that the corresponding predicate RatFun can be defined in one step by RatFun := lambda f:e. exists R:e. f="lambda x.R" & RatExpr(R).
+But I cannot tell if that would be well-typed.
+
+# Update after reading the other reviews
+
+I agree that citations to Coq etc. are missing.
+In particular, it would be interesting to see all details (as requested above) and then compare to what it would look like in, e.g., Coq.
+
+# Update after reading rebuttal
+
+I had said "I insist that the authors spell out the grammar for their language and provide an appendix/online version with the complete source files written in that grammar."
+Now there may have been some wiggle room with that demand, but the response left me puzzled. The authors say "The grammar of CTT_uqe is defined in [7]. We have not fully formulated the case study specifications in CTT_uqe; this task is listed as future work."
+So the language definition is prior work, and the case studies are future work. That doesn't leave much in between for this paper.
+
+The authors say "In section 4 of [8], the predicate is-poly is defined in CTT_qe. A definition of RatExpr in CTT_uqe would be similar but more complicated." The definition of is-poly in [8] uses quasiquotation and recursion, neither of which is mentioned in the submitted paper. That confirms my impression that the approach advocated by the authors is quite complicated, and without concrete case studies it's hard to evaluate its merit.
+
+The authors want to by-pass that issue by saying "The purpose of the paper is to illustrate the problem." But to illustrate the problem, it would be helpful to present and compare multiple possible solutions. Instead, the paper is quite clearly written as an advertisement of CTT_uqe, and the authors casually dismiss the requests by Rev. 2 and Rev. 3 for a comparison with the solutions already employed in proof assistants.
+
+Given the unwillingness to improve the paper, I'm changing my score to borderline.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 39
+TITLE: Towards Specifying Symbolic Computation
+AUTHORS: William Farmer and Jacques Carette
+
+Overall evaluation: 0 (borderline paper)
+Review can be made public: no
+
+----------- Overall evaluation -----------
+The paper reports on a case study of analyzing SBMA mathematical problems and formalizing this examples in the CTT logical setting. These examples implement integer factorization (Section 3), normalizing rational expressions (Section 4) ad differentiations (Section 5). 
+
+The paper claims to study four SBMA problems - which is then the fourth problem?
+
+While I found formalizing SBMA important, I cannot judge the need of the current work. The three case studies are expressed in CTT (and Maple), but 
+- why would be the approach proposed in the paper  give the most adequate formalization (whatever adequate is)
+- what can be automated in this process? Does every SBMA require a new formalization? I assume yes, but this is quite an over-head. 
+- how would the current approach compare to other works formalizing math, for example in Isabelle?
+
+Overall, I found the claims of the paper too generic, for example, 
+ "mathematically meaningful ways." -- what does this actually mean?
+For such generic claims, I would have expected a more automated approach for a class of SBMA programs and evidence that the proposed line of formalization is indeed useful.
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 39
+TITLE: Towards Specifying Symbolic Computation
+AUTHORS: William Farmer and Jacques Carette
+
+Overall evaluation: 2 (accept)
+Review can be made public: no
+
+----------- Overall evaluation -----------
+
+This work addresses the problem of specifying computer algebra
+algorithms.  This is an important problem in CICM and one that the
+authors have already contributed a lot to.  The present paper
+considers syntax-based mathematical algorithms by a number of
+representative examples. These examples are then naturally represented
+in the calculus CTT_uqe, a variant of which has been implemented in
+HOL Light [2].
+
+The present paper is an natural contribution to the author's long term
+research project and I recommend acceptance.
+
+Questions to the authors: 
+
+p2. Please elaborate on the implementation
+in HOL Light. Is this implementation provably conservative over HOL?
+The reflection in HOL will no longer be global. How does this relate
+to your thesis that it should be?
+
+Related work: metaCoq adds reflection to Coq. A similar feature is
+available in agda and lean. How does this relate to the present work?
+
+
