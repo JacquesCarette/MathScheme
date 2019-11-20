@@ -1,0 +1,20 @@
+( <= ) Leq
+( * ) Mult
+( + ) Add
+( / ) Div
+( \ ) Diff
+( --> ) Impl
+( +~ ) Add_Quoted
+( *~ ) Mul_Quoted
+0 Zero
+_0 Zero
+1 One
+_1 One
+0' Zero_Quoted
+_0' Zero_Quoted
+1' One_Quoted
+_1' One_Quoted
+/\ And
+\/ Or
+( @ ) At
+# Hash

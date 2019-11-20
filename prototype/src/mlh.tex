@@ -1,0 +1,55 @@
+\documentclass[11pt]{article}
+
+\usepackage{alltt}
+
+\setlength {\textheight} {7.5in}
+\setlength {\textwidth} {11in}
+
+\setlength{\parindent}{0pt}
+\begin{document}
+
+% A single space used by the OCaml formatter
+\newcommand{\s}{\hspace*{1ex}}
+
+% The following commands may seem very ambiguous due to their short names, yet
+% there is a logical reasoning behind this choice. As one can read in configuration.ml
+% file, OCaml's Format module works by counting characters to determine line breaks.
+% In retrospect, OCaml cannot understand LaTeX commands, so it treats them as normal
+% strings. Hence we try to name these commands relative to their actual "size" in the
+% final document. This way OCaml's Format module can use space sparingly.
+\newcommand{\lm}{\lambda}
+
+% Used for operator names, i.e. "if", "and", "or", "E", ect.
+\newcommand{\N}[1]{\mbox{\sf #1}}
+\newcommand{\K}[1]{\mathrel{#1}}
+
+\newcommand{\ab}[1]{\begin{alltt} \N{#1} \end{alltt}}
+
+\newcommand{\F}{\forall\s}
+\newcommand{\E}{\exists\s}
+\newcommand{\U}{\exists!\s}
+\newcommand{\I}{\iota}
+\newcommand{\e}{\epsilon}
+
+\newcommand{\Bl}{\lceil}
+\newcommand{\Br}{\rceil}
+
+\newcommand{\RA}{\rightarrow}
+\newcommand{\LRA}{\Leftrightarrow}
+\newcommand{\BR}{\mapsto}
+
+\newcommand{\ty}{\N{type}}
+\newcommand{\ts}{\N{type}\s}
+
+\newcommand{\Thy}{\N{Theory}\s}
+\newcommand{\alg}{\s\N{along}\s}
+\newcommand{\extend}{\N{extended by}\s}
+\newcommand{\extendCons}{\N{extended conservatively by}\s}
+\newcommand{\comb}{\N{combine}\s}
+\newcommand{\Con}{\N{Concepts}\s}
+\newcommand{\Def}{\N{Definitions}\s}
+\newcommand{\Var}{\N{Variables}\s}
+\newcommand{\Fac}{\N{Facts}\s}
+\newcommand{\Ind}{\N{Inductive}\s}
+
+\newcommand{\ax}{\N{axiom}\s}

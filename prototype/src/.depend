@@ -1,0 +1,79 @@
+bindings.cmi: util.cmo syntax.cmo
+library.cmi: util.cmo syntax.cmo bindings.cmi
+parser.cmi: syntax.cmo
+reify.cmi: syntax.cmo library.cmi bindings.cmi
+track.cmi: syntax.cmo library.cmi
+bindings.cmo: util.cmo syntax.cmo log.cmo exceptions.cmo bindings.cmi
+bindings.cmx: util.cmx syntax.cmx log.cmx exceptions.cmx bindings.cmi
+dot.cmo: util.cmo library.cmi bindings.cmi
+dot.cmx: util.cmx library.cmx bindings.cmx
+exceptions.cmo:
+exceptions.cmx:
+flattener.cmo: util.cmo syntax.cmo subst.cmo log.cmo library.cmi \
+    exceptions.cmo bindings.cmi
+flattener.cmx: util.cmx syntax.cmx subst.cmx log.cmx library.cmx \
+    exceptions.cmx bindings.cmx
+fold.cmo: syntax.cmo plate.cmo
+fold.cmx: syntax.cmx plate.cmx
+lexer.cmo: parser.cmi
+lexer.cmx: parser.cmx
+library.cmo: util.cmo syntax.cmo parser.cmi log.cmo lexer.cmo exceptions.cmo \
+    bindings.cmi library.cmi
+library.cmx: util.cmx syntax.cmx parser.cmx log.cmx lexer.cmx exceptions.cmx \
+    bindings.cmx library.cmi
+log.cmo:
+log.cmx:
+main.cmo: typechecker.cmo track.cmi reify.cmi reducer.cmo printers.cmo \
+    log.cmo library.cmi flattener.cmo dot.cmo
+main.cmx: typechecker.cmx track.cmx reify.cmx reducer.cmx printers.cmx \
+    log.cmx library.cmx flattener.cmx dot.cmx
+matita.cmo: util.cmo track.cmi toposort.cmo syntax.cmo reducer.cmo \
+    printers.cmo library.cmi flattener.cmo exceptions.cmo bindings.cmi
+matita.cmx: util.cmx track.cmx toposort.cmx syntax.cmx reducer.cmx \
+    printers.cmx library.cmx flattener.cmx exceptions.cmx bindings.cmx
+mmt.cmo: typechecker.cmo track.cmi to_mmt.cmo print_mmt.cmo library.cmi
+mmt.cmx: typechecker.cmx track.cmx to_mmt.cmx print_mmt.cmx library.cmx
+mmt_syntax.cmo:
+mmt_syntax.cmx:
+msl_configuration.cmo:
+msl_configuration.cmx:
+msl_options.cmo:
+msl_options.cmx:
+parser.cmo: syntax.cmo parser.cmi
+parser.cmx: syntax.cmx parser.cmi
+peano_biform_msl.cmo: syntax.cmo printers.cmo msl_options.cmo \
+    msl_configuration.cmo
+peano_biform_msl.cmx: syntax.cmx printers.cmx msl_options.cmx \
+    msl_configuration.cmx
+plate.cmo: util.cmo syntax.cmo
+plate.cmx: util.cmx syntax.cmx
+print_mmt.cmo: /usr/local/lib/ocaml/xmlm/xmlm.cmi mmt_syntax.cmo
+print_mmt.cmx: /usr/local/lib/ocaml/xmlm/xmlm.cmx mmt_syntax.cmx
+printer_tests.cmo: syntax.cmo printers.cmo
+printer_tests.cmx: syntax.cmx printers.cmx
+printers.cmo: syntax.cmo msl_options.cmo msl_configuration.cmo
+printers.cmx: syntax.cmx msl_options.cmx msl_configuration.cmx
+reducer.cmo: util.cmo syntax.cmo plate.cmo log.cmo library.cmi bindings.cmi
+reducer.cmx: util.cmx syntax.cmx plate.cmx log.cmx library.cmx bindings.cmx
+reify.cmo: util.cmo toposort.cmo syntax.cmo log.cmo library.cmi \
+    exceptions.cmo bindings.cmi reify.cmi
+reify.cmx: util.cmx toposort.cmx syntax.cmx log.cmx library.cmx \
+    exceptions.cmx bindings.cmx reify.cmi
+subst.cmo: util.cmo syntax.cmo plate.cmo log.cmo fold.cmo bindings.cmi
+subst.cmx: util.cmx syntax.cmx plate.cmx log.cmx fold.cmx bindings.cmx
+syntax.cmo:
+syntax.cmx:
+to_mmt.cmo: util.cmo toposort.cmo syntax.cmo mmt_syntax.cmo library.cmi \
+    bindings.cmi
+to_mmt.cmx: util.cmx toposort.cmx syntax.cmx mmt_syntax.cmx library.cmx \
+    bindings.cmx
+toposort.cmo: util.cmo exceptions.cmo
+toposort.cmx: util.cmx exceptions.cmx
+track.cmo: util.cmo syntax.cmo log.cmo library.cmi bindings.cmi track.cmi
+track.cmx: util.cmx syntax.cmx log.cmx library.cmx bindings.cmx track.cmi
+typechecker.cmo: util.cmo toposort.cmo syntax.cmo subst.cmo printers.cmo \
+    bindings.cmi
+typechecker.cmx: util.cmx toposort.cmx syntax.cmx subst.cmx printers.cmx \
+    bindings.cmx
+util.cmo:
+util.cmx:

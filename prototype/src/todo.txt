@@ -1,0 +1,14 @@
+1. get computations going
+  - needs a way to interpret 'trustable communication'
+2. induce transformers from rules and axioms
+3. redo typechecker to be more general
+4. implement type constructors (like monads) in Small Algebra
+5. more conservative extensions
+6. get rid of need for 'lift'
+7. get rid of BinOp, PBinOp [done]
+8. do a proper 2-level pretty-printer (see Chiron)
+9. revamp simplifier
+10. finish mmt translation
+11. merge type decl and func defn into a single structure (in bindings)
+12. figure out how to deal with 'instantiations' (co-equalizers?)
+
