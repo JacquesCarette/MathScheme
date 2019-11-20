@@ -1,0 +1,2432 @@
+Empty := Theory {}
+Carrier := Empty extended by { U : type }
+PointedCarrier := Carrier extended by { e : U }
+Pointed2Carrier := Carrier extended by { e2 : U }
+DoublyPointed := combine PointedCarrier, Pointed2Carrier over Carrier
+DoublyPointed01 := DoublyPointed[ e |-> 0, e2 |-> 1 ]
+UnaryOperation := Carrier extended by { prime : U -> U }
+Magma := Carrier extended by { * : (U,U) -> U }
+CarrierS := Empty extended by { S : type }
+MultiCarrier := combine Carrier, CarrierS over Empty
+BinaryRelation := Carrier extended by { R : (U,U)?  }
+UnaryRelation := Carrier extended by { R : U ?  }
+PointedUnarySystem := combine UnaryOperation, PointedCarrier over Carrier
+FixedPoint := PointedUnarySystem extended by {
+    axiom fixes_prime_e : prime e = e
+}
+InvolutiveMagmaSig := combine UnaryOperation, Magma over Carrier
+InvolutivePointedMagmaSig := combine PointedUnarySystem, Magma over Carrier
+
+Involution := UnaryOperation extended by { 
+    axiom involutive_prime : forall x:U. prime (prime x) = x;
+}
+UnaryDistributes := InvolutiveMagmaSig extended by {
+    axiom distribute_prime_* : forall x,y:U. prime(x * y) = (prime(x) * (prime(y)))
+}
+
+UnaryAntiDistribution := InvolutiveMagmaSig extended by {
+    axiom antidis_prime_* : forall x,y:U. prime(x * y) = (prime(y) * (prime(x)))
+}
+AdditiveUnaryAntiDistribution := UnaryAntiDistribution[ * |-> + ]
+IdempotentUnary := UnaryOperation extended by {
+    axiom idempotent_prime : forall f:U. prime(prime f) = prime f
+}
+InvolutiveMagma := combine Involution, UnaryAntiDistribution over UnaryOperation
+ReflexiveRelation := BinaryRelation extended by {
+   axiom reflexive_R : forall x : U. x `R x;
+}
+IrreflexiveRelation := BinaryRelation extended by {
+   axiom irreflexive_R : forall x : U. not (x `R x)
+}
+TransitiveRelation := BinaryRelation extended by {
+   axiom transitive_R : forall x,y,z : U. (x `R y and y `R z) implies x `R z
+}
+SymmetricRelation := BinaryRelation extended by {
+   axiom symmetric_R : forall x,y : U. (x `R y) implies y `R x
+}
+AntisymmetricRelation := BinaryRelation extended by {
+   axiom antisymmetric_R : forall x,y : U.(y `R x and x `R y) implies x = y
+}
+
+R_<= := [R |-> <=]
+OrderRelation := BinaryRelation[R |-> <=]
+ReflexiveOrderRelation := ReflexiveRelation[R |-> <= ]
+TransitiveOrderRelation := TransitiveRelation[ R |-> <= ]
+SymmetricOrderRelation := SymmetricRelation[ R |-> <= ]
+AntisymmetricOrderRelation := AntisymmetricRelation[ R |-> <= ]
+Preorder := combine ReflexiveOrderRelation, TransitiveOrderRelation over
+    OrderRelation
+StrictPartialOrder := combine IrreflexiveRelation, TransitiveRelation over BinaryRelation
+EquivalenceRelation := combine ReflexiveRelation, TransitiveRelation, SymmetricRelation over BinaryRelation
+PartialOrder := combine Preorder, AntisymmetricOrderRelation over OrderRelation
+PartiallyOrderedMagmaSig := combine Magma, OrderRelation over Carrier
+OrderPreservingMagma := PartiallyOrderedMagmaSig extended by {
+    axiom orderPreserving_*_<= : forall x,y,u,v : U. (x <= y) implies ((u * x * v) <= (u * y * v))
+}
+PartiallyOrderedMagma := combine OrderPreservingMagma, PartialOrder over OrderRelation
+TotalRelation := OrderRelation extended by {
+   axiom total_<= : forall x, y : U . x <= y or y <= x;
+}
+TotalPreorder := combine Preorder, TotalRelation over OrderRelation
+TotalOrder := combine TotalPreorder, AntisymmetricOrderRelation over Preorder
+OrderedMagma := combine PartiallyOrderedMagma, TotalRelation over OrderRelation
+LeftCanonicalOrder := PartiallyOrderedMagmaSig extended by {
+    axiom leftCanonicalOrder_*_<= : forall a,b:U. (a <= b iff exists c:U. b = a * c)
+}
+RightCanonicalOrder := PartiallyOrderedMagmaSig extended by {
+    axiom rightCanonicalOrder_*_<= : forall a,b:U. (a <= b iff exists c:U. b = c * a)
+}
+LeftCanonicallyOrderedMagma := combine OrderedMagma, LeftCanonicalOrder over PartiallyOrderedMagmaSig
+RightCanonicallyOrderedMagma := combine OrderedMagma, RightCanonicalOrder over PartiallyOrderedMagmaSig
+CanonicallyOrderedMagma := combine LeftCanonicallyOrderedMagma, RightCanonicalOrder over PartiallyOrderedMagmaSig
+Chain := TotalOrder
+
+AdditiveMagma := Magma [* |-> +]
+LeftDivisionMagma := Magma [* |-> \]
+RightDivisionMagma := Magma [* |-> /]
+LeftOperation := MultiCarrier extended by { @ : (U, S) -> S }
+RightOperation := MultiCarrier extended by { @ : (S, U) -> S }
+IdempotentMagma := Magma extended by {
+   axiom idempotent_* : forall x:U . x * x = x;
+}
+IdempotentAdditiveMagma := IdempotentMagma [ * |-> +]
+SelectiveMagma := Magma extended by {
+   axiom selective_* : forall x,y:U . (x * y = x) or (x * y = y);
+}
+SelectiveAdditiveMagma := SelectiveMagma [ * |-> +]
+PointedMagma := combine Magma, PointedCarrier over Carrier
+Pointed0Magma := PointedMagma[ e |-> 0 ]
+AdditivePointed1Magma := PointedMagma[ * |-> +, e |-> 1 ]
+
+LeftPointAction := PointedMagma extended conservatively by {
+  pointactLeft : U -> U;
+  pointactLeft (x) = e * x;
+}
+RightPointAction := PointedMagma extended conservatively by {
+  pointactRight : U -> U;
+  pointactRight (x) = x * e;
+}
+CommutativeMagma := Magma extended by { 
+    axiom commutative_* : forall x,y:U. x * y = y * x
+}
+CommutativeAdditiveMagma := CommutativeMagma [ * |-> +]
+PointedCommutativeMagma := combine PointedMagma, CommutativeMagma over Magma
+AntiAbsorbent := Magma extended by {
+    axiom antiAbsorbent_* : forall x,y : U. x * (x * y) = y;
+}
+SteinerMagma := combine CommutativeMagma, AntiAbsorbent over Magma
+Squag := combine SteinerMagma, IdempotentMagma over Magma
+PointedSteinerMagma := combine PointedMagma, SteinerMagma over Magma
+UnipotentPointedMagma := PointedMagma extended by {
+    axiom unipotent_*_e : forall x:U. x * x = e
+}
+Sloop := combine PointedSteinerMagma, UnipotentPointedMagma over PointedMagma
+LeftDistributiveMagma := Magma extended by {
+    axiom leftDistributive_* : forall x,y,z:U. x * (y * z) = (x * y) * (x * z)
+}
+RightDistributiveMagma := Magma extended by {
+    axiom rightDistributive_* : forall x,y,z:U. (y * z) * x = (y * x) * (z * x)
+}
+LeftCancellativeMagma := Magma extended by {
+    axiom leftCancellative_* : forall x,y,z:U. z * x = z * y implies x = y
+}
+RightCancellativeMagma := Magma extended by {
+    axiom rightCancellative_* : forall x,y,z:U. x * z = y * z implies x = y
+}
+CancellativeMagma := combine LeftCancellativeMagma, RightCancellativeMagma over Magma
+LeftUnital := PointedMagma extended by { 
+    axiom leftIdentity_*_e : forall x : U. e * x = x
+}
+RightUnital := PointedMagma extended by { 
+    axiom rightIdentity_*_e : forall x : U. x * e = x
+}
+Unital := combine LeftUnital, RightUnital over PointedMagma
+LeftBiMagma := combine LeftDivisionMagma, Magma over Carrier
+RightBiMagma := LeftBiMagma[\ |-> /]
+LeftCancellative := LeftBiMagma extended by {
+    axiom leftCancel_*_\ : forall x, y : U. x * (x \ y) = y
+}
+LeftCancellativeOp := LeftBiMagma extended by {
+    axiom leftCancel_\_* : forall x, y : U. x \ (x * y) = y
+}
+LeftQuasiGroup := combine LeftCancellative, LeftCancellativeOp over LeftBiMagma
+RightCancellative := RightBiMagma extended by {
+    axiom rightCancel_*_/ : forall x, y : U.  (y / x) * x = y
+}
+RightCancellativeOp := RightBiMagma extended by {
+    axiom rightCancel_/_* : forall x, y : U.  (y * x) / x = y
+}
+RightQuasiGroup := combine RightCancellative, RightCancellativeOp over RightBiMagma
+QuasiGroup := combine LeftQuasiGroup, RightQuasiGroup over Magma
+MedialMagma := Magma extended by {
+    axiom mediates_* : forall w,x,y,z : U. (x * y) * (z * w) = (x * z) * (y * w)
+}
+MedialQuasiGroup := combine QuasiGroup, MedialMagma over Magma
+MoufangLaw := Magma extended by {
+    axiom moufangLaw_* : forall e,x,y,z : U.
+        (y * e = y) implies (((x * y) * z) * x = x * (y * ((e * z) * x)))
+}
+MoufangQuasigroup := combine QuasiGroup, MoufangLaw over Magma
+LeftLoop := combine RightUnital, LeftQuasiGroup over Magma
+Loop := combine Unital, QuasiGroup over Magma
+(@* should conservatively extend Loop with leftInv and rightInv *@)
+MoufangIdentity := Magma extended by {
+    axiom MoufangIdentity_* : forall x,y,z:U. (z * x)*(y * z) = (z * (x * y))*z
+}
+MoufangLoop := combine Loop, MoufangIdentity over Magma
+LeftShelfSig := Magma[ * |-> |> ]
+LeftShelf := LeftDistributiveMagma [ * |-> |> ]
+RightShelfSig := Magma[ * |-> <| ]
+RightShelf := RightDistributiveMagma[ * |-> <| ]
+RackSig := combine LeftShelfSig, RightShelfSig over Carrier
+Shelf := combine LeftShelf, RightShelf over RackSig
+LeftBinaryInverse := RackSig extended by {
+    axiom leftInverse_|>_<| : forall x,y:U. (x |> y) <| x = y
+}
+RightBinaryInverse := RackSig extended by {
+    axiom rightInverse_|>_<| : forall x,y:U. x |> (y <| x) = y
+}
+Rack := combine RightShelf, LeftShelf, LeftBinaryInverse, RightBinaryInverse over RackSig
+LeftIdempotence := IdempotentMagma[ * |-> |> ]
+RightIdempotence := IdempotentMagma[ * |-> <| ]
+LeftSpindle := combine LeftShelf, LeftIdempotence over LeftShelfSig
+RightSpindle := combine RightShelf, RightIdempotence over RightShelfSig
+Quandle := combine Rack, LeftSpindle, RightSpindle over Shelf
+RightSelfInverse := LeftShelfSig extended by {
+    axiom rightSelfInverse_|> : forall x,y:U. (x |> y) |> y = x
+}
+Kei := combine LeftSpindle, RightSelfInverse over LeftShelfSig
+(@* a Shell is a BiUnital LeftBiMagma where the additive 0 is a zero for * *@)
+Semigroup := Magma extended by { 
+    axiom associative_* : forall x,y,z:U. (x * y)*z = x * (y * z)
+}
+AdditiveSemigroup := Semigroup[* |-> + ]
+CommutativeSemigroup := combine Semigroup, CommutativeMagma over Magma
+AdditiveCommutativeSemigroup := CommutativeSemigroup[* |-> + ]
+LeftCancellativeSemigroup := combine Semigroup, LeftCancellativeMagma over Magma
+RightCancellativeSemigroup  := combine Semigroup, RightCancellativeMagma over Magma
+CancellativeSemigroup := combine Semigroup, CancellativeMagma over Magma
+CancellativeCommutativeSemigroup := combine CommutativeSemigroup, CancellativeSemigroup over Semigroup
+InvolutiveSemigroup := combine Semigroup, InvolutiveMagma over PointedMagma
+PartiallyOrderedSemigroup := combine PartiallyOrderedMagma, Semigroup over PartiallyOrderedMagmaSig
+OrderedSemigroup := combine PartiallyOrderedSemigroup, TotalRelation over OrderRelation
+CommutativePartiallyOrderedSemigroup := combine CommutativeSemigroup, PartiallyOrderedSemigroup over Semigroup
+CommutativeOrderedSemigroup := combine CommutativeSemigroup, OrderedSemigroup over Semigroup
+Band := combine Semigroup, IdempotentMagma over Magma
+CommutativeBand := combine Band, CommutativeMagma over Magma
+MiddleAbsorption := Magma extended by {
+    axiom middleAbsorb_* : forall x,y,z:U. x * y * z = x * z
+}
+MiddleCommute := Magma extended by {
+    axiom middleCommute_* : forall x,y,z:U. x * y * z * x = x * z * y * x
+}
+RectangularBand := combine Band, MiddleAbsorption over Magma
+NormalBand := combine Band, MiddleCommute over Magma
+RightMonoid := combine RightUnital, Semigroup over Magma
+LeftMonoid := combine LeftUnital, Semigroup over Magma
+Monoid := combine Unital, Semigroup over Magma
+AdditiveMonoid := Monoid[* |-> +, e |-> 0]
+DoubleMonoid := combine Monoid, AdditiveMonoid over Carrier
+Monoid1 := Monoid [e |-> 1]
+CommutativeMonoid := combine Monoid, CommutativeSemigroup over Semigroup
+SelectiveMonoid := combine Monoid, SelectiveMagma over Magma
+CancellativeMonoid := combine Monoid, CancellativeMagma over Magma
+CancellativeCommutativeMonoid := combine CancellativeMonoid, CommutativeMonoid over Monoid
+LeftZero := PointedMagma extended by {
+    axiom leftZero_*_e : forall x:U. e * x = e
+}
+RightZero := PointedMagma extended by {
+    axiom rightZero_*_e : forall x:U. x * e = e
+}
+Zero := combine LeftZero, RightZero over PointedMagma
+Left0 := LeftZero[ e |-> 0 ]
+Right0 := RightZero[ e |-> 0 ]
+ComplementSig := UnaryOperation[ prime |-> compl ]
+CommutativeMonoid1 := CommutativeMonoid[e |-> 1]
+AdditiveCommutativeMonoid := CommutativeMonoid[* |-> +, e |-> 0]
+PartiallyOrderedMonoid := combine PartiallyOrderedMagma, Monoid over PartiallyOrderedMagmaSig
+OrderedMonoid := combine PartiallyOrderedMonoid, TotalRelation over OrderRelation
+CommutativePartiallyOrderedMonoid := combine CommutativeMonoid, PartiallyOrderedMonoid over Monoid
+CommutativeOrderedMonoid := combine CommutativeMonoid, OrderedMonoid over Monoid
+(@* For these canonically preordered structures, transitivity and reflexivity follow from the definition of <= by *, but they are included for clarity *@)
+LeftCanonicallyPreorderedMonoid := combine Monoid, LeftCanonicalOrder, Preorder over PartiallyOrderedMagmaSig
+RightCanonicallyPreorderedMonoid := combine Monoid, RightCanonicalOrder, Preorder over PartiallyOrderedMagmaSig
+CanonicallyPreorderedMonoid := combine LeftCanonicallyPreorderedMonoid, RightCanonicalOrder over PartiallyOrderedMagmaSig
+LeftCanonicallyOrderedMonoid := combine PartiallyOrderedMonoid, LeftCanonicalOrder over PartiallyOrderedMagmaSig
+RightCanonicallyOrderedMonoid := combine PartiallyOrderedMonoid, LeftCanonicalOrder over PartiallyOrderedMagmaSig
+CanonicallyOrderedMonoid := combine LeftCanonicallyOrderedMonoid, RightCanonicalOrder over PartiallyOrderedMagmaSig
+AdditiveCanonicallyOrderedMonoid := CanonicallyOrderedMonoid[* |-> +, e |-> 0]
+HemiGroup := combine CanonicallyOrderedMonoid, CancellativeMagma over Magma
+AdditiveHemiGroup := HemiGroup[* |-> +, e |-> 0]
+BooleanGroup := combine Monoid, UnipotentPointedMagma over PointedMagma
+InverseSig := InvolutivePointedMagmaSig[prime |-> inv]
+LeftInverse := InverseSig extended by {
+    axiom leftInverse_inv_*_e : forall x:U. x * (inv x) = e
+}
+RightInverse := InverseSig extended by {
+    axiom rightInverse_inv_*_e : forall x:U. (inv x) * x = e
+}
+Inverse := combine LeftInverse, RightInverse over InverseSig
+PseudoInverseSig := InvolutiveMagmaSig[prime |-> inv]
+PseudoInverse := PseudoInverseSig extended by {
+    axiom quasiInverse_inv_*_e : forall x:U. x * (inv x) * x =  x
+}
+PseudoInvolution := PseudoInverseSig extended by {
+    axiom quasiRightInverse_inv_*_e : forall x:U. 
+        (inv x) * x * (inv x) =  (inv x)
+}
+RegularSemigroup := combine Semigroup, PseudoInverse over Magma
+InverseSemigroup := combine PseudoInverse, PseudoInvolution over PseudoInverseSig
+Group := combine Monoid, Inverse over InverseSig
+Group1 := Group[e |-> 1]
+AdditiveGroup := Group [ * |-> +, e |-> 0, inv |-> neg]
+AbelianGroup := combine Group1, CommutativeMonoid1 over Monoid1
+AbelianAdditiveGroup := combine AdditiveGroup, CommutativeAdditiveMagma over AdditiveMagma
+PartiallyOrderedGroup := combine PartiallyOrderedMagma, Group over PartiallyOrderedMagmaSig
+OrderedGroup := combine PartiallyOrderedGroup, TotalRelation over OrderRelation
+AbelianPartiallyOrderedGroup := combine PartiallyOrderedMagma, AbelianGroup over PartiallyOrderedMagmaSig
+AbelianOrderedGroup := combine AbelianPartiallyOrderedGroup, TotalRelation over OrderRelation
+RingoidSig := combine Magma, AdditiveMagma over Carrier
+Pointed0Sig := PointedCarrier[ e |-> 0 ]
+Pointed1Sig := PointedCarrier[ e |-> 1 ]
+Ringoid0Sig := combine RingoidSig, Pointed0Sig over Carrier
+Ringoid1Sig := combine RingoidSig, Pointed1Sig over Carrier
+Ringoid01Sig := combine Ringoid0Sig, Ringoid1Sig over RingoidSig
+NonassociativeNondistributiveRing := combine AbelianAdditiveGroup, Magma over Carrier 
+NonassociativeRing := combine NonassociativeNondistributiveRing, Ringoid over RingoidSig
+LeftRingoid := RingoidSig extended by {
+    axiom leftDistributive_*_+ : forall x,y,z:U. x * (y + z) = (x * y) + (x * z)
+}
+RightRingoid := RingoidSig extended by {
+    axiom rightDistributive_*_+ : forall x,y,z:U. (y + z) * x = (y * x) + (z * x)
+}
+Ringoid := combine LeftRingoid, RightRingoid over RingoidSig
+PrimeRingoidSig := combine RingoidSig, UnaryOperation over Carrier
+AnddeMorgan := PrimeRingoidSig extended by {
+   axiom anddeMorgan_*_+_prime : 
+     forall x, y, z : U . prime (x * y) = (prime x) + (prime y)
+}
+OrdeMorgan := PrimeRingoidSig extended by {
+   axiom OrdeMorgan_+_*_prime : 
+     forall x, y, z : U . prime (x + y) = (prime x) * (prime y)
+}
+DualdeMorgan := combine OrdeMorgan, AnddeMorgan over PrimeRingoidSig
+LeftPreSemiring := combine LeftRingoid, Semigroup, AdditiveCommutativeSemigroup over RingoidSig
+RightPreSemiring := combine RightRingoid, Semigroup, AdditiveCommutativeSemigroup over RingoidSig
+PreSemiring := combine LeftPreSemiring, RightRingoid over RingoidSig
+NearSemiring := combine AdditiveSemigroup, Semigroup, RightRingoid over RingoidSig
+NearSemifield := combine NearSemiring, Group over Semigroup
+Semifield := combine NearSemifield, LeftRingoid over RingoidSig
+NearRing := combine AdditiveGroup, Semigroup, RightRingoid over RingoidSig
+Rng := combine AbelianAdditiveGroup, Semigroup, Ringoid over RingoidSig
+Semiring := combine AdditiveCommutativeMonoid, Monoid1, Ringoid, Left0, Right0 over Ringoid0Sig
+SemiRng := combine AdditiveCommutativeMonoid, Semigroup, Ringoid over RingoidSig
+LeftPreDioid := combine LeftPreSemiring, AdditiveCanonicallyOrderedMonoid over AdditiveMonoid
+RightPreDioid := combine RightPreSemiring, AdditiveCanonicallyOrderedMonoid over AdditiveMonoid
+PreDioid := combine LeftPreDioid, RightRingoid over RingoidSig
+LeftDioid := combine LeftPreDioid, Monoid, Left0, Right0 over DoubleMonoid
+RightDioid := combine RightPreDioid, Monoid, Left0, Right0 over DoubleMonoid
+Dioid := combine LeftDioid, RightRingoid over RingoidSig
+SymmetrizableDioid := combine Dioid, AdditiveHemiGroup over AdditiveCanonicallyOrderedMonoid
+IdempotentDioid := combine Dioid, IdempotentAdditiveMagma over AdditiveMagma
+DoublyIdempotentDioid := combine IdempotentDioid, IdempotentMagma over Magma
+IdempotentCancellativeDioid := combine IdempotentDioid, CancellativeMagma over Magma
+IdempotentInvertibleDioid := combine IdempotentDioid, Group over Monoid
+SelectiveDioid := combine Dioid, SelectiveAdditiveMagma over AdditiveMagma
+DoublySelectiveDioid := combine SelectiveDioid, SelectiveMagma over Magma
+SelectiveCancellativeDioid := combine SelectiveDioid, CancellativeMagma over Magma
+SelectiveInvertibleDioid := combine SelectiveDioid, Group over Monoid
+Ring := combine Rng, Semiring over SemiRng
+PrimeAdditiveGroup := AbelianGroup[U |-> S, * |-> +', inv |-> neg', 1 |-> 0']
+CommutativeRing := combine Ring, CommutativeMagma over Magma
+BooleanRing := combine CommutativeRing, IdempotentMagma over Magma
+IdempotentSemiRng := combine SemiRng, IdempotentAdditiveMagma over AdditiveMagma
+IdempotentSemiring := combine Semiring, IdempotentAdditiveMagma over AdditiveMagma
+InvolutiveFixes := FixedPoint [ e |-> 1 ]
+InvolutiveRingoidSig := combine InvolutiveMagmaSig, Ringoid1Sig over Magma
+InvolutiveRingoid := combine Ringoid, Involution, UnaryAntiDistribution, AdditiveUnaryAntiDistribution, InvolutiveFixes over InvolutiveRingoidSig
+InvolutiveRing := combine InvolutiveRingoid, Ring over Semiring
+JacobianIdentity := Ringoid0Sig extended by{
+    axiom jacobian_*_+ :
+        forall x, y, z : U . (x * (y * z)) + (y * (z * x)) + (z * (x * y)) = 0
+}
+AnticommutativeRing := Ring extended by{
+    axiom antiCommutative :
+        forall x, y : U . (x * y) = neg(y * x)
+}
+LieRing := combine JacobianIdentity, AnticommutativeRing over Ringoid0Sig
+OrderPreservingAdditiveMagma := OrderPreservingMagma[ * |-> + ]
+PartiallyOrdered0MagmaSig := combine PartiallyOrderedMagmaSig, Pointed0Sig over Carrier
+PositiveOrderPreserving := PartiallyOrdered0MagmaSig extended by {
+    axiom orderPreserving_*_<= : forall x,y,u,v : U.
+        ((x <= y) and (0 <= u and 0 <= v)) implies ((u * x * v) <= (u * y * v))
+}
+OrderedRingoid0Sig := combine Ringoid0Sig, OrderRelation over Carrier
+OrderedRng := combine Rng, OrderPreservingAdditiveMagma, PositiveOrderPreserving over OrderedRingoid0Sig
+CommutativeOrderedRng := combine CommutativeMagma, OrderedRng over Magma
+OrderedRing := combine Ring, OrderPreservingAdditiveMagma, PositiveOrderPreserving over OrderedRingoid0Sig
+CommutativeOrderedRing := combine CommutativeRing, OrderedRing over Ring
+NoZeroDivisors := Ringoid0Sig extended by {
+    axiom onlyZeroDivisor_*_0 : forall x,y:U. (x * y = 0) implies (x = 0 or y = 0)
+}
+Domain := combine Ring, NoZeroDivisors over Ringoid0Sig
+IntegralDomain := combine CommutativeRing, NoZeroDivisors over Ringoid0Sig
+NonZeroMultiples := Ringoid0Sig extended by {
+    axiom nonZeroMultiples_*_0 : forall x,y:U.
+      ((not x = 0) and (not y = 0)) implies
+        ((exists u,v:U. (x * u = y * v and (not x * u = 0)))
+        and (exists u,v:U. (u * x = v * y and (not u * x = 0))))
+}
+OreDomain := combine Ring, NoZeroDivisors, NonZeroMultiples over Ringoid0Sig
+(@* Euclidean domain -- need Nat, then we can have division property *@)
+DivisionRing := Ring extended by {
+    axiom divisible : forall x:U. (not (x = 0)) implies 
+        ((exists! y : U . y * x = 1) and (exists! y : U . x * y = 1))
+}
+Field := combine DivisionRing, IntegralDomain over Ring
+(@* next: ordered field and real field *@)
+(@* * is meet and + is join *@)
+MeetSemilattice := CommutativeBand
+BoundedMeetSemilattice := combine CommutativeMonoid1, MeetSemilattice over CommutativeSemigroup
+JoinSemilattice := MeetSemilattice [* |-> +]
+BoundedJoinSemilattice := BoundedMeetSemilattice [* |-> +, 1 |-> 0]
+DualSemilattices := combine JoinSemilattice, MeetSemilattice over Carrier
+LeftAbsorption := RingoidSig extended by {
+    axiom leftAbsorb_*_+ : forall x, y : U. x * (x + y) = x
+}
+LeftAbsorptionOp := LeftAbsorption[ * |-> +, + |-> * ]
+Lattice := combine DualSemilattices, LeftAbsorption, LeftAbsorptionOp over RingoidSig
+Modularity := RingoidSig extended by {
+    axiom leftModular_*_+ : forall x,y,z : U.  (x * y) + (x * z) = x * (y + (x * z))
+}
+ModularLattice := combine Lattice, Modularity over RingoidSig
+DistributiveLattice := combine ModularLattice, LeftRingoid over RingoidSig
+BoundedJoinLattice := combine BoundedJoinSemilattice, Lattice over JoinSemilattice
+BoundedMeetLattice := combine BoundedMeetSemilattice, Lattice over MeetSemilattice
+BoundedLattice := combine BoundedJoinLattice, BoundedMeetLattice over Lattice
+BoundedModularLattice := combine BoundedLattice, ModularLattice over Lattice
+BoundedDistributiveLattice := combine BoundedModularLattice, DistributiveLattice over ModularLattice
+PointedInvolutiveMagma0Sig := combine InvolutiveMagmaSig, Pointed0Sig over Carrier
+PrimePseudoComplement := PointedInvolutiveMagma0Sig extended by {
+    axiom pseudoComplement_prime_*_0 : forall x,y : U. (y * (prime x) = y) iff (x * y = 0)
+}
+DistributivePAlgebra := combine BoundedDistributiveLattice, PrimePseudoComplement over Pointed0Magma
+PointedAdditiveInvolutiveMagma1Sig := PointedInvolutiveMagma0Sig[ * |-> +, 0 |-> 1 ]
+PrimeDualPseudoComplement := PointedAdditiveInvolutiveMagma1Sig extended by {
+    axiom pseudoComplement_prime_+_1 : forall x,y : U. ((prime x) + y = y) iff (x + y = 1)
+}
+DistributiveDualPAlgebra := combine BoundedDistributiveLattice, PrimeDualPseudoComplement over AdditivePointed1Magma
+PrimeBoundedDistributiveLattice := combine UnaryOperation, BoundedDistributiveLattice over Carrier
+DistributiveDoublePAlgebra := combine DistributivePAlgebra, DistributiveDualPAlgebra over PrimeBoundedDistributiveLattice
+PointedInvolutiveMagma1Sig := combine InvolutiveMagmaSig, Pointed1Sig over Carrier
+PrimePseudoMeetInverse := PointedInvolutiveMagma1Sig extended by {
+    axiom pseudoInverse_prime_*_1 : forall x : U. ((prime (prime x)) * (prime x)) = 1
+}
+Prime01Sig := combine UnaryOperation, DoublyPointed01 over Carrier
+PrimeNegation := Prime01Sig extended by {
+    axiom negation_prime_0_1 : forall x : U. (prime 0) = 1
+}
+StoneAlgebraSig := combine Prime01Sig, Magma over Carrier
+StoneAlgebra := combine DistributivePAlgebra, PrimePseudoMeetInverse, PrimeNegation over StoneAlgebraSig
+DualStoneAlgebra := StoneAlgebra[ * |-> +, + |-> *, 0 |-> 1, 1 |-> 0 ]
+DoubleStoneAlgebra := combine StoneAlgebra, DualStoneAlgebra over DistributivePAlgebra
+CaretMeetSemilatticeSig := Magma[ * |-> /\ ]
+CaretMeetSemilattice := MeetSemilattice[ * |-> /\ ]
+CaretJoinSemilatticeSig := Magma[ * |-> \/ ]
+CaretJoinSemilattice := JoinSemilattice[ + |-> \/ ]
+CaretLatticeSig := RingoidSig[ + |-> \/, * |-> /\ ]
+CaretLattice := Lattice[ + |-> \/, * |-> /\ ]
+MultiplicativeMeetSemilatticeSig := combine Magma, CaretMeetSemilatticeSig over Carrier
+MultiplicativeJoinSemilatticeSig := combine Magma, CaretJoinSemilatticeSig over Carrier
+MultiplicativeLatticeSig := combine Magma, CaretLatticeSig over Carrier
+LeftJoinRingoid := LeftRingoid[ + |-> \/ ]
+RightJoinRingoid := RightRingoid[ + |-> \/ ]
+MultiplicativeJoinSemilattice := combine CaretJoinSemilattice, LeftJoinRingoid, RightJoinRingoid over MultiplicativeJoinSemilatticeSig
+MultiplicativeLattice := combine CaretLattice, LeftJoinRingoid, RightJoinRingoid over MultiplicativeLatticeSig
+MultiplicativeMeetSemilatticeOrderPreserving := MultiplicativeMeetSemilatticeSig extended by {
+    axiom orderPreserving_*_/\ : forall x,y,u,v : U. (x /\ y = x) implies ((u * x * v) /\ (u * y * v) = (u * x * v))
+}
+MultiplicativeJoinSemilatticeOrderPreserving := MultiplicativeJoinSemilatticeSig extended by {
+    axiom orderPreserving_*_\/ : forall x,y,u,v : U. (x \/ y = x) implies ((u * x * v) \/ (u * y * v) = (u * x * v))
+}
+LatticeOrderedMonoid := combine Monoid, CaretLattice, MultiplicativeMeetSemilatticeOrderPreserving, MultiplicativeJoinSemilatticeOrderPreserving over MultiplicativeLatticeSig
+CommutativeLatticeOrderedMonoid := combine LatticeOrderedMonoid, CommutativeMagma over Magma
+LatticeOrderedSemigroup := combine Semigroup, CaretLattice, MultiplicativeMeetSemilatticeOrderPreserving, MultiplicativeJoinSemilatticeOrderPreserving over MultiplicativeLatticeSig
+CommutativeLatticeOrderedSemigroup := combine LatticeOrderedSemigroup, CommutativeMagma over Magma
+LatticeOrderedGroup := combine Group, CaretLattice, MultiplicativeMeetSemilatticeOrderPreserving, MultiplicativeJoinSemilatticeOrderPreserving over MultiplicativeLatticeSig
+AbelianLatticeOrderedGroup := combine AbelianGroup, CaretLattice, MultiplicativeMeetSemilatticeOrderPreserving, MultiplicativeJoinSemilatticeOrderPreserving over MultiplicativeLatticeSig
+AdditiveMeetSemilatticeSig := MultiplicativeMeetSemilatticeSig[ * |-> + ]
+AdditiveIdentityMeetSemilatticeSig := combine AdditiveMeetSemilatticeSig, Pointed0Sig over Carrier
+AdditiveJoinSemilatticeSig := MultiplicativeJoinSemilatticeSig[ * |-> + ]
+AdditiveIdentityJoinSemilatticeSig := combine AdditiveJoinSemilatticeSig, Pointed0Sig over Carrier
+AdditiveLatticeSig := MultiplicativeLatticeSig[ * |-> + ]
+Multiplicative0MeetSemilatticeSig := combine MultiplicativeMeetSemilatticeSig, Pointed0Sig over Carrier
+Multiplicative0JoinSemilatticeSig := combine MultiplicativeJoinSemilatticeSig, Pointed0Sig over Carrier
+Additive0LatticeSig := combine AdditiveLatticeSig, Pointed0Sig over Carrier
+RingoidLatticeSig := combine MultiplicativeLatticeSig, Additive0LatticeSig over CaretLatticeSig
+MultiplicativeMeetSemilatticeClosed0 := Multiplicative0MeetSemilatticeSig extended by {
+    axiom closedUnder_0_*_/\ : forall x,y : U. (x /\ 0 = 0) and (y /\ 0 = 0) implies (0 /\ (x * y) = 0)
+}
+MultiplicativeJoinSemilatticeClosed0 := Multiplicative0JoinSemilatticeSig extended by {
+    axiom closedUnder_0_*_\/ : forall x,y : U. (x \/ 0 = x) and (y \/ 0 = y) implies (0 \/ (x * y) = x * y)
+}
+AdditiveMeetSemilatticeOrderPreserving := MultiplicativeMeetSemilatticeOrderPreserving[ * |-> + ]
+AdditiveJoinSemilatticeOrderPreserving := MultiplicativeJoinSemilatticeOrderPreserving[ * |-> + ]
+LatticeOrderedRing := combine Ring, CaretLattice, AdditiveMeetSemilatticeOrderPreserving, AdditiveJoinSemilatticeOrderPreserving, MultiplicativeMeetSemilatticeClosed0, MultiplicativeJoinSemilatticeClosed0 over RingoidLatticeSig
+CommutativeLatticeOrderedRing := combine LatticeOrderedRing, CommutativeMagma over Magma
+RightPrimeZero := InvolutivePointedMagmaSig extended by {
+    axiom rightPrimeZero_*_prime_e : forall x:U. x * (prime e) = prime e
+}
+MVProperty := InvolutiveMagmaSig extended by {
+    axiom mvProperty_*_prime : forall x,y:U. (prime ((prime x) * y)) * y = (prime ((prime y) * x)) * x
+}
+MVAlgebra := combine CommutativeMonoid, Involution, RightPrimeZero, MVProperty over InvolutivePointedMagmaSig
+PointedImplicativeSig := PointedMagma[ * |-> --> ]
+LimitedImplicativeTransitivity := PointedImplicativeSig extended by {
+    axiom limitedTransitivity_-->_e : forall x,y,z : U. (x --> y) --> ((y --> z) --> (x --> z)) = e
+}
+LeftImplicativeUnital := LeftUnital[ * |-> --> ]
+RightImplicativeZero := RightZero[ * |-> --> ]
+BCKMeetSemilatticeSig := combine Magma, PointedCarrier, ImplicativeSig over Carrier
+BCKJoinSemilatticeSig := combine AdditiveMagma, PointedCarrier, ImplicativeSig over Carrier
+BCKLatticeSig := combine RingoidSig, PointedCarrier, ImplicativeSig over Carrier
+ImplicativeRightMeetCancellation := BCKMeetSemilatticeSig extended by {
+    axiom rightCancellation_-->_*_e : forall x,y : U. (x * y) --> y = e
+}
+ImplicativeLeftJoinCancellation := BCKJoinSemilatticeSig extended by {
+    axiom leftCancellation_-->_+_e : forall x, y : U. x --> (x + y) = e
+}
+LeftMeetSemiabsorption := BCKMeetSemilatticeSig extended by {
+    axiom rightSemiabsorption_-->_* : forall x,y : U. x * ((x --> y) --> y) = x
+}
+RightJoinSemiabsortion := BCKJoinSemilatticeSig extended by {
+    axiom leftSemiabsorption_-->_+ : forall x, y : U. x + ((x --> y) --> y) = ((x --> y) --> y)
+}
+BCKMeetSemilattice := combine MeetSemilattice, LimitedImplicativeTransitivity, LeftImplicativeUnital, RightImplicativeZero, ImplicativeRightMeetCancellation, LeftMeetSemiabsorption over BCKMeetSemilatticeSig
+BCKJoinSemilattice := combine JoinSemilattice, LimitedImplicativeTransitivity, LeftImplicativeUnital, RightImplicativeZero, ImplicativeLeftJoinCancellation, RightJoinSemiabsortion over BCKJoinSemilatticeSig
+RestrictedTernarySubtractiveCancellation := PointedMagma extended by {
+    axiom restrictedTernarySubtractiveCancellation_*_e : forall x,y,z:U. ((x * y) * (x * z)) * (z * y) = e;
+}
+BCKLattice := combine BCKMeetSemilattice, JoinSemilattice, ImplicativeLeftJoinCancellation, RightJoinSemiabsortion over BCKLatticeSig
+RestrictedBinarySubtractiveCancellation := PointedMagma extended by {
+    axiom restrictedBinarySubtractiveCancellation_*_e : forall x,y:U. (x * (x * y)) * y = e
+}
+SubtractiveEquality := PointedMagma extended by {
+    axiom subtractiveEquality_*_e : forall x,y:U. ((x * y) = e and (y * x) = e) implies x = y
+}
+SubtractiveZero := PointedMagma extended by {
+    axiom subtractiveZero_*_e : forall x,y:U. (x * e) = e implies x = e
+}
+BCIAlgebra := combine RestrictedTernarySubtractiveCancellation, RestrictedBinarySubtractiveCancellation, UnipotentPointedMagma, SubtractiveEquality, SubtractiveZero over PointedMagma
+BCKAlgebra := combine BCIAlgebra, RightZero over PointedMagma
+PseudoCommutative := Magma extended by {
+    axiom pseudoCommutative_* : forall x,y:U. x * (x * y) = y * (y * x)
+}
+CommutativeBCKAlgebra := combine BCKAlgebra, PseudoCommutative over Magma
+LeftDivisionMuliplicativeMeetSemilatticeSig := combine MultiplicativeMeetSemilatticeSig, LeftDivisionMagma over Carrier
+RightDivisionMuliplicativeMeetSemilatticeSig := combine MultiplicativeMeetSemilatticeSig, RightDivisionMagma over Carrier
+LeftDivisionMuliplicativeJoinSemilatticeSig := combine MultiplicativeJoinSemilatticeSig, LeftDivisionMagma over Carrier
+RightDivisionMuliplicativeJoinSemilatticeSig := combine MultiplicativeJoinSemilatticeSig, RightDivisionMagma over Carrier
+ResiduatedLatticeSig := combine MultiplicativeLatticeSig, PointedCarrier, LeftDivisionMagma, RightDivisionMagma over Carrier
+MultiplicativeMeetSemilatticeLeftResidual := LeftDivisionMuliplicativeMeetSemilatticeSig extended by {
+    axiom leftResidual_*_\_/\ : forall x,y,z:U. y /\ (x \ z) = y iff (x * y) /\ z = x * y
+}
+MultiplicativeMeetSemilatticeRightResidual := RightDivisionMuliplicativeMeetSemilatticeSig extended by {
+    axiom rightResidual_*_/_/\ : forall x,y,z:U. x /\ (z / y) = x iff (x * y) /\ z = x * y
+}
+MultiplicativeJoinSemilatticeLeftResidual := LeftDivisionMuliplicativeJoinSemilatticeSig extended by {
+    axiom leftResidual_*_\_\/ : forall x,y,z:U. y \/ (x \ z) = (x \ z) iff (x * y) \/ z = z
+}
+MultiplicativeJoinSemilatticeRightResidual := RightDivisionMuliplicativeJoinSemilatticeSig extended by {
+    axiom rightResidual_*_/_\/ : forall x,y,z:U. x \/ (z / y) = (z / y) iff (x * y) \/ z = z
+}
+ResiduatedLattice := combine Monoid, CaretLattice, MultiplicativeMeetSemilatticeLeftResidual, MultiplicativeMeetSemilatticeRightResidual, MultiplicativeJoinSemilatticeLeftResidual, MultiplicativeJoinSemilatticeRightResidual over ResiduatedLatticeSig
+CommutativeResiduatedLattice := combine CommutativeMonoid, ResiduatedLattice over Monoid
+CancellativeResiduatedLattive := combine CancellativeMagma, ResiduatedLattice over Magma
+CancellativeCommutativeResiduatedLattive := combine CommutativeResiduatedLattice, CancellativeResiduatedLattive over ResiduatedLattice
+CaretMeetUpperBound := LeftUnital[ * |-> /\ ]
+CaretJoinUpperBound := LeftZero[ * |-> \/ ]
+IntegralResiduatedLattice := combine CaretMeetUpperBound, CaretJoinUpperBound, ResiduatedLattice over ResiduatedLatticeSig
+FLAlgebra := combine DoublyPointed, ResiduatedLattice over PointedCarrier
+FLeAlgebra := combine FLAlgebra, CommutativeResiduatedLattice over ResiduatedLattice
+DoublyPointedCaretMeetSemilatticeSig := combine DoublyPointed, CaretMeetSemilatticeSig over Carrier
+DoublyPointedCaretJoinSemilatticeSig := combine DoublyPointed, CaretJoinSemilatticeSig over Carrier
+DoublyPointedLatticeSig := combine DoublyPointed, CaretLatticeSig over Carrier
+CaretMeetLowerBound := LeftZero[ * |-> /\, e |-> e2 ]
+CaretJoinLowerBound := LeftUnital[ * |-> \/, e |-> e2 ]
+FLwAlgebra := combine FLAlgebra, IntegralResiduatedLattice, CaretMeetLowerBound, CaretJoinLowerBound over FLAlgebra
+FLewAlgebra := combine FLeAlgebra, FLwAlgebra over FLAlgebra
+MeetContractive := MultiplicativeMeetSemilatticeSig extended by {
+    axiom contractive_*_/\ : forall x:U. x /\ x * x = x
+}
+JoinContractive := MultiplicativeJoinSemilatticeSig extended by {
+    axiom contractive_*_\/ : forall x:U. x \/ x * x = x * x
+}
+FLcAlgebra := combine FLAlgebra, MeetContractive, JoinContractive over MultiplicativeLatticeSig
+OckhamAlgebra := combine BoundedDistributiveLattice, DualdeMorgan over PrimeRingoidSig
+DeMorganAlgebra := combine Involution, OckhamAlgebra over PrimeRingoidSig
+PseudoComplement := PrimeRingoidSig extended by {
+   axiom pseudocomp_prime_+_* : forall x,y : U . (x + (prime x)) * (y * (prime y)) = y * (prime y);
+}
+(@* Confusingly also called a KleeneAlgebra, so use KleeneLattice instead *@)
+KleeneLattice := combine DeMorganAlgebra, PseudoComplement over PrimeRingoidSig
+ImplicativeSig := Magma[ * |-> --> ]
+StrictImplicativeSig := Magma[ * |-> ==> ]
+EquivalenceSig := Magma[ * |-> <-> ]
+StrictEquivalenceSig := Magma[ * |-> <=> ]
+OrSig := Magma[ * |-> \/ ]
+OrAlgebra := CommutativeBand[ * |-> \/ ]
+AndSig := Magma[ * |-> /\ ]
+AndAlgebra := CommutativeBand[ * |-> /\ ]
+NotSig := UnaryOperation[ prime |-> -- ]
+NotAlgebra := Involution[ prime |-> -- ]
+PossibilitySig := UnaryOperation[ prime |-> diamond ]
+NecessitySig := UnaryOperation[ prime |-> box ]
+HeytingAlgebraSig := combine ImplicativeSig, Ringoid01Sig over Carrier
+ImplicationUnipotentMagma := UnipotentPointedMagma[ * |-> -->, e |-> 1]
+MeetImplicativeSig := RingoidSig[ * |-> -->, + |-> *]
+LeftDistributiveImplication := LeftRingoid[ * |-> -->, + |-> *]
+LeftImplicative := MeetImplicativeSig extended by {
+   axiom leftImplicative_*_--> : forall x, y : U. x * (x --> y) = x * y;
+}
+RightImplicative := MeetImplicativeSig extended by {
+   axiom rightImplicative_*_--> : forall x, y : U. y * (x --> y) = y;
+}
+Implicative := combine LeftImplicative, RightImplicative over MeetImplicativeSig
+HeytingAlgebra := combine BoundedDistributiveLattice, ImplicationUnipotentMagma, LeftDistributiveImplication, Implicative over HeytingAlgebraSig
+(@* A GoedelAlgebra is also called a Linear Heyting Algebra *@)
+GoedelAlgebra := HeytingAlgebra extended by {
+   axiom : forall x, y : U . (x --> y) * (y --> x) = 1
+}
+ComplementedLattice := BoundedLattice extended by {
+   axiom existsComplement_*_+_0_1 : forall x:U. exists y:U. x * y = 0 and x + y = 1;
+}
+ComplementedDistributiveLattice := combine DistributiveLattice, ComplementedLattice over Lattice
+ComplementedModularLattice := combine ModularLattice, ComplementedLattice over Lattice
+OrthoLatticeSig := combine Ringoid01Sig, ComplementSig over Carrier
+OrthoComplement := OrthoLatticeSig extended by {
+   axiom invIsComplement_*_+_compl_0_1 : forall x:U. x * (compl x) = 0 and x + (compl x) = 1
+}
+OrthoLattice := combine BoundedLattice, OrthoComplement over OrthoLatticeSig
+   (@* 
+   theorem : deMorgan((*),(+),inv);
+   theorem : deMorgan((+),(*),inv)
+   *@)
+OrthoModularLattice := OrthoLatticeSig extended by {
+   axiom : forall x, y : U. ((x * y) + (compl y)) * y = x * y
+}
+ModularOrthoLattice := combine BoundedModularLattice, OrthoModularLattice over OrthoLatticeSig
+BooleanAlgebra := combine GoedelAlgebra, ModularOrthoLattice over BoundedModularLattice
+(@* # is the necessarily operator *@)
+Necessity := UnaryOperation [ prime |-> # ]
+ModalAlgebraSig := combine Ringoid01Sig, Necessity over Carrier
+ModalDistributes := UnaryDistributes [ prime |-> # ]
+ModalFixes := FixedPoint [ prime |-> #, e |-> 1 ]
+ModalAlgebra := combine BooleanAlgebra, ModalDistributes, ModalFixes over ModalAlgebraSig
+StarSig := UnaryOperation [ prime |-> star ]
+StarSemiringSig := combine StarSig, Ringoid1Sig over Carrier
+LeftAsteration := StarSemiringSig extended by {
+    axiom leftAsteration_*_+_star : forall a:U. (a * (star a)) + 1 = star a;
+}
+RightAsteration := StarSemiringSig extended by {
+    axiom rightAsteration_*_+_star : forall a:U. ((star a) * a) + 1 = star a
+}
+Asteration := combine LeftAsteration, RightAsteration over StarSemiringSig
+StarSemiring := combine Asteration, Semiring over StarSemiringSig
+KleeneAlgebra := combine Dioid, StarSemiring over Semiring
+UpperBound := Preorder extended by {
+    axiom upperbound_<= : forall x,y:U. exists z:U. (x <= z) and (y <= z)
+}
+LowerBound := Preorder extended by {
+    axiom lowerbound_<= : forall x,y:U. exists z:U. (z <= x) and (z <= y)
+}
+UpDirectedSet := UpperBound
+DownDirectedSet := LowerBound
+InducedOrder := Magma extended conservatively by {
+    <= : (U,U)? ;
+    x <= y = (x * y = x)
+}
+LeftRegularity := Magma extended by {
+   axiom leftregular_* : forall x, y : U. (x * y) * x = x * y;
+}
+RightRegularity := Magma extended by {
+   axiom rightregular_* : forall x, y : U. (x * y) * x = y * x;
+}
+LeftRegularBand := combine Semigroup, IdempotentMagma, LeftRegularity over Magma
+RightRegularBand := combine Semigroup, IdempotentMagma, RightRegularity over Magma
+DirectoidD4 := Magma extended by {
+   axiom : forall x, y, z : U. x * ((x * y) * z) = (x * y) * z;
+} 
+Directoid := combine LeftRegularity, RightRegularity, DirectoidD4, IdempotentMagma over Magma
+(@* Actions *@)
+LeftMagmaActionSig := combine Magma, LeftOperation over Carrier
+LeftMagmaAction := LeftMagmaActionSig extended by {
+    axiom leftAction_*_@ : 
+        forall x,y:U. forall z:S. ((x * y) @ z) = (x @ (y @ z))
+}
+LeftSemigroupAction := combine Semigroup, LeftMagmaAction over Magma
+RightMagmaActionSig := combine Magma, RightOperation over Carrier
+RightMagmaAction := RightMagmaActionSig extended by {
+    axiom rightAction_*_@ : 
+        forall x,y:U. forall z:S. (z @ (y * x)) = ((z @ y) @ x)
+}
+RightSemigroupAction := combine Semigroup, RightOperation over Magma
+LeftUnitalActionSig := combine PointedMagma, LeftMagmaActionSig over Magma
+LeftUnitalAction := LeftUnitalActionSig extended by {
+    axiom leftIdentity_@_e : forall x : S. e @ x = x
+}
+LeftMonoidAction := combine Monoid, LeftUnitalAction, LeftMagmaAction over LeftUnitalActionSig
+RightUnitalActionSig := combine PointedMagma, RightMagmaActionSig over Magma
+RightUnitalAction := RightUnitalActionSig extended by {
+    axiom rightIdentity_@_e : forall x : S. x @ e = x
+}
+RightMonoidAction := combine Monoid, RightUnitalAction, RightMagmaAction over RightUnitalActionSig
+LeftGroupAction := combine Group, LeftMonoidAction over Monoid
+RightGroupAction := combine Group, RightMonoidAction over Monoid
+LeftMonoid1Action := LeftMonoidAction[e |-> 1]
+MultMonoidAction := combine LeftMonoid1Action, Ring  over Monoid1
+PreLeftRingAction := combine MultMonoidAction, PrimeAdditiveGroup over MultiCarrier
+LeftRingAction := PreLeftRingAction extended by {
+    axiom : forall x: S. forall y,z : U.  (y + z) @ x = (y @ x) +' (z @ x)
+}
+RightMonoid1Action := RightMonoidAction[e |-> 1]
+MultRightMonoidAction := combine RightMonoid1Action, Ring over Monoid1
+PreRightRingAction := combine MultRightMonoidAction, PrimeAdditiveGroup over MultiCarrier
+RightRingAction := PreRightRingAction extended by {
+    axiom : forall x: S. forall y,z : U.  x @ (y + z) = (x @ y) +' (x @ z)
+}
+CommutativeRingAction := combine LeftRingAction, CommutativeMagma over Magma
+LeftRModule := LeftRingAction extended by {
+    axiom leftDistributive_@_+' : 
+        forall x: U. forall y, z: S.  x @ (y +' z) = (x @ y) +' (x @ z)
+}
+RightRModule := RightRingAction extended by {
+    axiom rightDistributive_@_+' : 
+        forall x: U. forall y, z: S.  (y +' z) @ x = (y @ x) +' (z @ x)
+}
+RModule := combine LeftRModule, CommutativeRingAction over LeftRingAction
+PrimeMultiplicativeMagma := Magma[ U |-> S, * |-> *' ]
+MultiplicativeRModule := combine RModule, PrimeMultiplicativeMagma over PrimeAdditiveGroup
+BilinearMultiplicativeRModule := MultiplicativeRModule extended by {
+    axiom bilinear_*'_@ :
+        forall a : U. forall x,y : S. a @ (x *' y) = (a @ x) *' y and (a @ x) *' y = x *' (a @ y)
+}
+LeftPrimeRingoid := LeftRingoid[ U |-> S, + |-> +', * |-> *' ]
+RightPrimeRingoid := RightRingoid[ U |-> S, + |-> +', * |-> *' ]
+NonassociativeAlgebra := combine BilinearMultiplicativeRModule, LeftPrimeRingoid, RightPrimeRingoid over MultiplicativeRModule
+PrimeSemigroup := Semigroup[ U |-> S, * |-> *' ]
+AssociativeAlgebra := combine NonassociativeAlgebra, PrimeSemigroup over PrimeMultiplicativeMagma
+PrimeUnital := Unital[ U |-> S, * |-> *', e |-> 1' ]
+PrimeLeft0 := LeftZero[ U |-> S, * |-> *', e |-> 0' ]
+(@* Alternativelty, AssociativeAlgebra could be made unital by combine NonassociativeAlgebra, PrimeSemiring over MultiplicativeRModule *@)
+UnitalAssociativeAlgebra := combine AssociativeAlgebra, PrimeUnital, PrimeLeft0 over NonassociativeAlgebra
+PrimeInvolutiveRing := InvolutiveRing[ U |-> S, * |-> *', + |-> +', neg |-> neg', prime |-> prime', 1 |-> 1', 0 |-> 0' ]
+AlgebraWithInvolution := combine InvolutiveRing, PrimeInvolutiveRing over UnitalAssociativeAlgebra
+InvolutiveAlgebra := AlgebraWithInvolution extended by {
+    axiom antiLinear_prime'_+_prime :
+        forall a : U. forall x : S. prime'(a @ x) = (prime(a)) @ (prime'(x))
+}
+PrimeUnipotentPointedMagma := UnipotentPointedMagma[ U |-> S, * |-> *', e |-> 0' ]
+PrimeLieRing := LieRing[ U |-> S, * |-> *', + |-> +', neg |-> neg', prime |-> prime', 1 |-> 1', 0 |-> 0' ]
+LieAlgebra := combine PrimeUnipotentPointedMagma, PrimeLieRing over NonassociativeAlgebra
+VectorSpace := combine Field, RModule over RModule
+TernaryOperation := Carrier extended by { t : (U,U,U) -> U }
+TernaryPredicate := Carrier extended by { c : (U,U,U)? }
+Semiheap := TernaryOperation extended by { 
+    axiom para_t : forall v,w,x,y,z : U.  t(t(v,w,x),y,z) = t(v,w,t(x,y,z)) 
+}
+IdempotentSemiheap := Semiheap extended by {
+    axiom idempheap : forall x:U. t(x,x,x) = x }
+Heap := Semiheap extended by {
+   axiom leftCancelTernary_t : forall x:U. forall y:U. t(y,y,x) = x;
+   axiom rightCancelTernary_t : forall x:U. forall y:U. t(x,y,y) = x;
+}
+(@* Graph (directed multigraph) *@)
+GraphTerminology := MultiCarrier[U |-> node, S |-> edge]
+EdgeSource := GraphTerminology extended by { s : edge -> node }
+EdgeTarget := EdgeSource[s |-> t]
+Quiver := combine EdgeSource, EdgeTarget over GraphTerminology
+PseudoGraph := Quiver
+Digraph := PseudoGraph extended by { (@* no loops *@)
+    axiom irreflexive_s_t : forall x : edge. not (s x = t x)
+}
+Graph := PseudoGraph extended by {
+    axiom undirected_s_t : forall e,e' : edge. 
+      ((s e = t e') and (t e = s e')) implies e = e'
+}
+SimpleGraph := combine Graph, Digraph over PseudoGraph
+(@* Globular sets generalize Quivers; contexts are globular sets! *@)
+NCells := Nat extended by {
+    cell : nat -> type
+}
+CellSource := NCells extended by {
+    s : (n:nat) -> cell (lift (succ n)) -> cell (lift n)
+}
+CellTarget := CellSource[ s |-> t ]
+GlobularSig := combine CellSource, CellTarget over NCells
+(@* these are the 'opposites' of the morphisms in a Globe Category *@)
+GlobSourceCond := GlobularSig extended by {
+    axiom sourceDefn : forall n:nat. forall c:cell (lift (succ (succ n))). s n (s (succ n) c) = s n (t (succ n) c)
+}
+GlobTargetCond := GlobularSig extended by {
+    axiom targetDefn : forall n:nat. forall c:cell (lift (succ (succ n))). t n (s (succ n) c) = t n (t (succ n) c)
+}
+GlobularSet := combine GlobSourceCond, GlobTargetCond over GlobularSig
+(@* Start of theories with sub-types *@)
+SubType := Carrier extended by { I :< U }
+SinkSig := combine SubType, Magma over Carrier
+Sink := SinkSig extended by { 
+    axiom sink : forall x:U. forall a:I. (x * a `in I) and (a * x `in I)
+}
+FunctionalIdentity := Carrier extended conservatively by {
+    id : U -> U; 
+    id(x) = x;
+}
+CarrierU1 := Carrier[U |-> U1]
+CarrierU2 := Carrier[U |-> U2]
+CarrierU3 := Carrier[U |-> U3]
+Carrier3 := combine CarrierU1, CarrierU2, CarrierU3 over Empty
+FunctionalComposition := Carrier3 extended conservatively by {
+    o : ((U2 -> U3), (U1 -> U2)) -> (U1 -> U3);
+    o(f,g) = lambda x:U1. f( g(x) )
+}
+(@* Need some sort of instantiation mechanism to do this right *@)
+UnivariateComposition := Carrier extended conservatively by {
+    o : ((U -> U), (U -> U)) -> (U -> U);
+    o(f,g) = lambda x:U. f( g(x) )
+}
+FunctionSpace := combine FunctionalIdentity,UnivariateComposition over Carrier
+SurjectiveDefn := MultiCarrier extended conservatively by {
+    surjective : (U -> S)? ;
+    surjective(f) = forall y:S. exists x:U. f(x) = y
+}
+InjectiveDefn := MultiCarrier extended conservatively by {
+    injective : (U -> S)? ;
+    injective(f) = forall x,y:U. f(x)=f(y) implies x=y
+}
+BijectiveCtx := combine SurjectiveDefn, InjectiveDefn over MultiCarrier
+BijectiveDefn := BijectiveCtx extended conservatively by {
+    bijective : (U -> S)? ;
+    bijective(f) = surjective(f) and injective(f)
+}
+(@* And some category theory *@)
+(@* Somehow this needs to tie in with the Graph theory above. *@)
+(@* DirectedMultigraph out to be an instance of a enriched DiMultigraph functor instantiated at Carrier
+    (a.k.a. a "set"-enriched directed multigraph). *@)
+CategoricalCarrier := Carrier [U |-> obj]
+DirectedMultigraph := CategoricalCarrier extended by {
+    hom : (obj, obj) -> type;
+}
+(@* I'm not entirely sure Braided is the right term here *@)
+BraidedDirectedMultigraph :=  DirectedMultigraph extended by {
+    conv : (a:obj) -> (b:obj) -> hom (lift (a,b)) -> hom (lift (b,a))
+}
+Multigraph := BraidedDirectedMultigraph extended by {
+    axiom symmetric_conv : forall a, b : obj. forall x : hom (lift (a,b)).
+        conv b a (conv a b x) = x;
+}
+LoopedDirectedMultigraph := DirectedMultigraph extended by {
+    id : (a:obj) -> hom (lift (a,a));
+}
+PointedDirectedMultigraph := DirectedMultigraph extended by {
+    zero : (a:obj) -> (b:obj) -> hom (lift (a,b));
+}
+TypedMagma := DirectedMultigraph extended by {
+    seq : (a:obj) -> (b:obj) -> (c:obj) -> 
+        (hom (lift (a,b)), hom (lift (b,c))) -> (hom (lift (a,c)));
+}
+TypedLoopedMagma := combine TypedMagma, LoopedDirectedMultigraph over DirectedMultigraph
+TypedLeftUnital := TypedLoopedMagma extended by {
+    axiom leftIdentity_seq_id : forall a, b:obj. forall x : hom (lift (a,b)).
+        seq a a b (id a, x) = x;
+}
+TypedRightUnital := TypedLoopedMagma extended by {
+    axiom rightIdentity_seq_id : forall a, b:obj. forall x:hom (lift (a,b)).
+        seq a b b (x, id b) = x;
+}
+TypedUnital := combine TypedLeftUnital, TypedRightUnital over TypedLoopedMagma
+Semigroupoid := TypedMagma extended by {
+    axiom associative_seq : forall a, b, c, d : obj. forall x : hom (lift (a,b)).
+        forall y : hom (lift (b,c)). forall z : hom (lift (c,d)).
+            seq a c d (seq a b c (x,y), z) = seq a b d (x, seq b c d (y, z));
+}
+BraidedMagma := combine TypedMagma, BraidedDirectedMultigraph over DirectedMultigraph 
+ConvDistributes := BraidedMagma extended by {
+    axiom distributive_conv_seq : forall a, b, c : obj. 
+        forall x : hom (lift (a,b)). forall y : hom (lift (b,c)).
+            conv a c (seq a b c (x, y)) = seq c b a (conv b c y, conv a b x);
+}
+ConvSemigroupoid := combine Semigroupoid, ConvDistributes over BraidedMagma
+Category := combine TypedUnital, Semigroupoid over TypedMagma
+ConvCategory := combine Category, ConvSemigroupoid over Semigroupoid
+(@* some of this ought to be done as an enrichment functor instantiated at 
+    Pointed/Magma/Semilattice etc. *@)
+PointedTypedMagma := combine PointedDirectedMultigraph, TypedMagma over DirectedMultigraph
+TypedZero := PointedTypedMagma extended by {
+    axiom compatible_zero_seq : forall a, b, c : obj.
+                                seq a b c (zero a b, zero b c) = zero a c
+}
+ZeroRightAbsorb := PointedTypedMagma extended by {
+    axiom rightAbsorb_seq_zero : forall a,b,c:obj. 
+        forall x : hom (lift (a,b)). seq a b c (x, zero b c) = zero a c
+}
+ZeroLeftAbsorb := PointedTypedMagma extended by {
+    axiom leftAbsorb_seq_zero : forall a, b, c : obj. 
+        forall y : hom (lift (b,c)). seq a b c (zero a b, y) = zero a c
+}
+ZeroAbsorb := combine ZeroLeftAbsorb, ZeroRightAbsorb over PointedTypedMagma
+ZeroEnrichedSemigroupoid := combine Semigroupoid, TypedZero over PointedTypedMagma
+PointedEnrichedSemigroupoid := combine ZeroEnrichedSemigroupoid, ZeroAbsorb over PointedTypedMagma
+TypedJoin := DirectedMultigraph extended by {
+    join : (a : obj) -> (b : obj) -> (hom (lift (a,b)), hom (lift (a,b))) -> hom (lift (a,b));
+}
+TypedLoopedJoinMagma := combine TypedJoin, TypedLoopedMagma over DirectedMultigraph
+IdempotentJoin := TypedJoin extended by {
+    axiom idempotent_join : forall a, b : obj. forall x : hom (lift (a,b)). 
+        join a b (x, x) = x;
+}
+CommutativeJoin := TypedJoin extended by {
+    axiom commutative_join : forall a,b:obj. forall x,y : hom (lift (a,b)). 
+        join a b (x, y) = join a b (y, x);
+}
+AssociativeJoin := TypedJoin extended by {
+    axiom associative_join : forall a,b:obj. forall x,y,z:hom (lift (a,b)). 
+        join a b (join a b (x, y), z) = join a b (x, join a b (y, z));
+}
+
+ACIJoin := combine IdempotentJoin, CommutativeJoin, AssociativeJoin over TypedJoin
+TypedJoinMagma := combine TypedJoin, TypedMagma over DirectedMultigraph
+JoinSeqDistributes := TypedJoinMagma extended by {
+    axiom distributes_join_seq : forall a, b, c : obj. 
+        forall x1,x2:hom (lift (a,b)). forall y1,y2:hom (lift (b,c)).
+            seq a b c (join a b (x1, x2), join b c (y1, y2)) =
+            join a c (seq a b c (x1, y1), seq a b c (x2, y2));
+}
+JoinEnrichedSemigroupoid := combine JoinSeqDistributes, Semigroupoid over TypedMagma
+ACIJoinSemilatticeSemigroupoid := combine JoinEnrichedSemigroupoid, ACIJoin over TypedJoinMagma
+TypedOrderJoin := TypedJoin extended conservatively by {
+    leq : (a : obj) -> (b : obj) -> ((hom (lift (a, b)), hom (lift (a, b)))?);
+    leq = fun a, b, p. case p of {| (x, y) -> join a b (x, y) = x };
+}
+OrderedACIJoinSemilattice := combine TypedOrderJoin, ACIJoinSemilatticeSemigroupoid over TypedJoin
+RightDistributiveJoin := TypedJoinMagma extended by {
+    axiom rightDistributive_join_seq : forall a, b, c : obj. 
+         forall x : hom (lift (a,b)). forall y1, y2 : hom (lift (b,c)).
+             seq a b c (x, join b c (y1, y2)) = 
+             join a c (seq a b c (x, y1), seq a b c (x, y2));
+}
+LeftDistributiveJoin := TypedJoinMagma extended by {
+    axiom leftDistributive_join_seq : forall a, b, c : obj. 
+        forall x1, x2 : hom (lift (a,b)). forall y : hom (lift (b,c)).
+             seq a b c (join a b (x1, x2), y) = 
+             join a c (seq a b c (x1, y), seq a b c (x2, y));
+}
+JoinSemilatticeSemigroupoid := combine RightDistributiveJoin, LeftDistributiveJoin, OrderedACIJoinSemilattice 
+    over TypedJoinMagma
+JoinSemilatticeCategory := combine JoinSemilatticeSemigroupoid, TypedUnital over Semigroupoid
+MeetSemilatticeSemigroupoid := JoinSemilatticeSemigroupoid [ join |-> meet]
+TypedTransitiveClosure := DirectedMultigraph extended by {
+   transClosure : (a : obj) -> hom (lift (a,a)) -> hom (lift (a,a));
+}
+TypedTransClosedJoinMagma := combine TypedTransitiveClosure, TypedJoinMagma over DirectedMultigraph 
+TypedLoopedTransClosedJoinMagma := combine TypedTransClosedJoinMagma, TypedLoopedMagma over TypedMagma
+LeftTransitiveClosure := TypedTransClosedJoinMagma extended by {
+   axiom leftTrasitiveClosure_seq_join : forall a : obj. 
+       forall x : hom (lift (a,a)).
+           transClosure a x = join a a (x, seq a a a (transClosure a x, x));
+}
+RightTransitiveClosure := TypedTransClosedJoinMagma extended by {
+   axiom rightTrasitiveClosure_seq_join : forall a : obj. 
+       forall x : hom (lift (a,a)).
+           transClosure a x = join a a (x, seq a a a (x, transClosure a x));
+}
+TransitiveClosure := combine LeftTransitiveClosure, RightTransitiveClosure over TypedTransClosedJoinMagma
+TransitiveClosureSemilatticeSemigroupoid := combine JoinSemilatticeSemigroupoid, TransitiveClosure over TypedJoinMagma
+TypedTransClosedOrderedMagma := combine TypedOrderJoin, TypedMagma, TypedTransitiveClosure over DirectedMultigraph
+TypedRightOrder := TypedTransClosedOrderedMagma extended by {
+   axiom rightInd : forall a, b : obj. forall x : hom (lift (a,b)). 
+       forall y : hom (lift (b,b)).
+           (leq a b (seq a b b (x, y), x)) implies 
+               (leq a b (seq a b b (x, transClosure b y), x));
+}
+TypedLeftOrder := TypedTransClosedOrderedMagma extended by {
+   axiom leftInd : forall a, b : obj. forall x : hom (lift (a,a)). 
+       forall y : hom (lift (a,b)).
+           (leq a b (seq a a b (x, y), y)) implies 
+               (leq a b (seq a a b (transClosure a x,y), y));
+}
+TypedOrder := combine TypedRightOrder, TypedLeftOrder over TypedTransClosedOrderedMagma
+KleeneSemigroupoid := combine TypedOrder, TransitiveClosureSemilatticeSemigroupoid over TypedTransClosedOrderedMagma
+TypedTransClosedUnitalMagma := combine TypedTransClosedJoinMagma, TypedLoopedMagma over TypedMagma
+ReflectiveTransitiveClosure := TypedTransClosedUnitalMagma extended conservatively by {
+   reflTransClosure : (a : obj) -> hom (lift (a,a)) -> hom (lift (a,a));
+   reflTransClosure = fun b, x. join b b (id b, transClosure b x);
+}
+KleeneCategory := combine KleeneSemigroupoid, TypedUnital, ZeroAbsorb, ReflectiveTransitiveClosure over TypedLoopedTransClosedJoinMagma
+
+(@* Logics (mainly from http://www.cc.utah.edu/~nahaj/logic/structures/index.html) *@)
+PropositionP := PointedCarrier[ e |-> p ]
+PropositionQ := PointedCarrier[ e |-> q ]
+PropositionR := PointedCarrier[ e |-> r ]
+Deductive := Carrier extended by { ded : U -> type }
+
+(@* Sigs for building single axioms *@)
+  (@* Single operation *@)
+    SinglePropAndLogicSig := combine Deductive, AndSig, PropositionP over Carrier
+    DoublePropAndLogicSig := combine SinglePropAndLogicSig, PropositionQ over Carrier
+    TriplePropAndLogicSig := combine SinglePropAndLogicSig, PropositionR over Carrier
+
+    SinglePropOrLogicSig := combine Deductive, OrSig, PropositionP over Carrier
+    DoublePropOrLogicSig := combine SinglePropOrLogicSig, PropositionQ over Carrier
+    TriplePropOrLogicSig := combine SinglePropOrLogicSig, PropositionR over Carrier
+
+    SinglePropImplicationLogicSig := combine Deductive, ImplicativeSig, PropositionP over Carrier
+    DoublePropImplicationLogicSig := combine SinglePropImplicationLogicSig, PropositionQ over Carrier
+    TriplePropImplicationLogicSig := combine DoublePropImplicationLogicSig, PropositionR over Carrier
+
+    SinglePropEquivalenceLogicSig := combine Deductive, EquivalenceSig, PropositionP over Carrier
+    DoublePropEquivalenceLogicSig := combine SinglePropEquivalenceLogicSig, PropositionQ over Carrier
+    TriplePropEquivalenceLogicSig := combine DoublePropEquivalenceLogicSig, PropositionR over Carrier
+
+    SinglePropStrictImplicationLogicSig := combine Deductive, StrictImplicativeSig, PropositionP over Carrier
+    DoublePropStrictImplicationLogicSig := combine SinglePropStrictImplicationLogicSig, PropositionQ over Carrier
+    TriplePropStrictImplicationLogicSig := combine DoublePropStrictImplicationLogicSig, PropositionR over Carrier
+
+    SinglePropPossibilityLogicSig := combine Deductive, PossibilitySig, PropositionP over Carrier
+    DoublePropPossibilityLogicSig := combine SinglePropPossibilityLogicSig, PropositionQ over Carrier
+    TriplePropPossibilityLogicSig := combine DoublePropPossibilityLogicSig, PropositionR over Carrier
+
+    SinglePropNecessityLogicSig := combine Deductive, NecessitySig, PropositionP over Carrier
+    DoublePropNecessityLogicSig := combine SinglePropNecessityLogicSig, PropositionQ over Carrier
+    TriplePropNecessityLogicSig := combine DoublePropNecessityLogicSig, PropositionR over Carrier
+
+  (@* Two operations *@)
+    SinglePropAndNotLogicSig := combine SinglePropAndLogicSig, NotSig over Carrier
+    DoublePropAndNotLogicSig := combine DoublePropAndLogicSig, NotSig over Carrier
+    TriplePropAndNotLogicSig := combine TriplePropAndLogicSig, NotSig over Carrier
+    
+    SinglePropOrNotLogicSig := combine SinglePropOrLogicSig, NotSig over Carrier
+    DoublePropOrNotLogicSig := combine DoublePropOrLogicSig, NotSig over Carrier
+    TriplePropOrNotLogicSig := combine TriplePropOrLogicSig, NotSig over Carrier
+
+    SinglePropImplicationAndLogicSig := combine SinglePropImplicationLogicSig, AndSig over Carrier
+    DoublePropImplicationAndLogicSig := combine DoublePropImplicationLogicSig, AndSig over Carrier
+    TriplePropImplicationAndLogicSig := combine TriplePropImplicationLogicSig, AndSig over Carrier
+
+    SinglePropImplicationOrLogicSig := combine SinglePropImplicationLogicSig, OrSig over Carrier
+    DoublePropImplicationOrLogicSig := combine DoublePropImplicationLogicSig, OrSig over Carrier
+    TriplePropImplicationOrLogicSig := combine TriplePropImplicationLogicSig, OrSig over Carrier
+
+    SinglePropImplicationNotLogicSig := combine SinglePropImplicationLogicSig, NotSig over Carrier
+    DoublePropImplicationNotLogicSig := combine DoublePropImplicationLogicSig, NotSig over Carrier
+    TriplePropImplicationNotLogicSig := combine TriplePropImplicationLogicSig, NotSig over Carrier
+
+    SinglePropImplicationEquivalenceLogicSig := combine SinglePropImplicationLogicSig, EquivalenceSig over Carrier
+    DoublePropImplicationEquivalenceLogicSig := combine DoublePropImplicationLogicSig, EquivalenceSig over Carrier
+    TriplePropImplicationEquivalenceLogicSig := combine TriplePropImplicationLogicSig, EquivalenceSig over Carrier
+
+    SinglePropImplicationNecessityLogicSig := combine SinglePropImplicationLogicSig, NecessitySig over Carrier
+    DoublePropImplicationNecessityLogicSig := combine DoublePropImplicationLogicSig, NecessitySig over Carrier
+    TriplePropImplicationNecessityLogicSig := combine TriplePropImplicationLogicSig, NecessitySig over Carrier
+
+    SinglePropImplicationPossibilityLogicSig := combine SinglePropImplicationLogicSig, PossibilitySig over Carrier
+    DoublePropImplicationPossibilityLogicSig := combine DoublePropImplicationLogicSig, PossibilitySig over Carrier
+    TriplePropImplicationPossibilityLogicSig := combine TriplePropImplicationLogicSig, PossibilitySig over Carrier
+
+    SinglePropEquivalenceNotLogicSig := combine SinglePropEquivalenceLogicSig, NotSig over Carrier
+    DoublePropEquivalenceNotLogicSig := combine DoublePropEquivalenceLogicSig, NotSig over Carrier
+    TriplePropEquivalenceNotLogicSig := combine TriplePropEquivalenceLogicSig, NotSig over Carrier
+
+    SinglePropEquivalenceNecessityLogicSig := combine SinglePropEquivalenceLogicSig, NecessitySig over Carrier
+    DoublePropEquivalenceNecessityLogicSig := combine DoublePropEquivalenceLogicSig, NecessitySig over Carrier
+    TriplePropEquivalenceNecessityLogicSig := combine TriplePropEquivalenceLogicSig, NecessitySig over Carrier
+
+    SinglePropStrictImplicationAndLogicSig := combine SinglePropStrictImplicationLogicSig, AndSig over Carrier
+    DoublePropStrictImplicationAndLogicSig := combine DoublePropStrictImplicationLogicSig, AndSig over Carrier
+    TriplePropStrictImplicationAndLogicSig := combine TriplePropStrictImplicationLogicSig, AndSig over Carrier
+
+    SinglePropStrictImplicationOrLogicSig := combine SinglePropStrictImplicationLogicSig, OrSig over Carrier
+    DoublePropStrictImplicationOrLogicSig := combine DoublePropStrictImplicationLogicSig, OrSig over Carrier
+    TriplePropStrictImplicationOrLogicSig := combine TriplePropStrictImplicationLogicSig, OrSig over Carrier
+
+    SinglePropStrictImplicationNotLogicSig := combine SinglePropStrictImplicationLogicSig, NotSig over Carrier
+    DoublePropStrictImplicationNotLogicSig := combine DoublePropStrictImplicationLogicSig, NotSig over Carrier
+    TriplePropStrictImplicationNotLogicSig := combine TriplePropStrictImplicationLogicSig, NotSig over Carrier
+
+    SinglePropStrictImplicationNecessityLogicSig := combine SinglePropStrictImplicationLogicSig, NecessitySig over Carrier
+    DoublePropStrictImplicationNecessityLogicSig := combine DoublePropStrictImplicationLogicSig, NecessitySig over Carrier
+    TriplePropStrictImplicationNecessityLogicSig := combine TriplePropStrictImplicationLogicSig, NecessitySig over Carrier
+
+    SinglePropStrictImplicationPossibilityLogicSig := combine SinglePropStrictImplicationLogicSig, PossibilitySig over Carrier
+    DoublePropStrictImplicationPossibilityLogicSig := combine DoublePropStrictImplicationLogicSig, PossibilitySig over Carrier
+    TriplePropStrictImplicationPossibilityLogicSig := combine TriplePropStrictImplicationLogicSig, PossibilitySig over Carrier
+
+    SinglePropStrictEquivalenceNecessityLogicSig := combine SinglePropNecessityLogicSig, StrictEquivalenceSig over Carrier
+    DoublePropStrictEquivalenceNecessityLogicSig := combine DoublePropNecessityLogicSig, StrictEquivalenceSig over Carrier
+    TriplePropStrictEquivalenceNecessityLogicSig := combine TriplePropNecessityLogicSig, StrictEquivalenceSig over Carrier
+
+  (@* Three operations *@)
+    SinglePropAndNotPossibilityLogicSig := combine Deductive, AndSig, NotSig, PossibilitySig, PropositionP over Carrier
+    DoublePropAndNotPossibilityLogicSig := combine SinglePropAndNotPossibilityLogicSig, PropositionQ over Carrier
+    TriplePropAndNotPossibilityLogicSig := combine DoublePropAndNotPossibilityLogicSig, PropositionR over Carrier
+
+    SinglePropImplicationAndOryLogicSig := combine SinglePropImplicationAndLogicSig, OrSig over Carrier
+    DoublePropImplicationAndOrLogicSig := combine DoublePropImplicationAndLogicSig, OrSig over Carrier
+    TriplePropImplicationAndOrLogicSig := combine TriplePropImplicationAndLogicSig, OrSig over Carrier
+
+    SinglePropImplicationAndNotyLogicSig := combine SinglePropImplicationAndLogicSig, NotSig over Carrier
+    DoublePropImplicationAndNotLogicSig := combine DoublePropImplicationAndLogicSig, NotSig over Carrier
+    TriplePropImplicationAndNotLogicSig := combine TriplePropImplicationAndLogicSig, NotSig over Carrier
+
+    SinglePropImplicationAndNecessityLogicSig := combine SinglePropImplicationAndLogicSig, NecessitySig over Carrier
+    DoublePropImplicationAndNecessityLogicSig := combine DoublePropImplicationAndLogicSig, NecessitySig over Carrier
+    TriplePropImplicationAndNecessityLogicSig := combine TriplePropImplicationAndLogicSig, NecessitySig over Carrier
+
+    SinglePropImplicationOrNotyLogicSig := combine SinglePropImplicationOrLogicSig, NotSig over Carrier
+    DoublePropImplicationOrNotLogicSig := combine DoublePropImplicationOrLogicSig, NotSig over Carrier
+    TriplePropImplicationOrNotLogicSig := combine TriplePropImplicationOrLogicSig, NotSig over Carrier
+
+    SinglePropImplicationOrNecessityLogicSig := combine SinglePropImplicationOrLogicSig, NecessitySig over Carrier
+    DoublePropImplicationOrNecessityLogicSig := combine DoublePropImplicationOrLogicSig, NecessitySig over Carrier
+    TriplePropImplicationOrNecessityLogicSig := combine TriplePropImplicationOrLogicSig, NecessitySig over Carrier
+
+    SinglePropImplicationNotPossibilityLogicSig := combine SinglePropImplicationNotLogicSig, PossibilitySig over Carrier
+    DoublePropImplicationNotPossibilityLogicSig := combine DoublePropImplicationNotLogicSig, PossibilitySig over Carrier
+    TriplePropImplicationNotPossibilityLogicSig := combine TriplePropImplicationNotLogicSig, PossibilitySig over Carrier
+
+    SinglePropImplicationEquivalenceNecessityLogicSig := combine SinglePropImplicationEquivalenceLogicSig, NecessitySig over Carrier
+    DoublePropImplicationEquivalenceNecessityLogicSig := combine DoublePropImplicationEquivalenceLogicSig, NecessitySig over Carrier
+    TriplePropImplicationEquivalenceNecessityLogicSig := combine TriplePropImplicationEquivalenceLogicSig, NecessitySig over Carrier
+
+    SinglePropImplicationPossibilityNecessityLogicSig := combine SinglePropImplicationPossibilityLogicSig, NecessitySig over Carrier
+    DoublePropImplicationPossibilityNecessityLogicSig := combine DoublePropImplicationPossibilityLogicSig, NecessitySig over Carrier
+    TriplePropImplicationPossibilityNecessityLogicSig := combine TriplePropImplicationPossibilityLogicSig, NecessitySig over Carrier
+
+    SinglePropEquivalenceAndNecessityLogicSig := combine SinglePropEquivalenceNecessityLogicSig, AndSig over Carrier
+    DoublePropEquivalenceAndNecessityLogicSig := combine DoublePropEquivalenceNecessityLogicSig, AndSig over Carrier
+    TriplePropEquivalenceAndNecessityLogicSig := combine TriplePropEquivalenceNecessityLogicSig, AndSig over Carrier
+
+    SinglePropStrictImplicationAndOrLogicSig := combine SinglePropStrictImplicationAndLogicSig, OrSig over Carrier
+    DoublePropStrictImplicationAndOrLogicSig := combine DoublePropStrictImplicationAndLogicSig, OrSig over Carrier
+    TriplePropStrictImplicationAndOrLogicSig := combine TriplePropStrictImplicationAndLogicSig, OrSig over Carrier
+
+    SinglePropStrictImplicationAndNotLogicSig := combine SinglePropStrictImplicationAndLogicSig, NotSig over Carrier
+    DoublePropStrictImplicationAndNotLogicSig := combine DoublePropStrictImplicationAndLogicSig, NotSig over Carrier
+    TriplePropStrictImplicationAndNotLogicSig := combine TriplePropStrictImplicationAndLogicSig, NotSig over Carrier
+
+    SinglePropStrictImplicationAndPossibilityLogicSig := combine SinglePropStrictImplicationAndLogicSig, PossibilitySig over Carrier
+    DoublePropStrictImplicationAndPossibilityLogicSig := combine DoublePropStrictImplicationAndLogicSig, PossibilitySig over Carrier
+    TriplePropStrictImplicationAndPossibilityLogicSig := combine TriplePropStrictImplicationAndLogicSig, PossibilitySig over Carrier
+
+    SinglePropStrictImplicationNotPossibilityLogicSig := combine SinglePropStrictImplicationNotLogicSig, PossibilitySig over Carrier
+    DoublePropStrictImplicationNotPossibilityLogicSig := combine DoublePropStrictImplicationNotLogicSig, PossibilitySig over Carrier
+    TriplePropStrictImplicationNotPossibilityLogicSig := combine TriplePropStrictImplicationNotLogicSig, PossibilitySig over Carrier
+
+    SinglePropStrictImplicationPossibilityNecessityLogicSig := combine SinglePropStrictImplicationPossibilityLogicSig, NecessitySig over Carrier
+    DoublePropStrictImplicationPossibilityNecessityLogicSig := combine DoublePropStrictImplicationPossibilityLogicSig, NecessitySig over Carrier
+    TriplePropStrictImplicationPossibilityNecessityLogicSig := combine TriplePropStrictImplicationPossibilityLogicSig, NecessitySig over Carrier
+
+  (@* Four or more operations *@)
+    SinglePropImplicationAndPossibilityNecessityLogicSig := combine SinglePropImplicationAndNecessityLogicSig, PossibilitySig over Carrier
+    DoublePropImplicationAndPossibilityNecessityLogicSig := combine DoublePropImplicationAndNecessityLogicSig, PossibilitySig over Carrier
+    TriplePropImplicationAndPossibilityNecessityLogicSig := combine TriplePropImplicationAndNecessityLogicSig, PossibilitySig over Carrier
+
+    SinglePropImplicationOrPossibilityNecessityLogicSig := combine SinglePropImplicationOrNecessityLogicSig, PossibilitySig over Carrier
+    DoublePropImplicationOrPossibilityNecessityLogicSig := combine DoublePropImplicationOrNecessityLogicSig, PossibilitySig over Carrier
+    TriplePropImplicationOrPossibilityNecessityLogicSig := combine TriplePropImplicationOrNecessityLogicSig, PossibilitySig over Carrier
+
+    SinglePropImplicationStrictImplicationPossibilityNecessityLogicSig := combine SinglePropImplicationPossibilityNecessityLogicSig, StrictImplicativeSig over Carrier
+    DoublePropImplicationStrictImplicationPossibilityNecessityLogicSig := combine DoublePropImplicationPossibilityNecessityLogicSig, StrictImplicativeSig over Carrier
+    TriplePropImplicationStrictImplicationPossibilityNecessityLogicSig := combine TriplePropImplicationPossibilityNecessityLogicSig, StrictImplicativeSig over Carrier
+
+    SinglePropImplicationStrictImplicationOrPossibilityNecessityLogicSig := combine SinglePropImplicationStrictImplicationPossibilityNecessityLogicSig, OrSig over Carrier
+    DoublePropImplicationStrictImplicationOrPossibilityNecessityLogicSig := combine DoublePropImplicationStrictImplicationPossibilityNecessityLogicSig, OrSig over Carrier
+    TriplePropImplicationStrictImplicationOrPossibilityNecessityLogicSig := combine TriplePropImplicationStrictImplicationPossibilityNecessityLogicSig, OrSig over Carrier
+
+    SinglePropEquivalenceAndOrNotLogicSig := combine SinglePropEquivalenceNotLogicSig, AndSig, OrSig over Carrier
+    DoublePropEquivalenceAndOrNotLogicSig := combine DoublePropEquivalenceNotLogicSig, AndSig, OrSig over Carrier
+    TriplePropEquivalenceAndOrNotLogicSig := combine TriplePropEquivalenceNotLogicSig, AndSig, OrSig over Carrier
+
+    SinglePropStrictImplicationOrNotNecessityLogicSig := combine SinglePropStrictImplicationNecessityLogicSig, OrSig, NotSig over Carrier
+    DoublePropStrictImplicationOrNotNecessityLogicSig := combine DoublePropStrictImplicationNecessityLogicSig, OrSig, NotSig over Carrier
+    TriplePropStrictImplicationOrNotNecessityLogicSig := combine TriplePropStrictImplicationNecessityLogicSig, OrSig, NotSig over Carrier
+(@* END Sigs for building single axioms *@)
+
+(@* Derivation of operations *@)
+  ImplicationAndNotSig := combine ImplicativeSig, AndSig, NotSig over Carrier
+  AndNotDeriveImplication := ImplicationAndNotSig extended conservatively by {
+    --> : (U,U) -> U;
+    x --> y = (--) (x /\ ((--) y))
+  }
+  AndOrNotSig := combine AndSig, OrSig, NotSig over Carrier
+  AndNotDeriveOr := AndOrNotSig extended conservatively by {
+    \/ : (U,U) -> U;
+    x \/ y = (--) ((--) x /\ ((--) y))
+  }
+  ImplicationOrNotSig := combine ImplicativeSig, OrSig, NotSig over Carrier
+  OrNotDeriveImplication := ImplicationOrNotSig extended conservatively by {
+    --> : (U,U) -> U;
+    x --> y = (--) x \/ y
+  }
+  OrNotDeriveAnd := AndOrNotSig extended conservatively by {
+    /\ : (U,U) -> U;
+    x /\ y = (--) ((--) x \/ ((--) y))
+  }
+  (@* Equivalence can be more basically derived from OR and NOT, but it's clearer to use IMPLIES and AND *@)
+  ImplicationEquivalenceAndSig := combine ImplicativeSig, EquivalenceSig, AndSig over Carrier
+  ImplicationAndDeriveEquivalence := ImplicationEquivalenceAndSig extended conservatively by {
+    <-> : (U,U) -> U;
+    x <-> y = (x --> y) /\ (y --> x)
+  }
+  StrictImplicationStrictEquivalenceAndSig := combine StrictImplicativeSig, StrictEquivalenceSig, AndSig over Carrier
+  StrictImplicationAndDeriveStrictEquivalence := StrictImplicationStrictEquivalenceAndSig extended conservatively by {
+    <=> : (U,U) -> U;
+    x <=> y = (x ==> y) /\ (y ==> x)
+  }
+  AndNotStrictImplicationPossibilitySig := combine AndSig, NotSig, StrictImplicativeSig, PossibilitySig over Carrier
+  AndNotPossibilityDeriveStrictImplication := AndNotStrictImplicationPossibilitySig extended conservatively by {
+    ==> : (U,U) -> U;
+    x ==> y = (--) (diamond (x /\ ((--) y)))
+  }
+  NotPossibilityNecessitySig := combine NotSig, PossibilitySig, NecessitySig over Carrier
+  NotPossibilityDeriveNecessity := NotPossibilityNecessitySig extended conservatively by {
+    box : U -> U;
+    box (x) = ((--) (diamond ((--) x)))
+  }
+  NotNecessityDerivePossibility := NotPossibilityNecessitySig extended conservatively by {
+    diamond : U -> U;
+    diamond (x) = ((--) (box ((--) x)))
+  }
+(@* END Derivations of operations *@)
+
+(@* Rules (of inference) *@)
+  ModusPonens := DoublePropImplicationLogicSig extended by{
+      modusPonens : ded p -> ded (lift(p --> q)) -> ded q
+  }
+  StrictModusPonens := DoublePropStrictImplicationLogicSig extended by{
+      strictModusPonens : ded p -> ded (lift(p ==> q)) -> ded q
+  }
+  ModusTolens := DoublePropImplicationNotLogicSig extended by{
+      modusTolens : ded (lift(p --> q)) -> ded (lift(((--) q) --> ((--) p)))
+  }
+  ModusTolensReductiona := DoublePropImplicationNotLogicSig extended by{
+      modusTolensReductiona : ded (lift(((--) p) --> ((--) q))) -> ded (lift((q --> p)))
+  }
+  Necessitation := SinglePropNecessityLogicSig extended by{
+      necessitation : ded p -> ded (lift(box p))
+  }
+  BeckersRule := DoublePropImplicationNecessityLogicSig extended by{
+      beckersRule : ded (lift(box (p --> q))) -> ded (lift((box p) --> (box q)))
+  }
+  RE := DoublePropEquivalenceNecessityLogicSig extended by{
+      re : ded (lift(p <-> q)) -> ded (lift(box (p <-> q)))
+  }
+  RS := DoublePropStrictEquivalenceNecessityLogicSig extended by{
+      rs : ded (lift(p <=> q)) -> ded (lift(box (p <=> q)))
+  }
+  Adjunction := DoublePropAndLogicSig extended by{
+      adjunction : ded p -> ded q -> ded (lift(p /\ q))
+  }
+(@* END Rules (of inference) *@)
+
+(@* Axioms *@)
+  (@* This naming scheme is taken from http://www.cc.utah.edu/~nahaj/logic/structures/axioms/index.html and should eventually be changed to something more meaningful *@)
+  AxiomPL1 := DoublePropImplicationLogicSig extended by {
+      pl1 : ded (lift (p --> (q --> p)))
+  }
+  AxiomPL2 := TriplePropImplicationLogicSig extended by {
+      pl2 : ded (lift ((p --> (q --> r)) --> ((p --> q) --> (p --> r))))
+  }
+  AxiomPL3 := DoublePropImplicationAndLogicSig extended by {
+      pl3 : ded (lift ((p /\ q) --> p))
+  }
+  AxiomPL4 := DoublePropImplicationAndLogicSig extended by {
+      pl4 : ded (lift ((p /\ q) --> q))
+  }
+  AxiomPL5 := DoublePropImplicationAndLogicSig extended by {
+      pl5 : ded (lift (p --> (q --> (p /\ q))))
+  }
+  AxiomPL6 := DoublePropImplicationOrLogicSig extended by {
+      pl6 : ded (lift (p --> (p \/ q)))
+  }
+  AxiomPL7 := DoublePropImplicationOrLogicSig extended by {
+      pl7 : ded (lift (q --> (p \/ q)))
+  }
+  AxiomPL8 := TriplePropImplicationOrLogicSig extended by {
+      pl8 : ded (lift ((p --> r) --> ((q --> r) --> ((p \/ q) --> r))))
+  }
+  AxiomPL9 := DoublePropImplicationEquivalenceLogicSig extended by {
+      pl9 : ded (lift ((p <-> q) --> (p --> q)))
+  }
+  AxiomPL10 := DoublePropImplicationEquivalenceLogicSig extended by {
+      pl10 : ded (lift ((p <-> q) --> (q --> p)))
+  }
+  AxiomPL11 := DoublePropImplicationEquivalenceLogicSig extended by {
+      pl11 : ded (lift ((p --> q) --> ((q --> p) --> (p <-> q))))
+  }
+  AxiomPC1 := DoublePropImplicationNotLogicSig extended by {
+      pc1 : ded (lift ((((--) p) --> ((--) q)) --> (q --> p)))
+  }
+  AxiomPC2 := SinglePropImplicationNotLogicSig extended by { (@* Not actually listed or named by J.H. *@)
+      pc2 : ded (lift (((--) ((--) p)) --> p))
+  }
+  AxiomPC3 := DoublePropImplicationNotLogicSig extended by { (@* Not actually listed or named by J.H. *@)
+      pc3 : ded (lift (p --> ((q --> ((--) p)) --> ((--) q))))
+  }
+  AxiomPC4 := SinglePropOrNotLogicSig extended by { (@* Not actually listed or named by J.H. *@)
+      pc4 : ded (lift (p \/ ((--) p)))
+  }
+  (@* CN1 given as AxiomCombinatorB' *@)
+  AxiomCN2 := DoublePropImplicationNotLogicSig extended by { (@* Not actually listed by J.H. *@)
+      cn2 : ded (lift (p --> (((--) p) --> q)))
+  }
+  AxiomCN3 := SinglePropImplicationNotLogicSig extended by { (@* Not actually listed by J.H. *@)
+      cn3 : ded (lift ((((--) p) --> p) --> p))
+  }
+  (@* KN1 given as AxiomHA1 *@) (@* Not actually listed by J.H. *@)
+  (@* KN2 given as AxiomPL3 *@) (@* Not actually listed by J.H. *@)
+  AxiomKN3 := TriplePropImplicationAndNotLogicSig extended by { (@* Not actually listed by J.H. *@)
+      cn3 : ded (lift ((p --> q) --> (((--) (q /\ r)) --> ((--) (r /\ p)))))
+  }
+  AxiomR1 := SinglePropImplicationOrLogicSig extended by {
+      r1 : ded (lift ((p \/ p) --> p))
+  }
+  (@* R2 is given as PL7 above *@)
+  AxiomR3 := DoublePropImplicationOrLogicSig extended by {
+      r3 : ded (lift ((p \/ q) --> (q \/ p)))
+  }
+  AxiomR4 := TriplePropImplicationOrLogicSig extended by {
+      r4 : ded (lift ((q --> r) --> ((p \/ q) --> (p \/ r))))
+  }
+  AxiomIP1 := SinglePropImplicationNotLogicSig extended by {
+      ip1 : ded (lift ((p --> ((--) p)) --> ((--) p)))
+  }
+  AxiomIP2 := DoublePropImplicationNotLogicSig extended by {
+      ip2 : ded (lift (((--) p) --> (p --> q)))
+  }
+  AxiomHA1 := SinglePropImplicationAndLogicSig extended by {
+      ha1 : ded (lift (p --> (p /\ p)))
+  }
+  AxiomHA2 := DoublePropImplicationAndLogicSig extended by {
+      ha2 : ded (lift ((p /\ q) --> (q /\ p)))
+  }
+  AxiomHA3 := TriplePropImplicationAndLogicSig extended by {
+      ha3 : ded (lift ((p --> q) --> ((p /\ r) --> (q /\ r))))
+  }
+  AxiomHA4 := TriplePropImplicationAndLogicSig extended by {
+      ha4 : ded (lift (((p --> q) /\ (q --> r)) --> (p --> r)))
+  }
+  AxiomHA5 := TriplePropImplicationLogicSig extended by {
+      ha5 : ded (lift (q --> (p --> q)))
+  }
+  AxiomHA6 := DoublePropImplicationAndLogicSig extended by {
+      ha6 : ded (lift ((p /\ (p --> q)) --> q))
+  }
+  AxiomHA7 := DoublePropImplicationOrLogicSig extended by {
+      ha7 : ded (lift (p --> (p \/ q)))
+  }
+  AxiomHA8 := DoublePropImplicationOrLogicSig extended by {
+      ha8 : ded (lift ((p \/ q) --> (q \/ p)))
+  }
+  AxiomHA9 := TriplePropImplicationAndOrLogicSig extended by {
+      ha9 : ded (lift (((p --> r) /\ (q --> r)) --> ((p \/ q) --> r)))
+  }
+  AxiomHA10 := DoublePropImplicationNotLogicSig extended by {
+      ha10 : ded (lift ((--) p --> (p --> q)))
+  }
+  AxiomHA11 := DoublePropImplicationAndNotLogicSig extended by {
+      ha11 : ded (lift (((p --> q) /\ (p --> ((--) q))) --> ((--) p)))
+  }
+  AxiomF1 := DoublePropImplicationNotLogicSig extended by {
+      f1 : ded (lift ((--) p --> (p --> q)))
+  }
+  AxiomF2 := SinglePropEquivalenceNotLogicSig extended by {
+      f2 : ded (lift (p <-> ((--) ((--) p))))
+  }
+  AxiomF3 := DoublePropEquivalenceAndOrNotLogicSig extended by {
+      f3 : ded (lift ((--) (p \/ q) <-> (((--) p) /\ ((--) q))))
+  }
+  AxiomF4 := DoublePropEquivalenceAndOrNotLogicSig extended by {
+      f4 : ded (lift ((--) (p /\ q) <-> (((--) p) \/ ((--) q))))
+  }
+  AxiomJ1 := DoublePropImplicationNotLogicSig extended by {
+      j1 : ded (lift ((p --> q) --> (((--) q) --> ((--) p))))
+  }
+  AxiomJ2 := SinglePropAndNotLogicSig extended by {
+      j2 : ded (lift ((--) (p /\ ((--) p))))
+  }
+  AxiomLC := DoublePropImplicationOrLogicSig extended by {
+      lc : ded (lift ((p --> q) \/ (q --> p)))
+  }
+  AxiomKC := DoublePropOrNotLogicSig extended by {
+      kc : ded (lift (((--) p) \/ ((--) ((--) p))))
+  }
+  AxiomCombinatorB := TriplePropImplicationLogicSig extended by {
+      combinatorB : ded (lift ((p --> q) --> ((r --> p) --> (r --> q))))
+  }
+  AxiomCombinatorB' := TriplePropImplicationLogicSig extended by {
+      combinatorB' : ded (lift ((p --> q) --> ((q --> r) --> (p --> r))))
+  }
+  AxiomCombinatorW := DoublePropImplicationLogicSig extended by {
+      combinatorW : ded (lift ((p --> (p --> q)) --> (p --> q)))
+  }
+  AxiomCombinatorI := SinglePropImplicationLogicSig extended by {
+      combinatorI : ded (lift (p --> p))
+  }
+  AxiomAS1_1 := DoublePropStrictImplicationAndLogicSig extended by {
+      as1_1 : ded (lift ((p /\ q) ==> (q /\ p)))
+  }
+  AxiomAS1_2 := DoublePropStrictImplicationAndLogicSig extended by { (@* strict version of PL3 *@)
+      as1_2 : ded (lift ((p /\ q) ==> p))
+  }
+  AxiomAS1_2Right := DoublePropStrictImplicationAndLogicSig extended by { (@* Not actually listed or named by J.H. *@)
+      as1_2 : ded (lift ((p /\ q) ==> q))
+  }
+  AxiomAS1_3 := SinglePropStrictImplicationAndLogicSig extended by {
+      as1_3 : ded (lift (p ==> (p /\ p)))
+  }
+  AxiomAS1_4 := TriplePropStrictImplicationAndLogicSig extended by {
+      as1_4 : ded (lift (((p /\ q) /\ r) ==> (p /\ (q /\ r))))
+  }
+  AxiomAS1_5 := TriplePropStrictImplicationAndLogicSig extended by {
+      as1_5 : ded (lift (((p ==> q) /\ (q ==> r)) ==> (p ==> r)))
+  }
+  AxiomAS1_6 := DoublePropStrictImplicationAndLogicSig extended by {
+      as1_6 : ded (lift ((p /\ (p ==> q)) ==> q))
+  }
+  AxiomAS4_1 := SinglePropStrictImplicationNecessityLogicSig extended by { (@* strict version of 4 *@)
+      as4_1 : ded (lift ((box p) ==> (box (box p))))
+  }
+  AxiomH3 := TriplePropStrictImplicationAndNotLogicSig extended by {
+      h3 : ded (lift (((r /\ p) /\ ((--) (q /\ r))) ==> (p /\ ((--) q))))
+  }
+  AxiomH4 := SinglePropImplicationNotPossibilityLogicSig extended by {
+      h4 : ded (lift (((--) (diamond p)) --> ((--) p)))
+  }
+  AxiomH5 := SinglePropStrictImplicationPossibilityLogicSig extended by {
+      h5 : ded (lift (p ==> (diamond p)))
+  }
+  AxiomH6 := DoublePropStrictImplicationNotPossibilityLogicSig extended by {
+      h6 : ded (lift ((p ==> q) ==> (((--) (diamond q)) ==> ((--) (diamond p)))))
+  }
+  AxiomS := SinglePropStrictImplicationPossibilityLogicSig extended by{
+      s : ded (lift (diamond (diamond p)))
+  }
+  AxiomS2 := DoublePropStrictImplicationAndPossibilityLogicSig extended by {
+      s2 : ded (lift ((diamond (p /\ q)) ==> ((diamond p) /\ (diamond q))))
+  }
+  AxiomS2Reduced := DoublePropStrictImplicationAndPossibilityLogicSig extended by { (@* Not actually listed or named by J.H. *@)
+      s2 : ded (lift ((diamond (p /\ q)) ==> (diamond p)))
+  }
+  AxiomS3 := DoublePropStrictImplicationNotPossibilityLogicSig extended by {
+      s3 : ded (lift ((p ==> q) ==> (((--) (diamond q)) ==> ((--) (diamond p)))))
+  }
+  AxiomM := DoublePropImplicationAndNecessityLogicSig extended by {
+      m : ded (lift ((box (p /\ q)) --> ((box p) /\ (box q))))
+  }
+  AxiomC := DoublePropImplicationAndNecessityLogicSig extended by {
+      c : ded (lift (((box p) /\ (box q)) --> (box (p /\ q))))
+  }
+  AxiomK := DoublePropImplicationNecessityLogicSig extended by {
+      k : ded (lift ((box (p --> q)) --> ((box p) --> (box q))))
+  }
+  AxiomB := SinglePropImplicationPossibilityNecessityLogicSig extended by {
+      b : ded (lift (p --> (box (diamond p))))
+  }
+  AxiomD := SinglePropImplicationPossibilityNecessityLogicSig extended by {
+      d : ded (lift ((box p) --> (diamond p)))
+  }
+  AxiomT := SinglePropImplicationNecessityLogicSig extended by {
+      t : ded (lift ((box p) --> p))
+  }
+  Axiom4 := SinglePropImplicationNecessityLogicSig extended by {
+      4 : ded (lift ((box p) --> (box (box p))))
+  }
+  AxiomW := SinglePropImplicationNecessityLogicSig extended by {
+      w : ded (lift ((box ((box p) --> p)) --> (box p)))
+  }
+  AxiomH := SinglePropImplicationEquivalenceNecessityLogicSig extended by {
+      h : ded (lift ((box ((box p) <-> p)) --> (box p)))
+  }
+  AxiomTriv := SinglePropEquivalenceNecessityLogicSig extended by {
+      triv : ded (lift (p <-> (box p)))
+  }
+  AxiomVer := SinglePropNecessityLogicSig extended by {
+      ver : ded (lift (box p))
+  }
+  AxiomM7 := DoublePropStrictImplicationAndPossibilityLogicSig extended by {
+      m7 : ded (lift ((diamond (p /\ q)) ==> p))
+  }
+  AxiomM8 := DoublePropStrictImplicationPossibilityLogicSig extended by {
+      m8 : ded (lift ((p ==> q) ==> ((diamond p) ==> (diamond q))))
+  }
+  AxiomF1_Sobocinski := DoublePropAndNotPossibilityLogicSig extended by {
+      f1 : ded (lift ((--) (diamond ((p /\ q) /\ ((--) p)))))
+  }
+  AxiomF2_Sobocinski := DoublePropAndNotPossibilityLogicSig extended by {
+      f2 : ded (lift ((--) (diamond ((p /\ q) /\ ((--) (q /\ p))))))
+  }
+  AxiomF3_Sobocinski := TriplePropAndNotPossibilityLogicSig extended by {
+      f3 : ded (lift ((--) (diamond (((p /\ q) /\ r) /\ ((--) (p /\ (q /\ r)))))))
+  }
+  AxiomF4_Sobocinski := DoublePropAndNotPossibilityLogicSig extended by {
+      f4 : ded (lift ((--) (diamond (p /\ ((--) (p /\ p))))))
+  }
+  AxiomF5_Sobocinski := TriplePropAndNotPossibilityLogicSig extended by {
+      f5 : ded (lift ((--) (diamond ((((--) (diamond (p /\ ((--) q)))) /\ ((--) (diamond (q /\ ((--) r))))) /\ ((--) ((--) (diamond (p /\ ((--) r)))))))))
+  }
+  AxiomZ2 := DoublePropAndNotPossibilityLogicSig extended by {
+      z2 : ded (lift ((--) (diamond ((p /\ q) /\ ((--) q)))))
+  }
+  AxiomZ3 := TriplePropAndNotPossibilityLogicSig extended by {
+      z3 : ded (lift ((--) (diamond (((r /\ p) /\ ((--) (q /\ r))) /\ ((--) (p /\ ((--) q)))))))
+  }
+  AxiomZ4 := DoublePropAndNotPossibilityLogicSig extended by {
+      z4 : ded (lift ((--) (((--) (diamond (p /\ ((--) q)))) /\ ((--) ((--) (diamond (((--) (diamond q)) /\ ((--) ((--) (diamond p))))))))))
+  }
+  AxiomZ5 := DoublePropAndNotPossibilityLogicSig extended by {
+      z5 : ded (lift ((--) (((--) (diamond p)) /\ ((--) ((--) p)))))
+  }
+  AxiomX := DoublePropImplicationPossibilityNecessityLogicSig extended by {
+      x : ded (lift ((diamond ((diamond (diamond p)) --> (box (diamond q)))) --> ((diamond (diamond p)) --> (box (diamond q)))))
+  }
+(@* END Axioms *@)
+
+(@* Logics *@)
+  (@* Positive Propositional Logic (http://www.cc.utah.edu/~nahaj/logic/structures/systems/ppl.html) *@)
+    PositivePropositionalLogicSig := combine TriplePropImplicationLogicSig, EquivalenceSig, OrSig, AndSig over Carrier
+
+    (@* Hackstaff (1966, p50) *@)
+    PositivePropositionalLogic := combine ModusPonens, AxiomPL1, AxiomPL2, AxiomPL3, AxiomPL4, AxiomPL5, AxiomPL6, AxiomPL7, AxiomPL8, AxiomPL9, AxiomPL10, AxiomPL11 over PositivePropositionalLogicSig
+
+    (@* Hilbert & Bernays (1934, p68-71) *@)
+    PositivePropositionalLogicAltHilbert1 := combine ModusPonens, AxiomPL1, AxiomCombinatorW, AxiomCombinatorB', AxiomPL3, AxiomPL4, AxiomPL5, AxiomPL6, AxiomPL7, AxiomPL8, AxiomPL9, AxiomPL10, AxiomPL11 over PositivePropositionalLogicSig
+    (@* Hilbert & Ackermann (1959, pp39) *@)
+    PositivePropositionalLogicAltHilbert2 := combine ModusPonens, AxiomCombinatorI, AxiomCombinatorB', AxiomCombinatorB, AxiomCombinatorW, AxiomPL3, AxiomPL4, AxiomPL5, AxiomPL6, AxiomPL7, AxiomPL8, AxiomPL9, AxiomPL10, AxiomPL11 over PositivePropositionalLogicSig
+
+  (@* Propositional Logic (http://www.cc.utah.edu/~nahaj/logic/structures/systems/pc.html) *@)
+    PropositionalLogicSig := combine PositivePropositionalLogicSig, NotSig over Carrier
+
+    (@* Hackstaff (1966, p95) *@) (@* Hackstaff gives several alternate definitions *@)
+    PropositionalLogic := combine AxiomPC1, PositivePropositionalLogic over DoublePropImplicationNotLogicSig
+
+    (@* Hackstaff (1966, p95) *@)
+    PropositionalLogicAltHackstaff1 := combine AxiomPC2, AxiomPC3, PositivePropositionalLogic over DoublePropImplicationNotLogicSig
+
+    (@* Hackstaff (1966, p95) *@)
+    PropositionalLogicAltHackstaff2 := combine AxiomPC4, AxiomIP2, AxiomIP1, PositivePropositionalLogic over DoublePropImplicationOrNotLogicSig
+
+    (@* NOTE: the below definitions differ in only certain operations are taken as basic *@)
+
+    (@* Whitehead & Russell (1910, volume 1, p100 (2nd ed. p96)) *@)
+    PropositionalLogicAltWhiteheadRussell := combine OrNotDeriveImplication, OrNotDeriveAnd, ImplicationAndDeriveEquivalence, ModusPonens, AxiomPL7, AxiomR1, AxiomR3, AxiomR4 over PropositionalLogicSig
+
+    (@* Zeman (1973, p25) *@)
+    PropositionalLogicAltZeman1 := combine AndNotDeriveImplication, AndNotDeriveOr, ImplicationAndDeriveEquivalence, ModusPonens, AxiomCombinatorB', AxiomCN2, AxiomCN3 over PropositionalLogicSig
+
+    (@* Zeman (1973, p26) (originally Rosser 1953 p55) *@)
+    PropositionalLogicAltZeman2 := combine AndNotDeriveImplication, AndNotDeriveOr, ImplicationAndDeriveEquivalence, ModusPonens, AxiomHA1, AxiomPL3, AxiomKN3 over PropositionalLogicSig
+
+  (@* Intuitionist Propositional Logic (http://www.cc.utah.edu/~nahaj/logic/structures/systems/ipc.html) *@)
+    (@* Hackstaff (1966, p223) *@)
+    IntuitionistPropositionalLogic := combine AxiomIP1, AxiomIP2, PositivePropositionalLogic over DoublePropImplicationNotLogicSig
+    
+    (@* Hackstaff (1966, p223) *@) (@* Attributed to Heyting, thus the name *@)
+    IntuitionistPropositionalLogicAltHeyting := combine ModusPonens, AxiomHA1, AxiomHA2, AxiomHA3, AxiomHA4, AxiomHA5, AxiomHA6, AxiomHA7, AxiomHA8, AxiomHA9, AxiomHA10, AxiomHA11 over PropositionalLogicSig
+
+  (@* Fitch Propositional Logic (http://www.cc.utah.edu/~nahaj/logic/structures/systems/fitch.html) *@)
+    (@* Hackstaff (1966, p223) *@)
+    FitchPropositionalLogic := combine AxiomF1, AxiomF2, AxiomF3, AxiomF4, PositivePropositionalLogic over PropositionalLogicSig
+
+  (@* Johansson Minimal Logic (http://www.cc.utah.edu/~nahaj/logic/structures/systems/johansson.html) *@)
+    (@* Hackstaff (1966, p229) *@)
+    JohanssonLogic := combine AxiomJ1, AxiomJ2, PositivePropositionalLogic over PropositionalLogicSig
+
+  (@* LC (http://www.cc.utah.edu/~nahaj/logic/structures/systems/lc.html) *@)
+    (@* Dummett (1959, p97) *@)
+    LCLogic := combine AxiomLC, IntuitionistPropositionalLogic over PropositionalLogicSig
+
+  (@* KC (http://www.cc.utah.edu/~nahaj/logic/structures/systems/kc.html) *@)
+    (@* (mentioned in) Chagrov & Zakharyaschev (1997) *@)
+    KCLogic := combine AxiomKC, IntuitionistPropositionalLogic over PropositionalLogicSig
+
+  StrictModalLogicSig := combine TriplePropStrictImplicationLogicSig, AndSig, OrSig, NotSig, PossibilitySig, NecessitySig over Carrier
+  StrictModalLogicWithStrictEquivalenceSig := combine StrictModalLogicSig, StrictEquivalenceSig over Carrier
+  ModalLogicSig := combine TriplePropImplicationLogicSig, AndSig, OrSig, NotSig, PossibilitySig, NecessitySig over Carrier
+  ModalLogicWithEquivalenceSig := combine ModalLogicSig, EquivalenceSig over Carrier
+  FullModalLogicSig := combine ModalLogicSig, StrictImplicativeSig over Carrier
+  FullModalLogicWithEquivalenceStrictEquivalenceSig := combine FullModalLogicSig, EquivalenceSig, StrictEquivalenceSig over Carrier
+
+  (@* S0 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s0.html)*@)
+    (@* Feys (1965, p139) *@)
+    S0Logic := combine StrictModusPonens, Adjunction, AndNotDeriveOr, StrictImplicationAndDeriveStrictEquivalence, NotPossibilityDeriveNecessity, AxiomAS1_1, AxiomAS1_2, AxiomAS1_3, AxiomAS1_4, AxiomAS1_5, AxiomAS1_6 over StrictModalLogicWithStrictEquivalenceSig
+
+  (@* S1 superscipt 0 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s1-0.html)*@)
+    (@* Feys (1950, p43) *@)
+    S1_0Logic := combine StrictModusPonens, Adjunction, AndNotDeriveOr, AndNotPossibilityDeriveStrictImplication, StrictImplicationAndDeriveStrictEquivalence, NotPossibilityDeriveNecessity, AxiomAS1_1, AxiomAS1_2, AxiomAS1_3, AxiomAS1_4, AxiomAS1_5 over StrictModalLogicSig
+
+    (@* Sobocinski (1962, p53) *@)
+    S1_0LogicAltSobocinski := combine StrictModusPonens, Adjunction, AndNotDeriveOr, AndNotPossibilityDeriveStrictImplication, StrictImplicationAndDeriveStrictEquivalence, NotPossibilityDeriveNecessity, AxiomF1_Sobocinski, AxiomF2_Sobocinski, AxiomF3_Sobocinski, AxiomF4_Sobocinski, AxiomF5_Sobocinski over StrictModalLogicSig
+
+  (@* S1 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s1.html)*@)
+    (@* Lewis & Langford (1932, p139) *@) (@* also Feys (1965, p139), which introduced s0 as an incomplete version of s1 *@)
+    S1Logic := combine S0Logic, AndNotPossibilityDeriveStrictImplication over StrictModalLogicWithStrictEquivalenceSig
+    
+    (@* Zeman (1968, p459) *@)
+    S1LogicAltZeman1 := combine AxiomH5, S1_0Logic over StrictModalLogicSig
+
+  (@* S2 superscript 0 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s2-0.html)*@)
+    (@* Zeman (1973, p96) *@)
+    S2_0Logic := combine AxiomM7, S1_0Logic over StrictModalLogicSig
+
+    (@* Zeman (1973, p281) *@)
+    S2_0LogicAltZeman1 := combine AxiomH5, S1_0Logic over StrictModalLogicSig
+
+  (@* S2 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s2.html)*@)
+    (@* Lewis & Langford (1932, p500) *@)
+    S2Logic := combine S1Logic, AxiomS2 over StrictModalLogicWithStrictEquivalenceSig
+
+    (@* Hughes & Cresswell (1968, p230) *@)
+    S2LogicAltHughesCresswell1 := combine S1Logic, AxiomS2Reduced over StrictModalLogicWithStrictEquivalenceSig
+
+    (@* Hughes & Cresswell (1968, p200) *@)
+    S2LogicAltHughesCresswell2 := combine PropositionalLogic, AxiomT, AxiomK, BeckersRule over ModalLogicWithEquivalenceSig
+
+    (@* Zeman (1973, p281) *@)
+    S2LogicAltZeman := combine AxiomH5, S2_0Logic over StrictModalLogicSig
+
+  (@* S3 superscript 0 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s3-0.html)*@)
+    (@* Zeman (1973, p281) *@)
+    S3_0Logic := combine S1_0Logic, AxiomM8 over StrictModalLogicSig
+
+  (@* S3 star (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s3star.html)*@)
+    (@* Sobocinski (1962, p53) *@)
+    S3_StarLogic := combine AndNotDeriveOr, AndNotPossibilityDeriveStrictImplication, AndNotDeriveImplication, StrictImplicationAndDeriveStrictEquivalence, NotPossibilityDeriveNecessity, StrictModusPonens, AxiomAS1_3, AxiomAS1_2Right, AxiomH3, AxiomH6, AxiomH4 over FullModalLogicSig
+
+    (@* Sobocinski (1962, p53) *@)
+    S3_StarLogicAltSobocinski := combine AndNotDeriveOr, AndNotPossibilityDeriveStrictImplication, AndNotDeriveImplication, StrictImplicationAndDeriveStrictEquivalence, NotPossibilityDeriveNecessity, StrictModusPonens, AxiomF4_Sobocinski, AxiomZ2, AxiomZ3, AxiomZ4, AxiomZ5 over FullModalLogicSig
+
+  (@* S3 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s3.html)*@)
+    (@* Lewis & Langford (1932, p500) *@)
+    S3Logic := combine S1Logic, AxiomS3 over StrictModalLogicWithStrictEquivalenceSig
+
+    (@* Simons (1953, p309) *@)
+    S3LogicAltSimons := combine AndNotPossibilityDeriveStrictImplication, NotPossibilityDeriveNecessity, ModusPonens, AxiomAS1_3, AxiomAS1_2, AxiomH3, AxiomH4, AxiomH5, AxiomH6 over FullModalLogicSig
+
+    (@* Zeman (1973, p281) *@)
+    S3LogicAltZeman := combine S3_0Logic, AxiomH5 over StrictModalLogicSig
+    
+    (@* Sobocinski (1962, p53) *@)
+    S3LogicAltSobocinski := combine S3_StarLogic, AxiomH5 over StrictModalLogicSig
+
+  (@* S4 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s4.html)*@)
+    (@* Hughes & Cresswell (1968, p236) *@)
+    S4Logic := combine S1Logic, AxiomAS4_1 over StrictModalLogicWithStrictEquivalenceSig
+
+  (@* S6 superscript 0 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s6-0.html)*@)
+    (@* Hughes & Cresswell (1996, p364) *@)
+    S6_0Logic := combine AxiomS, S2_0Logic over StrictModalLogicSig
+
+  (@* S6 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s6.html)*@)
+    (@* Hughes & Cresswell (1996, p207) *@)
+    S6Logic := combine AxiomS, S2Logic over StrictModalLogicWithStrictEquivalenceSig
+
+  (@* S7 superscript 0 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s7-0.html)*@)
+    (@* Hughes & Cresswell (1996, p354) *@)
+    S7_0Logic := combine S3_0Logic, AxiomS over StrictModalLogicSig
+
+  (@* S7 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/s7.html)*@)
+    (@* Hughes & Cresswell (1996, p364) *@)
+    S7Logic := combine S3Logic, AxiomS over StrictModalLogicWithStrictEquivalenceSig
+
+  (@* E (http://www.cc.utah.edu/~nahaj/logic/structures/systems/e.html)*@)
+    (@* Chellas (1980, p231) *@)
+    ELogic := combine PropositionalLogic, NotNecessityDerivePossibility, RS over FullModalLogicWithEquivalenceStrictEquivalenceSig
+
+  (@* M (or EM) (http://www.cc.utah.edu/~nahaj/logic/structures/systems/m.chellas.html)*@)
+    (@* Chellas (1980, p237) *@)
+    MLogic := combine ELogic, AxiomM over FullModalLogicWithEquivalenceStrictEquivalenceSig
+
+  (@* EC (http://www.cc.utah.edu/~nahaj/logic/structures/systems/ec.html)*@)
+    (@* Chellas (1980, p237) *@)
+    ECLogic := combine ELogic, AxiomC over FullModalLogicWithEquivalenceStrictEquivalenceSig
+
+  (@* R (or EMC) (http://www.cc.utah.edu/~nahaj/logic/structures/systems/r.html)*@)
+    (@* Chellas (1980, p237) *@)
+    RLogic := combine MLogic, AxiomC over FullModalLogicWithEquivalenceStrictEquivalenceSig (@* Equivalent to EC + axiom M *@)
+
+  (@* EK4 (http://www.cc.utah.edu/~nahaj/logic/structures/systems/ek4.html)*@)
+    (@* Surendok (1995) *@)
+    EK4Logic := combine ELogic, AxiomK, Axiom4 over FullModalLogicWithEquivalenceStrictEquivalenceSig
+
+  (@* K (http://www.cc.utah.edu/~nahaj/logic/structures/systems/k.html)*@)
+    (@* Hughes & Cresswell (1996, p25) *@)
+    KLogic := combine AxiomK, NotNecessityDerivePossibility, Necessitation, PropositionalLogic over ModalLogicWithEquivalenceSig
+
+  (@* D (http://www.cc.utah.edu/~nahaj/logic/structures/systems/d.lands.html)*@)
+    (@* Hughes & Cresswell (1996, p43) *@)
+    DLogic := combine AxiomD, KLogic over ModalLogicWithEquivalenceSig
+
+  (@* T (http://www.cc.utah.edu/~nahaj/logic/structures/systems/t.html)*@)
+    (@* Hughes & Cresswell (1996, p41) *@)
+    TLogic := combine AxiomT, KLogic over ModalLogicWithEquivalenceSig
+
+  (@* KH (http://www.cc.utah.edu/~nahaj/logic/structures/systems/kw.html)*@)
+    (@* Hughes & Cresswell (1996, p160-161) *@)
+    KHLogic := combine AxiomH, KLogic over ModalLogicWithEquivalenceSig
+
+  (@* KW (http://www.cc.utah.edu/~nahaj/logic/structures/systems/kw.html)*@)
+    (@* Hughes & Cresswell (1996, p139) *@)
+    KWLogic := combine AxiomW, KLogic over ModalLogicWithEquivalenceSig
+
+    (@* Hughes & Cresswell (1996, p164) *@)
+    KWLogicAltHughesCresswell := combine Axiom4, KHLogic over ModalLogicWithEquivalenceSig
+
+  (@* B (http://www.cc.utah.edu/~nahaj/logic/structures/systems/b.html)*@)
+    (@* Hughes & Cresswell (1996, p63) *@)
+    BLogic := combine AxiomB, TLogic over ModalLogicWithEquivalenceSig
+
+  (@* X (http://www.cc.utah.edu/~nahaj/logic/structures/systems/x.html)*@)
+    (@* Georgacarakos (1978, p103) *@)
+    XLogic := combine AxiomX, TLogic over ModalLogicWithEquivalenceSig
+
+  (@* Triv (http://www.cc.utah.edu/~nahaj/logic/structures/systems/triv.html)*@)
+    (@* Hughes & Cresswell (1996, p65) *@)
+    TrivLogic := combine AxiomTriv, DLogic over ModalLogicWithEquivalenceSig
+
+  (@* Ver (http://www.cc.utah.edu/~nahaj/logic/structures/systems/ver.html)*@)
+    (@* Hughes & Cresswell (1996, p67) *@)
+    VerLogic := combine AxiomVer, KLogic over ModalLogicWithEquivalenceSig
+(@* END Logics *@)
+
+(@* Conservative extensions *@)
+(@* These two relate Group and Rack *@)
+RightCommutator := Group extended conservatively by {
+    |> : (U,U) -> U;
+    a |> b = a * b * (inv a)
+}
+LeftCommutator := Group extended conservatively by {
+    <| : (U,U) -> U;
+    a <| b = (inv a) * b * a
+}
+(@* need to continue with 
+    http://en.wikipedia.org/wiki/List_of_algebraic_structures
+*@)
+(@* Canonical examples of algebraic structures:
+Taken from a thread on MathOverflow.  Once implemented, these can be taken
+out of here.
+
+Abelian Group: Z and Z/nZ
+*@)
+(@* structures *@)
+OneType := Empty extended conservatively by { Inductive one | ~ee : one }
+One := OneType extended conservatively by {
+  ee : one;
+  ee = ~ee
+}
+OneUnary := One extended conservatively by {
+    id : one -> one;
+    id(x) = x
+}
+OneBinary := One extended conservatively by {
+    * : (one, one) -> one;
+    x * y = case x of { | ~ee -> ee }
+}
+OneTheory := combine OneUnary, OneBinary over One
+BoolType := Empty extended conservatively by { 
+  Inductive Boole 
+   | ~true  : Boole 
+   | ~false : Boole }
+(@* this should be 'automated' *@)
+Bool := BoolType extended conservatively by {
+  false : Boole;
+  false = ~false;
+  true  : Boole;
+  true  = ~true;
+}
+Not := Bool extended conservatively by {
+    B-not : Boole -> Boole;
+    B-not(b) = case b of {
+      | ~true  -> false
+      | ~false -> true
+    }
+}
+And := Bool extended conservatively by {
+    B-and : (Boole, Boole) -> Boole;
+    B-and(x,y) = case x of {
+      | ~false -> false
+      | ~true -> y
+    }
+}
+Or := Bool extended conservatively by {
+    B-or : (Boole, Boole) -> Boole;
+    B-or(x,y) = case x of {
+      | ~true -> true
+      | ~false -> y
+    }
+}
+BasicBool := combine Not, And, Or over Bool
+
+(@* The naming of these graph structures is as follows:
+    - the number of nodes is indicated by the number of sets of digits in the name
+    - the number of edges from the ith node to the jth node is indicated by jth digit in the ith set of digits
+
+    eg. the two node system with nodes n1, n2 and one edge n1 -> n2 is represented by 01_00.
+*@)
+Graph_0 := DirectedMultigraph extended by {
+    a : obj
+}
+Graph_1 := Graph_0 extended by {
+    e : hom (lift (a,a));
+}
+Graph_2 := Graph_1 extended by {
+    e2 : hom (lift (a,a));
+}
+Graph_00_00 := Graph_0 extended by {
+    b : obj
+}
+Graph_10_00 := Graph_00_00 extended by {
+    e : hom (lift (a,a));
+}
+Graph_01_00 := Graph_00_00 extended by {
+    e : hom (lift (a,b));
+}
+Graph_10_01 := Graph_10_00 extended by {
+    e2 : hom (lift (b,b));
+}
+Graph_01_10 := Graph_01_00 extended by {
+    e2 : hom (lift (b,a));
+}
+Graph_01_01 := Graph_01_00 extended by {
+    e2 : hom (lift (b,b));
+}
+Graph_02_01 := Graph_01_01 extended by {
+    e3 : hom (lift (a,b));
+}
+Graph_02_00 := Graph_01_00 extended by {
+    e2 : hom (lift (a,b));
+}
+Graph_20_00 := Graph_10_00 extended by {
+    e2 : hom (lift (a,a))
+}
+Graph_20_01 := Graph_20_00 extended by {
+    e3 : hom (lift (b,b))
+}
+Graph_20_02 := Graph_20_01 extended by {
+    e4 : hom (lift (b,b))
+}
+Graph_21_02 := Graph_20_02 extended by {
+    e5 : hom (lift (a,b))
+}
+Graph_21_12 := Graph_21_02 extended by {
+    e6 : hom (lift (b,a))
+}
+Graph_000_000_000 := Graph_00_00 extended by {
+    c : obj
+}
+Graph_010_000_000 := combine Graph_000_000_000, Graph_01_00 over Graph_00_00
+Graph_010_000_010 := Graph_010_000_000 extended by {
+    e2 : hom (lift (c,b))
+}
+Graph_011_000_000 := Graph_010_000_000 extended by {
+    e2 : hom (lift (a,c))
+}
+
+NatType := Empty extended conservatively by {
+    Inductive nat
+    | ~zero : nat
+    | ~succ : nat -> nat
+}
+(@* this should be 'automated' *@)
+Nat := NatType extended conservatively by {
+  zero : nat;
+  succ : nat -> nat;
+
+  zero = ~zero;
+  succ = fun x. ~succ x
+}
+NatAdd := Nat extended conservatively by {
+    add : (nat, nat) -> nat;
+    add(x,y) = case x of {
+      | ~zero     -> y
+      | ~succ(xx) -> add(xx, succ(y))
+    }
+}
+NatMul := NatAdd extended conservatively by {
+    mul : (nat, nat) -> nat;
+    mul(x,y) = case x of {
+      | ~zero     -> zero
+      | ~succ(xx) -> add(mul(xx, y),y)
+    }
+}
+NatLess := Nat extended conservatively by {
+    less : (nat, nat)? ;
+    less(x,y) = case x of {
+      | ~zero -> case y of {
+                 | ~zero -> %false
+                 | ~succ(xx) -> %true
+                }
+      | ~succ(xx) -> case y of {
+                      | ~zero -> %false
+                      | ~succ(yy) -> less(xx,yy)
+                }
+    }
+}
+
+(@* In this representation, neg(zero) represents -1, neg(succ(zero)) -2, etc. *@)
+IntType := NatType extended conservatively by {
+  Inductive int
+  | ~nonneg : nat -> int
+  | ~neg : nat -> int
+}
+Int := IntType extended conservatively by {
+  nonneg : nat -> int;
+  neg : nat -> int;
+
+  nonneg = fun x. ~nonneg x;
+  neg = fun x. ~neg x
+}
+IntWithNatAdd := combine Int, NatAdd over NatType
+IntNonnegAdd := IntWithNatAdd[add |-> nonneg_add]
+IntAdd := IntNonnegAdd extended conservatively by {
+  add : (int, int) -> int;
+  add(x,y) = case x of {
+    | ~neg(xx)    -> case y of {
+                     | ~neg(yy)    -> neg(nonneg_add(xx,yy))
+                     | ~nonneg(yy) -> case xx of {
+                                      | ~zero     -> case yy of {
+                                                     | ~zero     -> x
+                                                     | ~succ(y') -> nonneg(y')
+                                                  }
+                                      | ~succ(x') -> case yy of {
+                                                     | ~zero     -> x
+                                                     | ~succ(y') -> add(neg(x'), nonneg(y'))
+                                                  }
+                                   }
+                  }
+    | ~nonneg(xx) -> case y of {
+                     | ~neg(yy)    -> case xx of {
+                                      | ~zero     -> y
+                                      | ~succ(x') -> case yy of {
+                                                     | ~zero     -> nonneg(x')
+                                                     | ~succ(y') -> add(nonneg(x'), neg(y'))
+                                                  }
+                                   }
+                     | ~nonneg(yy) -> nonneg(succ(nonneg_add(xx,yy)))
+                  }
+  }
+}
+IntWithNat := combine Int, Nat over NatType
+IntCompl := IntWithNat extended conservatively by {
+  compl : int -> int;
+  compl(x) = case x of {
+    | ~neg(xx)    -> case xx of {
+                     | ~zero -> nonneg(succ(zero))
+                     | ~succ(x') -> nonneg(succ(succ(x')))
+                  }
+    | ~nonneg(xx) -> case xx of {
+                     | ~zero -> nonneg(zero)
+                     | ~succ(x') -> neg(x')
+                  }
+  }
+}
+IntAddCompl := combine IntAdd, IntCompl over IntWithNat
+IntSub := IntAddCompl extended conservatively by {
+  sub : (int, int) -> int;
+  sub(x,y) = add(x,compl(y))
+}
+IntWithNatMul := combine Int, NatMul over NatType
+IntNonnegMul := IntWithNatMul[mul |-> nonneg_mul, add |-> nonneg_add]
+IntMul := IntNonnegMul extended conservatively by {
+  mul : (int, int) -> int;
+  mul(x,y) = case x of {
+    | ~neg(xx)    -> case y of {
+                     | ~neg(yy)    -> nonneg(nonneg_mul(succ(xx), succ(yy)))
+                     | ~nonneg(yy) -> neg(nonneg_mul(succ(xx), yy))
+                  }
+    | ~nonneg(xx) -> case y of {
+                     | ~neg(yy)    -> neg(nonneg_mul(xx, succ(yy)))
+                     | ~nonneg(yy) -> nonneg(nonneg_mul(xx, yy))
+                  }
+  }
+}
+IntWithNatLess := combine Int, NatLess over NatType
+IntNonnegLess := IntWithNatLess[less |-> nonneg_less]
+IntLess := IntNonnegLess extended conservatively by {
+  less : (int, int)? ;
+  less(x,y) = case x of {
+    | ~neg(xx)    -> case y of {
+                     | ~neg(yy)    -> nonneg_less(yy, xx)
+                     | ~nonneg(yy) -> %true
+                  }
+    | ~nonneg(xx) -> case y of {
+                     | ~neg(yy)    -> %false
+                     | ~nonneg(yy) -> nonneg_less(xx, yy)
+                  }
+  }
+}
+
+(@* In this representation, pos(zero) represents 1, pos(succ(zero)) 2, etc. and neg(zero) represents -1, neg(succ(zero)) -2, etc. *@)
+Int2Type := NatType extended conservatively by {
+  Inductive int
+  | ~0 : int
+  | ~pos : nat -> int
+  | ~neg : nat -> int
+}
+Int2 := Int2Type extended conservatively by {
+  0 : int;
+  pos : nat -> int;
+  neg : nat -> int;
+
+  0 = ~0;
+  pos = fun x. ~pos x;
+  neg = fun x. ~neg x
+}
+Int2WithNatAdd := combine Int2, NatAdd over NatType
+Int2NonnegAdd := Int2WithNatAdd[add |-> nonneg_add]
+Int2Add := Int2NonnegAdd extended conservatively by {
+  add : (int, int) -> int;
+  add(x,y) = case x of {
+    | ~0       -> y
+    | ~neg(xx) -> case y of {
+                  | ~0       -> neg(xx)
+                  | ~neg(yy) -> neg(nonneg_add(succ(xx),succ(yy)))
+                  | ~pos(yy) -> case xx of {
+                                | ~zero     -> case yy of {
+                                               | ~zero     -> 0
+                                               | ~succ(y') -> pos(y')
+                                            }
+                                | ~succ(x') -> case yy of {
+                                               | ~zero     -> neg(x')
+                                               | ~succ(y') -> add(neg(x'),pos(y'))
+                                            }
+                             }
+               }
+    | ~pos(xx) -> case y of {
+                  | ~0       -> pos(xx)
+                  | ~neg(yy) -> case xx of {
+                                | ~zero     -> case yy of {
+                                               | ~zero     -> 0
+                                               | ~succ(y') -> neg(y')
+                                            }
+                                | ~succ(x') -> case yy of {
+                                               | ~zero     -> pos(x')
+                                               | ~succ(y') -> add(pos(x'),neg(y'))
+                                            }
+                             }
+                  | ~pos(yy) -> pos(nonneg_add(succ(xx),succ(yy)))
+               }
+  }
+}
+Int2WithNat := combine Int2, Nat over NatType
+Int2Compl := Int2WithNat extended conservatively by {
+  compl : int -> int;
+  compl(x) = case x of {
+    | ~0    -> 0
+    | ~neg(xx) -> pos(xx)
+    | ~pos(xx) -> neg(xx)
+  }
+}
+Int2AddCompl := combine Int2Add, Int2Compl over Int2WithNat
+Int2Sub := Int2AddCompl extended conservatively by {
+  sub : (int, int) -> int;
+  sub(x,y) = add(x,compl(y))
+}
+Int2WithNatMul := combine Int2, NatMul over NatType
+Int2NonnegMul := Int2WithNatMul[mul |-> nonneg_mul, add |-> nonneg_add]
+Int2Mul := Int2NonnegMul extended conservatively by {
+  mul : (int, int) -> int;
+  mul(x,y) = case x of {
+    | ~0       -> 0
+    | ~neg(xx) -> case y of {
+                  | ~0       -> 0
+                  | ~neg(yy) -> pos(nonneg_add(nonneg_mul(succ(xx),yy), xx))
+                  | ~pos(yy) -> neg(nonneg_add(nonneg_mul(succ(xx),yy), xx))
+               }
+    | ~pos(xx) -> case y of {
+                  | ~0       -> 0
+                  | ~neg(yy) -> neg(nonneg_add(nonneg_mul(succ(xx),yy), xx))
+                  | ~pos(yy) -> pos(nonneg_add(nonneg_mul(succ(xx),yy), xx))
+               }
+  }
+}
+Int2WithNatLess := combine Int2, NatLess over NatType
+Int2NonnegLess := Int2WithNatLess[less |-> nonneg_less]
+Int2Less := Int2NonnegLess extended conservatively by {
+    less : (int, int)? ;
+    less(x,y) = case x of {
+      | ~0       -> case y of {
+                    | ~0       -> %false
+                    | ~neg(yy) -> %false
+                    | ~pos(yy) -> %true
+                 }
+      | ~neg(xx) -> case y of {
+                    | ~0       -> %true
+                    | ~neg(yy) -> nonneg_less(yy, xx)
+                    | ~pos(yy) -> %true
+                 }
+      | ~pos(xx) -> case y of {
+                    | ~0       -> %false
+                    | ~neg(yy) -> %false
+                    | ~pos(yy) -> nonneg_less(xx, yy)
+                 }
+    }
+}
+
+(@* Testing the reflection of theories *@)
+NatAddTerm := Empty extended by {
+    type NATerm =  &NatAdd
+}
+MonoidTerm := Empty extended by {
+    type MTerm = &Monoid
+}
+FieldTerm := Empty extended by {
+    type FieldTerm = &Field
+}
+
+(@* One day this probably won't work *@)
+Self:= Theory {
+    type self = &Self;
+    const : self;
+    const = ~const#;
+    binop : (self, self) -> self;
+    binop = ~binop#;
+}
+
+(@* We also need some ways to do type constructors *@)
+Pair := MultiCarrier extended conservatively by {
+    pair : U -> S -> (U,S);
+    pair = fun x, y. (x,y);
+    fst : (U, S) -> U;
+    fst(x,y) = x;
+    snd : (U, S) -> S;
+    snd(x,y) = y;
+}
+
+PairToFunAdjunct := Empty extended conservatively by {
+    a,b,c:type;
+    curry : ((a,b) -> c) -> a -> b -> c;
+    curry = fun f, x, y. f (x,y)
+}
+FunToPairAdjunct := Empty extended conservatively by {
+    a,b,c:type;
+    uncurry : (a -> b -> c) -> (a,b) -> c;
+    uncurry = fun f, p. case p of { | (x,y) -> f x y}
+}
+Miscellaneous := Empty extended conservatively by {
+    a,b,c:type;
+    const : a -> b -> a;
+    const(x) = fun y. x;
+    flip : (a -> b -> c) -> b -> a -> c;
+    flip(f) = fun x,y. f y x
+}
+
+RecordExample := Theory {
+    A : type;
+    P : A -> type;
+    record : { x : A, y : P x };
+    a : A;
+    pa : P (lift a);
+    record = { x = a, y : P x = pa };
+}
+NatEnrichedMonoid1 := combine Nat, Monoid1 over Empty
+NatPowerOp := NatEnrichedMonoid1 extended conservatively by {
+    ^ : (U,nat) -> U;
+    x ^ n = case n of {
+         | ~zero -> 1
+         | ~succ y -> x * (x ^ y) }
+}
+IsCyclic := NatPowerOp extended by {
+    axiom cyclic : forall x : U. exists k : nat. x = x ^ k
+}
+CyclicGroup := combine Group1, IsCyclic over Monoid1
+
+(@* some type constructors *@)
+List := Empty extended conservatively by {
+    type List = Lambda a:type . (data X.
+          ~nil : X
+        | ~cons : a -> X -> X);
+    nil : (a:type) -> List a;
+    nil(a)= ~nil ;
+    cons : (a:type) -> a -> List a -> List a;
+    cons(a) = ~cons
+}
+Maybe := Empty extended conservatively by {
+    type Maybe = Lambda a:type . (data X.
+          ~nothing : X
+        | ~just : a -> X);
+    nothing : (a:type) -> Maybe a;
+    nothing(a) = ~nothing ;
+    just : (a:type) -> a -> Maybe a;
+    just(a) = ~just
+}
+MaybeF := Maybe extended conservatively by {
+  maybe : (a : type) -> (b :type) -> (c:type) -> b -> (a -> b) -> Maybe a -> b;
+  maybe = fun a, b, c, x, f. fun m : Maybe a . case m of {
+    | ~nothing -> x
+    | ~just y ->  f y
+  }
+}
+Equal := EquivalenceRelation[ R |-> == ]
+Max := TotalOrder extended conservatively by {
+    max : (U,U) -> U;
+    max (x,y) = if (x <= y) then y else x
+}
+Min := TotalOrder extended conservatively by {
+    min : (U,U) -> U;
+    min (x,y) = if (x <= y) then x else y
+}
+Either := Empty extended conservatively by {
+    type Either = Lambda a,b:type. (data X.
+          ~Left : a -> X
+        | ~Right : b -> X );
+    left : (a:type) -> (b:type) -> a -> Either a b;
+    left = fun a. fun b. fun x. ~Left x;
+    right : (a:type) -> (b:type) -> b -> Either a b;
+    right = fun a,b. fun x. ~Right x;
+}
+EitherF := Either extended conservatively by {
+    either : (a:type) -> (b:type) -> (c:type) -> 
+             (a -> c) -> (b -> c) -> Either a b -> c;
+    either = fun a,b,c,f,g. fun e : Either a b. case e of {
+        | ~Left aa -> f aa
+        | ~Right bb -> g bb
+    }
+}
+NatEnrichedCarrier := combine Carrier, Nat over Empty
+
+TFunctorSig := Empty extended by {
+    map : Lambda a,b:type. (f : type -> type) -> (a -> b) -> f a -> f b;
+}
+MaybeMap := Maybe extended conservatively by {
+    map : (a -> b) -> Maybe a -> Maybe b;
+    map(f) = fun x : Maybe a. case x of {
+                        | ~just xx -> just (f x)
+                        | ~nothing -> nothing
+                      }
+}
+(@* should define return and bind too *@)
+(@* I'm commenting out FinSet because dependent inductive families is not even close to being supported
+    -- ROC 2012-01-05 
+FinSet := Nat extended by {
+    Inductive Fin
+    | ~fzero : (n:Nat) -> Fin (succ n)
+    | ~fsucc : (n:Nat) -> Fin n -> Fin (succ n)
+}
+Here is another implementation using recursively defined types
+FinSet := Nat extended by {
+    fin : nat -> type;
+    fin(n) = case n of {
+           | zero   -> (data Zero .)
+           | succ m -> (data Succ . ~new : Succ | ~lift : Fin m -> Succ)
+           }
+}
+*@)
+Set := Carrier extended by {
+    set : U ?;
+}
+Cardinality0 := Set extended by {
+    axiom empty : not exists x:U . set(x)
+}
+EmptySet := Cardinality0[ set |-> empty ]
+Cardinality1 := Set extended by {
+    axiom singleton : exists! x:U . set(x)
+}
+SingletonSet := Cardinality1[ set |-> singleton ]
+SetUnion := Set extended by {
+    Union : ((U ?), (U ?)) -> (U ?);
+    Union(A,B) = iota C : (U ?) . (forall x:U . C(x) = (A(x) or B(x)))
+}
+SetUnionAssociative := SetUnion extended by {
+    axiom associative_Union : forall A,B,C:(U ?). Union(Union(A,B), C) = Union(A, Union(B,C))
+}
+SetUnionCommutative := SetUnion extended by {
+    axiom commutative_Union : forall A,B:(U ?). Union(A,B) = Union(B,A)
+}
+SetUnionIdempotent := SetUnion extended by {
+    axiom idempotent_Union : forall A,B:(U ?). Union(A,A) = A
+}
+SetUnionAxioms := combine SetUnionAssociative, SetUnionCommutative, SetUnionIdempotent over SetUnion
+SetInsert := Set extended by {
+    Insert : (U, (U ?)) -> (U ?);
+    Insert(a,A) = iota B : (U ?) . (forall x:U . B(x) = (A(x) or x = a))
+}
+SetInsertLeftCommutative := SetInsert extended by {
+    axiom leftCommutative_Insert : forall A:(U ?). forall a,b:U. Insert(a, Insert(b, A)) =  Insert(b, Insert(a, A))
+}
+SetInsertLeftIdempotent := SetInsert extended by {
+    axiom leftIdempotent_Insert : forall A:(U ?). forall a:U. Insert(a, Insert(a, A)) = Insert(a, A)
+}
+SetInsertAxioms := combine SetInsertLeftCommutative, SetInsertLeftIdempotent over SetInsert
+
+(@* for fun, include ETCS.  See http://ncatlab.org/nlab/show/fully+formal+ETCS
+*@)
+CatSourceSig := UnaryOperation[prime |-> s]
+CatTargetSig := UnaryOperation[prime |-> t]
+CatSource := IdempotentUnary[prime |-> s]
+CatTarget := IdempotentUnary[prime |-> t]
+CatArrowSig := combine CatSourceSig, CatTargetSig over Carrier
+CatIdempotentArrows := combine CatSource, CatTarget over Carrier
+CatSourceAsId := CatArrowSig extended by {
+    axiom sourceAsId_s_t : forall f:U. s f = t (s f)
+}
+CatTargetAsId := CatArrowSig extended by {
+    axiom targetAsId_s_t : forall f:U. t f = s (t f)
+}
+CatArrowsAsId := combine CatSourceAsId, CatTargetAsId over CatArrowSig
+CatArrows := combine CatIdempotentArrows, CatArrowsAsId over CatArrowSig
+CategorySig := combine TernaryPredicate, CatArrowSig over Carrier
+CatCompose := CategorySig extended by {
+    axiom composeDefn_c_s_t : forall f,g,h:U. c(f,g,h) implies
+        (s f = t g) and (t f = t h) and (s g = s h)
+}
+CatComposeExists := CategorySig extended by {
+    axiom composeExist_c_s_t : forall f,g:U. (s f = t g) implies
+        exists! h:U. c(f, g, h)
+}
+CatLeftId := CategorySig extended by {
+    axiom compLeftId_c_s_t : forall f:U. c(f, s f, f)
+}
+CatRightId := CategorySig extended by {
+    axiom compRightId_c_s_t : forall f:U. c(t f, f, f)
+}
+CatIdentityLaws := combine CatLeftId, CatRightId over CategorySig
+CatAssoc := CategorySig extended by {
+    axiom associativity_c_s_t : forall f,g,h,j,k,m:U.
+        (c(f,g,j) and c(g,h,k)) implies (c(j,h,m) iff c(f,k,m))
+}
+CatComposition := CatComposeExists extended conservatively by {
+    o : (U,U) -> U;
+    o(f,g) = iota h:U. ((s f = t g) and c(f,g,h))
+}
+CatIsObject := CategorySig extended conservatively by {
+    objTerm : (U)?;
+    objTerm(f) = (f = s f)
+}
+CatSpan := CategorySig extended conservatively by {
+    span : (U,U)?;
+    span(f,g) = s f = s g
+}
+CatBase := combine CatComposition, CatIsObject, CatSpan over CategorySig
+CatMonic := CatBase extended conservatively by {
+    monic : (U)?;
+    monic(f) = forall g,h:U. ((s f = t g) and (s f = t h) and 
+        (f `o g = f `o h)) implies (g = h)
+}
+CatEpi := CatBase extended conservatively by {
+    epi : (U)?;
+    epi(f) = forall g,h:U. ((t f = s g) and (t f = s h) and 
+        (g `o f = h `o f)) implies (g = h)
+}
+CatJointlyMonic := CatBase extended conservatively by {
+    jointlymonic : (U,U)?;
+    jointlymonic(f,g) = span(f,g) and
+      forall h,i:U. ((s f = t h) and (s f = t i) and (s h = s i) and
+        (f `o h = f `o i) and (g `o h = g `o i)) implies (h = i)
+}
+ThCat := combine CatArrows, CatCompose, CatIdentityLaws,
+    CatAssoc, CatComposition, CatIsObject over CategorySig
+ThCat' := combine CatMonic, CatEpi, CatJointlyMonic, ThCat over CatBase
+LexTermObject := PointedCarrier[ e |-> 1]
+LexIsPullback := Carrier extended by { p : (U,U,U,U)? }
+LexSig := combine CatBase, LexTermObject, LexIsPullback over Carrier
+LexTerminal := LexSig extended by {
+    axiom terminal : 1 = s 1
+}
+LexUniqTerminalMap := LexSig extended by {
+    axiom termMapUniq : forall f:U. objTerm(f) implies exist! g:U.
+        ((s g = f) and (t g = 1))
+}
+LexPullbackDefn := LexSig extended by {
+    axiom pullWellDefn : forall f,g,h,k:U. p(f,g,h,k) implies
+        ((s f = t h) and (s g = t k) and (t f = t g) and (s h = s k))
+}
+LexSquareCommutes := LexSig extended by {
+    axiom commutativeSquare_p : forall f,g,h,k:U. p(f,g,h,k) implies
+        (f `o h = g `o k)
+}
+LexPullback := LexSig extended by {
+    axiom pullbackUniv : forall f,g,h,k,h',k':U.
+        (p(f,g,h,k) and (f `o h' = g `o k')) implies
+        exists! i:U. (s i = s h') and (t i = s h) and (h `o i = h')
+                 and (k `o i = k')
+}
+ThLex := combine ThCat', LexTerminal, LexUniqTerminalMap, LexPullbackDefn, 
+    LexSquareCommutes, LexPullback over LexSig
+PowerObject := UnaryOperation[prime |-> pow]
+LeftInjPow := UnaryOperation[prime |-> li]
+RightInjPow := UnaryOperation[prime |-> ri]
+Elementhood := TernaryPredicate[c |-> lam]
+ToposObjs := combine PowerObject, LeftInjPow, RightInjPow, Elementhood
+    over Carrier
+LexBase := combine ToposObjs, ThLex over Carrier
+PowerOfTarget := LexBase extended by {
+    axiom powerOfTarget : forall f:U. pow f = pow (t f)
+}
+TargetOfPower := LexBase extended by {
+    axiom targetOfPower : forall f:U. t (pow f) = pow (t f)
+}
+TargetOfLeftInj := LexBase extended by {
+    axiom targetOfLeftInj : forall f:U. t(li f) = t (pow f)
+}
+TargetOfRightInj := LexBase extended by {
+    axiom targetOfRightInj : forall f:U. t(ri f) = t f
+}
+SourceOfInj := LexBase extended by {
+    axiom sourceOfInj : forall f:U. s(li f) = s(ri f)
+}
+InjMonic := LexBase extended by {
+    axiom injMonic : forall f:U. jointlymonic(li f, ri f)
+}
+ClassifyingRelation := LexBase extended by {
+    axiom lambdaClassRel : forall f,g,h:U. lam(f,g,h) implies
+      (jointlymonic(f,g) and (s h = t f) and (t h = pow g))
+}
+ClassifyingMap := LexBase extended by {
+    axiom classifyingMap : forall f,g:U. jointlymonic(f,g) implies
+      exists! h:U. lam(f,g,h)
+}
+PullbackRelation := LexBase extended by {
+    axiom pullbackRelation : forall f,g,h:U. lam(f,g,h) iff
+      exists l,j:U. (p(l,h,j,f) and g = ri j)
+}
+ThElementaryTopos := combine PowerOfTarget, TargetOfPower, TargetOfLeftInj,
+    TargetOfRightInj, SourceOfInj, InjMonic, ClassifyingRelation,
+    ClassifyingMap, PullbackRelation over LexBase
+NatObj := PointedCarrier[e |-> nat]
+ZeroObj := PointedCarrier[e |-> 0]
+SuccObj := PointedCarrier[e |-> succ]
+ETCSSig := combine ThElementaryTopos, NatObj, ZeroObj, SuccObj over Carrier
+WellPointed := ETCSSig extended by {
+    axiom wellpointed : forall f,g:U. ((s f = s g) and (t f = t g)) implies
+      (forall h:U. ((s h = 1) and (t h = s f) and (f `o h = g `o h)) implies
+       f = g)
+}
+Choice := ETCSSig extended by {
+   axiom choice : forall f:U. 
+     (forall g,h:U. ((t f = s g) and (s g = s h) and (t g = t h)
+       and g `o f = h `o f) implies (g = h)) implies
+       (exists i:U. (s i = t f) and (t i = s f) and (f `o i = t f))
+}
+ZeroArrow := ETCSSig extended by {
+    axiom zerodefn : s 0 = 1 and t 0 = nat
+}
+SuccArrow := ETCSSig extended by {
+    axiom succdefn : s succ = nat and t succ = nat
+}
+Recursion := ETCSSig extended by {
+    axiom recursion : forall f,g:U. ((s f = 1) and (t f = s g) and 
+      (s g = t g)) implies (exists! h:U. (s h = nat) and (t h = t f) and
+        (f = h `o 0) and (h `o succ = g `o h))
+}
+ThETCS := combine WellPointed, Choice, ZeroArrow, SuccArrow, Recursion
+    over ETCSSig
+
+(@* MultiCarrier := Carrier || CarrierS
+UtoS := Carrier[U |-> S]
+CarrierS := (Carrier ; UtoS) *@)
+(@* remove the instances for now
+OneMagma := instance OneTheory of Monoid via [ One |-> U, ee |-> e ]
+BoolAsBA := instance Bool of BooleanAlgebra via [ Boole |-> U, ~false |-> 0, ~true |-> 1]
+FunctionsAsMonoid := instance FunctionSpace of Monoid via [ F |-> U, id |-> e, o |-> * ]
+*@)
