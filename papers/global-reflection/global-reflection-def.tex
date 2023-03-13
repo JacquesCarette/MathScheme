@@ -1,0 +1,296 @@
+%% Requires:
+%% 
+%% \usepackage{latexsym}
+%% \usepackage{amssymb}
+%% \usepackage{stmaryrd}
+
+\renewcommand{\labelenumi}{(\theenumi)}
+%\renewcommand{\labelenumi}{\theenumi.}
+%\renewcommand{\labelenumii}{\theenumii.}
+%\renewcommand{\labelenumiii}{\theenumiii.}
+\newcommand{\be}{\begin{enumerate}}
+\newcommand{\ee}{\end{enumerate}}
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\bc}{\begin{center}}
+\newcommand{\ec}{\end{center}}
+\newcommand{\bsp}{\begin{sloppypar}}
+\newcommand{\esp}{\end{sloppypar}}
+
+\newcommand{\sglsp}{\ }
+\newcommand{\dblsp}{\ \ }
+\newcommand{\bs}{\mbox{\textvisiblespace}}
+
+\newcommand{\sA}{\mbox{$\cal A$}}
+\newcommand{\sB}{\mbox{$\cal B$}}
+\newcommand{\sC}{\mbox{$\cal C$}}
+\newcommand{\sD}{\mbox{$\cal D$}}
+\newcommand{\sE}{\mbox{$\cal E$}}
+\newcommand{\sF}{\mbox{$\cal F$}}
+\newcommand{\sG}{\mbox{$\cal G$}}
+\newcommand{\sH}{\mbox{$\cal H$}}
+\newcommand{\sI}{\mbox{$\cal I$}}
+\newcommand{\sJ}{\mbox{$\cal J$}}
+\newcommand{\sK}{\mbox{$\cal K$}}
+\newcommand{\sL}{\mbox{$\cal L$}}
+\newcommand{\sM}{\mbox{$\cal M$}}
+\newcommand{\sN}{\mbox{$\cal N$}}
+\newcommand{\sO}{\mbox{$\cal O$}}
+\newcommand{\sP}{\mbox{$\cal P$}}
+\newcommand{\sQ}{\mbox{$\cal Q$}}
+\newcommand{\sR}{\mbox{$\cal R$}}
+\newcommand{\sS}{\mbox{$\cal S$}}
+\newcommand{\sT}{\mbox{$\cal T$}}
+\newcommand{\sU}{\mbox{$\cal U$}}
+\newcommand{\sV}{\mbox{$\cal V$}}
+\newcommand{\sW}{\mbox{$\cal W$}}
+\newcommand{\sX}{\mbox{$\cal X$}}
+\newcommand{\sY}{\mbox{$\cal Y$}}
+\newcommand{\sZ}{\mbox{$\cal Z$}}
+
+\newcommand{\bA}{\mathbb{A}}
+\newcommand{\bB}{\mathbb{B}}
+\newcommand{\bC}{\mathbb{C}}
+\newcommand{\bD}{\mathbb{D}}
+\newcommand{\bE}{\mathbb{E}}
+\newcommand{\bF}{\mathbb{F}}
+\newcommand{\bG}{\mathbb{G}}
+\newcommand{\bH}{\mathbb{H}}
+\newcommand{\bI}{\mathbb{I}}
+\newcommand{\bJ}{\mathbb{J}}
+\newcommand{\bK}{\mathbb{K}}
+\newcommand{\bL}{\mathbb{L}}
+\newcommand{\bM}{\mathbb{M}}
+\newcommand{\bN}{\mathbb{N}}
+\newcommand{\bO}{\mathbb{O}}
+\newcommand{\bP}{\mathbb{P}}
+\newcommand{\bQ}{\mathbb{Q}}
+\newcommand{\bR}{\mathbb{R}}
+\newcommand{\bS}{\mathbb{S}}
+\newcommand{\bT}{\mathbb{T}}
+\newcommand{\bU}{\mathbb{U}}
+\newcommand{\bV}{\mathbb{V}}
+\newcommand{\bW}{\mathbb{W}}
+\newcommand{\bX}{\mathbb{X}}
+\newcommand{\bY}{\mathbb{Y}}
+\newcommand{\bZ}{\mathbb{Z}}
+
+\renewcommand{\phi}{\varphi}
+\newcommand{\seq}[1]{{\langle #1 \rangle}}
+\newcommand{\set}[1]{{\{ #1 \}}}
+\newcommand{\tuple}[1]{{( #1 )}}
+\newcommand{\mlist}[1]{{[ #1 ]}}
+\newcommand{\sembrack}[1]{\llbracket#1\rrbracket}
+\newcommand{\synbrack}[1]{\ulcorner#1\urcorner}
+\newcommand{\commabrack}[1]{\lfloor#1\rfloor}
+\newcommand{\bsynbrack}[1]{\lceil#1\rceil}
+\newcommand{\bsembrack}[1]{\lceil\!\!\lceil#1\rceil\!\!\rceil}
+\newcommand{\mname}[1]{\mbox{\sf #1}}
+\newcommand{\mcolon}{\mathrel:}
+\newcommand{\mdot}{\mathrel.}
+\newcommand{\bo}{\omicron}
+\newcommand{\modpar}{\models_{\rm par}}
+\newcommand{\modreg}{\models_{\rm reg}}
+\newcommand{\proves}[2]{#1 \vdash #2}
+\newcommand{\notproves}[2]{#1 \not\vdash #2}
+\newcommand{\provesin}[3]{#1 \vdash_{#2} #3}
+\newcommand{\notprovesin}[3]{#1 \not\vdash_{#2} #3}
+%\newcommand{\leqq}[1]{\mathrel{\preceq_{#1}}}
+\newcommand{\parrow}{\rightharpoonup}
+\newcommand{\tarrow}{\rightarrow}
+\newcommand{\term}{\seq}
+\newcommand{\lub}{\sqcup}
+\newcommand{\subfun}{\sqsubseteq}
+\newcommand{\strictsubfun}{\sqsubset}
+\newcommand{\subpred}{\subseteq}
+\newcommand{\strictsubpred}{\subset}
+\newcommand{\BoxApp}{\Box\,}
+\newcommand{\BOX}{\mathrel{\Box}}
+\newcommand{\funapp}{\mathrel@}
+\newcommand{\StarApp}{\star\,}
+\newcommand{\compl}[1]{\overline{#1}}
+\newcommand{\recip}[1]{{#1}^{-1}}
+
+\newcommand{\com}{\mname{complement}}
+\newcommand{\dom}{\mname{domain}}
+\newcommand{\sumcl}{\mname{sum}}
+\newcommand{\pow}{\mname{power}}
+\newcommand{\pair}{\mname{pair}}
+\newcommand{\opair}{\mname{ordered-pair}}
+\newcommand{\inters}{\mname{intersection}}
+\newcommand{\emp}{\mname{empty}}
+\newcommand{\uni}{\mname{univocal}}
+\newcommand{\fun}{\mname{function}}
+\newcommand{\card}{\mname{card}}
+\newcommand{\sets}{\mname{sets}}
+\newcommand{\monotone}{\mname{monotone}}
+\newcommand{\continuous}{\mname{continuous}}
+\newcommand{\chain}{\mname{chain}}
+\newcommand{\mub}{\mname{ub}}
+\newcommand{\mlub}{\mname{lub}}
+\newcommand{\fixedpoint}{\mname{fp}}
+\newcommand{\leastfixedpoint}{\mname{lfp}}
+\newcommand{\strongfixedpoint}{\mname{sfp}}
+\newcommand{\emptyfun}{\triangle}
+\newcommand{\emptylist}{[\,]}
+\newcommand{\consext}{\trianglelefteq}
+\newcommand{\der}[2]{\stackrel[#2]{#1}{\longrightarrow}}
+
+\newcommand{\Iota}{\mbox{\rm I}}
+\newcommand{\IotaApp}{\mbox{\rm I}\,}
+\newcommand{\iotaApp}{\iota\,}
+\newcommand{\invertediota}{\rotatebox[origin=c]{180}{$\iota$}}
+\newcommand{\Epsilon}{\mbox{\rm E}}
+\newcommand{\EpsilonApp}{\mbox{\rm E}\,}
+\newcommand{\epsilonApp}{\epsilon\,}
+\newcommand{\True}{\mbox{\sf T}} 
+\newcommand{\False}{\mbox{\sf F}} 
+\newcommand{\Trueword}{\sf true}
+\newcommand{\Falseword}{\sf false}
+\newcommand{\Neg}{\neg} 
+
+\ifdefined \And 
+  \renewcommand{\And}{\wedge}
+\else
+  \newcommand{\And}{\wedge}
+\fi
+
+\newcommand{\AND}{\mathrel\&}
+\newcommand{\Or}{\vee}
+\newcommand{\Implies}{\supset}
+\newcommand{\ImpliesAlt}{\Rightarrow}
+\newcommand{\ImpliesTrad}{\rightarrow}
+\newcommand{\Iff}{\equiv}
+\newcommand{\IffAlt}{\Leftrightarrow}
+\newcommand{\IffTrad}{\leftrightarrow}
+\newcommand{\Sheffer}{\mathrel|}
+\newcommand{\ShefferAlt}{\mathrel\uparrow}
+\newcommand{\PeirceAlt}{\mathrel\downarrow}
+\newcommand{\ExOrAlt}{\oplus}
+\newcommand{\Forall}{\forall}
+\newcommand{\ForallApp}{\forall\,}
+\newcommand{\Forsome}{\exists}
+\newcommand{\ForsomeApp}{\exists\,}
+\newcommand{\ForsomeUniqueApp}{\exists!\,}
+\newcommand{\IsDef}{\downarrow}
+\newcommand{\IsUndef}{\uparrow}
+\newcommand{\Equal}{=}
+\newcommand{\QuasiEqual}{\simeq}
+\newcommand{\Undefined}{\bot}
+\newcommand{\If}{\mname{if}}
+\newcommand{\IfAlt}[3]{#1 \mapsto #2|#3}
+\newcommand{\IsDefApp}{\!\IsDef}
+\newcommand{\IsUndefApp}{\!\IsUndef}
+\newcommand{\TRUE}{\mbox{{\sc t}}}
+\newcommand{\FALSE}{\mbox{{\sc f}}}
+\newcommand{\truthvalues}{\{\TRUE,\FALSE\}}
+\newcommand{\LambdaApp}{\lambda\,}
+\newcommand{\LAMBDAapp}{\Lambda\,}
+\newcommand{\PiApp}{\Pi\,}
+\newcommand{\AlphaEquiv}{\stackrel{\alpha}{=}}
+\newcommand{\SigmaApp}{\Sigma\,}
+\newcommand{\SetAbs}{\mbox{\rm S}}
+\newcommand{\SetAbsApp}{\mbox{\rm S}\,}
+\newcommand{\ClassAbs}{\mbox{\sc C}}
+\newcommand{\ClassAbsApp}{\mbox{\sc C}\,}
+\newcommand{\DepTypeProd}{\otimes}
+\newcommand{\DepTypeProdApp}{\otimes\,}
+
+\newcommand{\mterm}[2]{\textbf{term}_{#1}[#2]}
+\newcommand{\mterma}[3]{\textbf{term}_{#1}[#2,#3]}
+\newcommand{\mform}[2]{\textbf{form}_{#1}[#2]}
+\newcommand{\mforma}[3]{\textbf{form}_{#1}[#2,#3]}
+\newcommand{\mkind}[2]{\textbf{kind}_{#1}[#2]}
+\newcommand{\mtype}[2]{\textbf{type}_{#1}[#2]}
+\newcommand{\mtypea}[3]{\textbf{type}_{#1}[#2,#3]}
+\newcommand{\mvar}[3]{\textbf{var}_{#1}[#2,#3]}
+\newcommand{\mexpr}[3]{\textbf{expr}_{#1}[#2,#3]}
+\newcommand{\mexpra}[2]{\textbf{expr}_{#1}[#2]}
+\newcommand{\mins}[3]{\textbf{ins}_{#1}[#2,#3]}
+
+\iffalse
+\newcommand{\mvar}[3]{\textbf{var}_{#1}(#2,#3)}
+\newcommand{\mterm}[3]{\textbf{term}_{#1}(#2,#3)}
+\newcommand{\mform}[2]{\textbf{form}_{#1}(#2)}
+\newcommand{\mtype}[2]{\textbf{type}_{#1}(#2)}
+\newcommand{\mexpr}[3]{\textbf{expr}_{#1}(#2,#3)}
+\fi
+
+\newcommand{\imps}{\mbox{\sc imps}}
+\newcommand{\fol}{\mbox{\sc fol}}
+\newcommand{\msfol}{\mbox{\sc ms-fol}}
+\newcommand{\lutins}{\mbox{\sc lutins}}
+\newcommand{\bestt}{\mbox{\sc bestt}}
+\newcommand{\stt}{\mbox{\sc stt}}
+\newcommand{\sttwu}{\mbox{{\sc stt}{\small w}{\sc u}}}
+\newcommand{\sttws}{\mbox{{\sc stt}{\small w}{\sc s}}}
+\newcommand{\vlisp}{\mbox{\sc vlisp}}
+\newcommand{\vmach}{\mbox{\sc vmach}}
+\newcommand{\gnu}{\mbox{\sc gnu}}
+\newcommand{\ml}{\mbox{\sc ml}}
+\newcommand{\zf}{\mbox{\sc zf}}
+\newcommand{\nbg}{\mbox{\sc nbg}}
+\newcommand{\pnbg}{\mbox{\sc pnbg}}
+\newcommand{\snbg}{\mbox{\sc snbg}}
+\newcommand{\pfol}{\mbox{\sc pfol}}
+\newcommand{\nbgstar}{$\mbox{\sc nbg}^\ast$}
+\newcommand{\boldnbgstar}{$\mbox{\bf NBG}^\ast$}
+\newcommand{\pf}{${\bf PF}$}
+\newcommand{\pfstar}{${\bf PF}^\ast$}
+\newcommand{\churchqe}{$\mbox{\sc ctt}_{\rm qe}$}
+\newcommand{\churchuqe}{$\mbox{\sc ctt}_{\rm uqe}$}
+\newcommand{\qzero}{${\cal Q}_0$}
+\newcommand{\qzerou}{${\cal Q}^{\rm u}_{0}$}
+\newcommand{\qzerouqe}{${\cal Q}^{\rm uqe}_{0}$}
+
+\newcommand{\eves}{\mbox{\sc eves}}
+\newcommand{\hol}{\mbox{\sc hol}}
+\newcommand{\mizar}{Mizar}
+\newcommand{\nqthm}{Nqthm}
+\newcommand{\pvs}{\mbox{\sc pvs}}
+\newcommand{\stmm}{\mbox{\sc stmm}}
+\newcommand{\stmmstar}{$\mbox{\sc stmm}^\ast$}
+\newcommand{\ehdm}{\mbox{\sc ehdm}}
+\newcommand{\obj}{\mbox{\sc obj}3}
+\newcommand{\iotasys}{\mbox{\sc iota}}
+\newcommand{\kids}{\mbox{\sc kids}}
+\newcommand{\cstt}{\mbox{\sc cstt}}
+\newcommand{\tps}{\mbox{\sc tps}}
+\newcommand{\lego}{\mbox{\sc lego}}
+\newcommand{\Blang}{\mbox{\sc b}}
+\newcommand{\zed}{\mbox{\sc z}}
+\newcommand{\vdm}{\mbox{\sc vdm}}
+\newcommand{\vdmsl}{\mbox{\sc vdm-sl}}
+\newcommand{\bee}{\mbox{\sc b}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+\newtheorem{axschemas}{Axiom Schemas}
+\newtheorem{infrule}{Rule}
+\newtheorem{infrules}{Rules}
+\newtheorem{requirement}{Requirement}
+\newtheorem{antirequirement}{Antirequirement}
+\newtheorem{designgoal}{Design Goal}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{eg}[thm]{Example}
+\newtheorem{df}[thm]{Definition}
+
+\newenvironment{proof}{\par\noindent{\bf Proof\sglsp}}{\hfill$\Box$}
+\newenvironment{proofsketch}{\par\noindent{\bf Proof sketch\sglsp}}{\hfill$\Box$}
+
+\newenvironment{namedform}[1]
+   {\begin{tabbing}\textbf{#1}\ } {\end{tabbing}}
+
+\newcommand{\urlpart}[1]{\mbox{\texttt{#1}}\linebreak[0]}
+
+\newcommand{\pnote}[1]{{\langle \text{#1} \rangle}}

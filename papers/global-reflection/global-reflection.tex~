@@ -1,0 +1,64 @@
+\documentclass[fleqn]{article}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{xurl}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  linkcolor={blue!70!black},
+  citecolor={blue!70!black},
+  urlcolor={blue!70!black}
+}
+
+\title{{\bf Global Reflection}}
+
+\author{Jacques Carette \and William M. Farmer \and Johanna Schwartzentruber}
+
+\date{today}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+\section{Introduction}\label{sec:introduction}
+
+
+
+\section{Global Reflection}
+
+\section{${\rm CTT_{qe}}$}
+
+\subsection{Syntax}
+
+\subsection{Semantics}
+
+\subsection{Quasiquotation}
+
+\subsection{Proof System}
+
+\subsection{The Three Design Problems} 
+
+\section{HOL Light QE}
+
+\subsection{Overview}
+
+\subsection{Implementation}
+
+\subsection{Mapping of ${\rm CTT_{qe}}$ Expressions to HOL Terms}
+
+\subsection{Creation of Support Machinery}
+
+\subsection{Metatheorems}
+
+\section{Binary Arithmetic}
+
+\section{Related Work}
+
+\section{Conclusion}
+
+\section*{Acknowledgments} 
+
